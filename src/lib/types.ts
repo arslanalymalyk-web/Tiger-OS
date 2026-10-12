@@ -90,7 +90,8 @@ export interface Signal {
   metricId?: string;
   entityIds: string[];
   evidenceIds: string[];
-  caseId: string;
+  /** Primary seeded case. Null for signals raised in Stage 2 that have no case yet. Live links come from the store. */
+  caseId: string | null;
   assumptions: string[];
 }
 
@@ -136,14 +137,30 @@ export interface Decision {
   assumptions: string[];
 }
 
+/** Readable fictional source content (Stage 2). Paragraphs are referenced as P1…Pn, table rows as T<k>R<n>. */
+export type EvidenceBlock =
+  | { type: "p"; text: string }
+  | { type: "table"; caption: string; columns: string[]; rows: (string | number)[][] };
+export interface EvidenceVersion {
+  version: number;
+  sourceDate: string; // YYYY-MM-DD
+  changeNote: string;
+  limitations: string[];
+  blocks: EvidenceBlock[];
+}
+
 export interface Evidence {
   id: string; // EVD-<SECTOR>-nn
   sectorId: SectorId;
   title: string;
   kind: string;
   source: string; // fictional source system / author
-  asOf: string;
+  asOf: string; // source date of the current version
   summary: string;
+  /** Entities the source is about. */
+  entityIds?: string[];
+  /** Readable content, oldest first. Absent = summary only (no readable source in this demonstration). */
+  versions?: EvidenceVersion[];
 }
 
 export interface Activity {

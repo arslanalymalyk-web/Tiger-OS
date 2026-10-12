@@ -3,8 +3,10 @@
 import Link from "next/link";
 import type { ChartData, ChartDef } from "@/lib/types";
 import {
-  ALL_SIGNALS, CROSS_LINKS, SECTORS, SECTOR_BY_ID, computeMetric, fmtNum, fmtTime, groupCapital, groupCounts, recordTitle, sectorCapital, sectorCounts, severityRank,
+  ALL_SIGNALS, CROSS_LINKS, SECTORS, SECTOR_BY_ID, computeMetric, fmtNum, fmtTime, groupCapital, recordTitle, sectorCapital, severityRank,
 } from "@/data";
+import { groupCounts, sectorCounts } from "@/lib/stage2/world";
+import { useDemo } from "@/state/DemoProvider";
 import { useRecordNav } from "@/lib/useRecordNav";
 import { ChartCard } from "./Charts";
 import { DemoTag, IdTag, SECTOR_ICONS, SeverityBadge } from "./ui";
@@ -20,12 +22,13 @@ const decChart: ChartDef = {
 
 export function OverviewView() {
   const { openRecord } = useRecordNav();
-  const g = groupCounts();
+  const { world, hydrated } = useDemo();
+  const g = groupCounts(world);
   const cap = groupCapital();
   const capData: ChartData = { categories: SECTORS.map((s) => s.short), series: [{ name: "Capital employed", values: SECTORS.map((s) => sectorCapital(s.id)) }], sources: SECTORS.map((s) => s.id) };
   const decData: ChartData = {
     categories: SECTORS.map((s) => s.short),
-    series: [{ name: "New commitments (additive)", values: SECTORS.map((s) => sectorCounts(s.id).commitments) }, { name: "Reallocations (not additive)", values: SECTORS.map((s) => sectorCounts(s.id).reallocations) }],
+    series: [{ name: "New commitments (additive)", values: SECTORS.map((s) => sectorCounts(world, s.id).commitments) }, { name: "Reallocations (not additive)", values: SECTORS.map((s) => sectorCounts(world, s.id).reallocations) }],
     sources: SECTORS.map((s) => s.id),
   };
   const top = [...ALL_SIGNALS].sort((a, b) => severityRank(a.severity) - severityRank(b.severity) || b.detectedAt.localeCompare(a.detectedAt)).slice(0, 8);
@@ -43,8 +46,8 @@ export function OverviewView() {
       <section aria-label="Additive group totals" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {tile("Capital employed", `SAR ${fmtNum(cap / 1000, 1)} bn`, `Σ of eight entities = SAR ${fmtNum(cap)} m; Sovereign memo stakes excluded`, "kpi-capital")}
         {tile("Open signals", String(g.signals), `${g.bySev.critical} critical · ${g.bySev.high} high · ${g.bySev.moderate} moderate · ${g.bySev.low} low`)}
-        {tile("Active cases", String(g.cases), "Across all sectors")}
-        {tile("Pending decisions", String(g.decisions), "Awaiting approval (Stage 6 workflow)")}
+        {tile("Active cases", hydrated ? String(g.cases) : "…", hydrated ? `${g.openReviews} open expert review(s) · ${g.staleBriefs} brief(s) need refresh · ${g.untriaged} signal(s) without a case` : "Loading saved state…", "kpi-cases")}
+        {tile("Pending decisions", String(g.decisions), "Proposals only; approvals arrive in Stage 5")}
         {tile("New commitments", `SAR ${fmtNum(g.commitments)} m`, `Reallocations of SAR ${fmtNum(g.reallocations)} m shown separately, not added`)}
       </section>
 
@@ -60,7 +63,7 @@ export function OverviewView() {
             <thead className="bg-ivory-2 text-xs text-muted"><tr><th className="p-3 font-semibold">Sector</th><th className="p-3 text-right font-semibold">Capital employed (SAR m, additive)</th><th className="p-3 font-semibold">Signals (C / H / M / L)</th><th className="p-3 text-right font-semibold">Cases</th><th className="p-3 text-right font-semibold">Decisions</th><th className="p-3 font-semibold">Headline indicator (non-additive)</th></tr></thead>
             <tbody>
               {SECTORS.map((s) => {
-                const c = sectorCounts(s.id);
+                const c = sectorCounts(world, s.id);
                 const m = SECTOR_BY_ID[s.id].metrics[0];
                 const r = computeMetric(m);
                 const I = SECTOR_ICONS[s.id];

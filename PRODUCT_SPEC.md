@@ -1,4 +1,4 @@
-# Product specification — Stage 1
+# Product specification — Stage 2
 
 ## Purpose
 Demonstrate to investors how TIGERIS turns institutional data into signals, intelligence cases and decisions across sovereign sectors. Stage 1 is the shared foundation plus eight working command centres on fictional data.
@@ -24,6 +24,21 @@ Demonstrate to investors how TIGERIS turns institutional data into signals, inte
 - Detail drawers for metrics, signals, cases, decisions, entities and evidence, with stable IDs, related entities, evidence references (illustrative), timestamps and assumptions. Navigation signal → case → decision. Search and notifications open records.
 - Role behaviour (demonstration only): the focus panel shows signals to triage (Analyst), cases requesting expert input (Expert), or decisions awaiting approval (Approver).
 - Persistence in `localStorage`: selected sector, role, notification read state, entered flag.
+
+## Stage 2 scope (delivered): cases, evidence and expert collaboration
+Journey in every sector: **Signal → investigation → evidence → expert review → decision brief**.
+- **Cases** (`/cases`): list with filters and search, empty states, create from a signal or standalone, duplicate prevention (one active case per signal; the existing case is offered). 18 cases: 8 fully investigated (`CAS-<code>-01`), others carry context links.
+- **Case workspace** (`/cases/<id>`): question, summary, owner, priority, due date, linked signals/entities/mandate objectives; hypotheses with alternatives; supporting/contradictory/context evidence with stance history; assumptions, missing information, open questions; human investigation tasks; expert review; versioned decision brief; local demonstration activity.
+- **Statuses**: Draft → Investigating → Expert review → Brief ready → Closed. A central state machine validates every move and lists the reasons for a blocked transition. Closed means the investigation ended (with a reason); it does not mean a decision was approved or executed.
+- **Evidence**: at least three fictional items per sector, readable with stable paragraph/table refs (`P#`, `T#R#`), source, date, version history, limitations, freshness and an "Illustrative evidence" label. Links carry a stance; duplicates are prevented; unlinking keeps history.
+- **Expert review**: the Expert records findings (type, text, valid citations), caveats and disagreements and returns *Reviewed* or *Revision requested*. Earlier rounds are retained. Experts can progress only expert/specialist tasks.
+- **Decision brief**: "Compile brief" is deterministic (no AI). It assembles structured sections from case records, never invents financial figures, and states when no impact is calculated. Analysts can edit; every save is a new version with timestamp and evidence/finding refs. A brief shows **Needs refresh** when linked hypotheses, evidence versions, findings or task outcomes change after it was compiled; prior versions stay available.
+- **Roles (demonstration behaviour, not security)**: Analyst edits; Expert reviews; Approver reads only.
+- **Cross-surface consistency**: sector counts, search, notifications, drawers and the overview derive from the same case/evidence records.
+- Persistence: versioned local store (`tigeris.demo.v2`) with Stage 1 migration, validation and a visible recovery message with an explicit reset.
+
+## Out of scope in Stage 2
+AI assistance (Stage 3), scenarios (4), delegated authority and approvals (5), simulated execution (6), outcome tracking (7), data integration and assurance (8). Shown as stage boundaries. No messages are sent to real experts.
 
 ## Out of scope in Stage 1
 Case editing, evidence document viewing, AI assistance, expert comments, scenario calculations, approvals/delegation, simulated execution, outcome tracking, data integration, Arabic/RTL, real authentication. See `IMPLEMENTATION_PLAN.md`.

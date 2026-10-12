@@ -65,7 +65,7 @@ export function GenericEntry() {
           <div className="mt-4 h-0.5 w-14 bg-gd-500" aria-hidden />
           <p className="mt-4 text-lg text-ink-2">An AI-native operating layer for sovereign capital intelligence across eight sectors, shown here as a demonstration on fictional data.</p>
         </div>
-        <p className="text-sm text-ink-2">Demonstration prototype · Stage 1</p>
+        <p className="text-sm text-ink-2">Demonstration prototype · Stage 2</p>
       </section>
       <section className="flex flex-col justify-center bg-ivory p-4 sm:p-10">
         <div className="card mx-auto w-full max-w-lg p-6 shadow-card sm:p-8">

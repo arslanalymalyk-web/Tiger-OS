@@ -89,3 +89,12 @@ main:focus { outline: none; }
 @media (prefers-reduced-motion: reduce) {
   .slide-in { animation: none; }
 }
+
+/* Evidence references: highlight the paragraph or row a link points at */
+[id^="ref-"]:target,
+[id^="ref-"][data-hl] {
+  background: var(--color-gd-100);
+  outline: 2px solid var(--color-gd-500);
+  outline-offset: 1px;
+  border-radius: 6px;
+}

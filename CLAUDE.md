@@ -9,7 +9,7 @@ Tagline: *Intelligence into Capability. Capital into Sovereign Advantage.*
 - The primary entry action is labelled exactly **"Enter demonstration"**.
 - All **eight sectors** must stay selectable with a working, distinct command centre. No "coming soon" sectors.
 - Later-stage capabilities are shown as explicit **stage boundaries** (`StageBoundary` component), never as unexplained inactive buttons.
-- Do not begin Stage 2 or deploy publicly unless asked.
+- Stage 2 (cases, evidence, expert collaboration) is delivered. Do not begin Stage 3 (AI) or deploy publicly unless asked. Stage numbering: 3 AI · 4 scenarios · 5 approvals · 6 simulated execution · 7 outcomes · 8 integration/assurance.
 
 ## Stack
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 (tokens in `src/app/globals.css`) · lucide-react icons. Charts are hand-written SVG (`src/components/Charts.tsx`). No backend, no env vars.
@@ -29,6 +29,15 @@ Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 (tokens in 
 - Records open in the drawer through `?r=<ID>` (`useRecordNav`). Use it for every link to a record.
 - Series arrays align to `Sector.periods`; the last value must equal the snapshot attribute.
 
+## Stage 2 rules
+- Seed data is immutable; user changes are a copy-on-write overlay (`WorkState` in `src/lib/stage2/types.ts`). Change data only through pure `Result`-returning mutations in `src/lib/stage2/mutations.ts`, called via `useDemo().act`. Every transition goes through `checkTransition` (`rules.ts`). Role permissions live in `can()`.
+- Counts, search, notifications and drawers derive from `buildWorld` (`world.ts`); never count from seed arrays directly.
+- Briefs are compiled deterministically (`brief.ts`) — no AI claim, no financial figure without a calculation. Staleness uses `basisOf`/`isBriefStale`.
+- Evidence is "Illustrative evidence"; cite by stable refs (`P#`, `T#R#`). History is "local demonstration activity", never "audit log". Roles are "demonstration behaviour", never security.
+- Persistence key `tigeris.demo.v2` (schemaVersion 2); v1 is migrated. Malformed state shows the recovery banner and pauses writes until the user resets. Do not silently overwrite.
+- Don't use `pkill -f "next start"` (kills your own shell); kill by PID.
+- Run `npm run verify:store` and `npm run e2e:stage2` after changes to Stage 2 logic/UI.
+
 ## UI rules learned in review
 - Anything that depends on persisted state (role, sector, read state) must render a neutral state until `useDemo().hydrated` is true — never show defaults that then change.
 - Dialogs/drawers use `ModalDialog` (native `<dialog>` + `showModal()`; sets `inert` on `#app-root`, wraps Tab, Escape/backdrop close, restores focus to the opener). Always give a dialog `aria-labelledby` pointing at its visible title. A modal must be rendered **outside** `#app-root` (the drawer in `Shell`) or portalled to `<body>` (About/Reset). Link to records only through `useRecordNav().openRecord`.
@@ -38,5 +47,5 @@ Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 (tokens in 
 - Gold text uses `gd-700` (#7a5c22) only.
 
 ## Commands
-`npm run dev` · `npm run build` · `npm run typecheck` · `npm run lint` · `npm run verify:data` · `npm run verify` (typecheck+lint+data) · `npm run e2e` (needs `npm start -- -p 3100` and Chromium; `BROWSER=firefox|webkit` if installed) · `node scripts/a11y.mjs http://localhost:3100 ./review` (axe-core; writes findings + annotated screenshots) · `node scripts/review-shots.mjs`.
+`npm run dev` · `npm run build` · `npm run typecheck` · `npm run lint` · `npm run verify:data` · `npm run verify` (typecheck+lint+data) · `npm run verify:store` · `npm run e2e:stage2` · `npm run e2e` (needs `npm start -- -p 3100` and Chromium; `BROWSER=firefox|webkit` if installed) · `node scripts/a11y.mjs http://localhost:3100 ./review` (axe-core; writes findings + annotated screenshots) · `node scripts/review-shots.mjs`.
 Run `verify:data` after editing any seed file.

@@ -103,7 +103,7 @@ export const energy: SectorSeed = {
     { id: "SIG-ENR-01", sectorId: S, title: `Wadi Processing Hub carries ${r1(hubShare)}% of production`, severity: "high",
       summary: `Rimal, Sahil and Dhahab (${fmt(sumAttr(upstream.filter((e) => e.dependsOn?.includes(HUB)), "production"))} of ${fmt(totalProd)} kboe/d) have no processing path that bypasses the hub. An outage would interrupt most output.`,
       detectedAt: "2026-10-09T09:15", metricId: "MET-ENR-02", entityIds: [HUB, "ENT-ENR-01", "ENT-ENR-03", "ENT-ENR-08"], evidenceIds: ["EVD-ENR-01"], caseId: "CAS-ENR-01",
-      assumptions: ["Hub outage scenarios are not yet modelled (Stage 5)."] },
+      assumptions: ["Hub outage scenarios are not yet modelled (scenario calculations are Stage 4)."] },
     { id: "SIG-ENR-02", sectorId: S, title: `Sahil Offshore output down ${Math.abs(sahilDecline)}% since April`, severity: "moderate",
       summary: `Production fell from ${sahil.series!.production[0]} to ${attr(sahil, "production")} kboe/d over six months, now ${r1((attr(sahil, "production") / attr(sahil, "capacity")) * 100)}% of capacity.`,
       detectedAt: "2026-10-08T14:40", entityIds: ["ENT-ENR-03"], evidenceIds: ["EVD-ENR-03", "EVD-ENR-04"], caseId: "CAS-ENR-02",
@@ -120,7 +120,7 @@ export const energy: SectorSeed = {
   cases: [
     { id: "CAS-ENR-01", sectorId: S, title: "Wadi hub concentration and export redundancy", status: "In analysis", owner: "Layla Haddad (Analyst)", openedAt: "2026-10-09T11:00",
       summary: "Assess whether to fund a hub bypass or alternate export capacity for single-route assets.",
-      nextStep: "Scenario modelling of a 14-day hub outage (Stage 5 capability).",
+      nextStep: "Scenario modelling of a 14-day hub outage (a Stage 4 capability).",
       signalIds: ["SIG-ENR-01", "SIG-ENR-03"], decisionIds: ["DEC-ENR-01"], entityIds: [HUB, "ENT-ENR-01", "ENT-ENR-03", "ENT-ENR-07"], evidenceIds: ["EVD-ENR-01", "EVD-ENR-02"],
       assumptions: ["Bypass study cost is an indicative estimate."], expertInputRequested: true },
     { id: "CAS-ENR-02", sectorId: S, title: "Upstream decline recovery plan", status: "Awaiting decision", owner: "Omar Siddiq (Analyst)", openedAt: "2026-10-08T15:30",

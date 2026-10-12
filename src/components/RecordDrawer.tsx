@@ -2,22 +2,32 @@
 
 import { useSearchParams } from "next/navigation";
 import { ArrowRight, X } from "lucide-react";
-import type { Decision, Entity, Evidence, IntelligenceCase, MetricDef, Signal } from "@/lib/types";
+import Link from "next/link";
+import type { Decision, Entity, Evidence, MetricDef, Signal } from "@/lib/types";
+import type { CaseAggregate } from "@/lib/stage2/types";
 import {
   CROSS_LINKS, SECTOR_BY_ID, computeMetric, fmtNum, fmtTime, getRecord, recordKind, recordTitle, referencedBy, type RecordKind, KIND_LABEL,
 } from "@/data";
 import { useRecordNav } from "@/lib/useRecordNav";
 import { useDemo } from "@/state/DemoProvider";
 import { ModalDialog } from "./ModalDialog";
+import { activeCaseForSignal, casesForEvidence, casesForSignal } from "@/lib/stage2/world";
+import { isBriefStale, latestBrief } from "@/lib/stage2/brief";
+import { personLabel } from "@/lib/stage2/catalog";
+import { currentVersion } from "@/data/stage2/blocks";
+import { CaseStatusBadge, IllustrativeBadge, PriorityBadge, StaleBadge } from "./stage2/common";
+import { freshness } from "./stage2/EvidenceViews";
 import { DemoTag, IdTag, KindChip, Section, SeverityBadge, StageBoundary, StatusPill } from "./ui";
 
 function RecLink({ id, onOpen }: { id: string; onOpen: (id: string) => void }) {
   const k = recordKind(id);
+  const { world } = useDemo();
+  const title = world.caseById.get(id)?.title ?? recordTitle(id);
   return (
     <button onClick={() => onOpen(id)} className="group flex w-full items-start gap-2 rounded-lg border border-line bg-white p-2.5 text-left hover:border-em-600 hover:bg-sg-50">
       <span className="mt-0.5 shrink-0">{k && <KindChip kind={k} />}</span>
       <span className="min-w-0 flex-1">
-        <span className="block text-sm font-medium text-ink">{recordTitle(id)}</span>
+        <span className="block text-sm font-medium text-ink">{title}</span>
         <span className="font-mono text-[11px] text-muted">{id}</span>
       </span>
       <ArrowRight size={14} className="mt-1 shrink-0 text-muted group-hover:text-em-700" aria-hidden />
@@ -33,15 +43,16 @@ const Field = ({ label, children }: { label: string; children: React.ReactNode }
   <div><dt className="text-[11px] font-semibold uppercase tracking-wide text-muted">{label}</dt><dd className="text-sm text-ink">{children}</dd></div>
 );
 
-/** Signal → case → decision path, each step clickable. */
+/** Signal → case → decision path, each step clickable. Uses the current (local) case links. */
 function FlowPath({ current }: { current: string }) {
   const { openRecord } = useRecordNav();
+  const { world } = useDemo();
   const r = getRecord(current);
-  if (!r) return null;
+  const agg = world.caseById.get(current);
   let sig: string[] = [], cas: string[] = [], dec: string[] = [];
-  if (r.kind === "signal") { sig = [r.data.id]; cas = [r.data.caseId]; dec = (getRecord(r.data.caseId)?.data as IntelligenceCase | undefined)?.decisionIds ?? []; }
-  else if (r.kind === "case") { sig = r.data.signalIds; cas = [r.data.id]; dec = r.data.decisionIds; }
-  else if (r.kind === "decision") { sig = r.data.signalIds; cas = [r.data.caseId]; dec = [r.data.id]; }
+  if (agg) { sig = agg.signalIds; cas = [agg.id]; dec = agg.decisionIds; }
+  else if (r?.kind === "signal") { const cs = casesForSignal(world, r.data.id); sig = [r.data.id]; cas = cs.map((c) => c.id); dec = [...new Set(cs.flatMap((c) => c.decisionIds))]; }
+  else if (r?.kind === "decision") { sig = r.data.signalIds; cas = [r.data.caseId]; dec = [r.data.id]; }
   else return null;
   const col = (label: string, ids: string[]) => (
     <div className="min-w-0 flex-1">
@@ -82,40 +93,53 @@ function MetricBody({ m, open }: { m: MetricDef; open: (id: string) => void }) {
 }
 
 function SignalBody({ s, open }: { s: Signal; open: (id: string) => void }) {
+  const { world, role, hydrated } = useDemo();
+  const cases = casesForSignal(world, s.id);
+  const active = activeCaseForSignal(world, s.id);
   return (
     <>
       <FlowPath current={s.id} />
       <div className="flex flex-wrap items-center gap-2"><SeverityBadge severity={s.severity} /><span className="text-xs text-muted">Detected {fmtTime(s.detectedAt)}</span></div>
       <p className="text-sm leading-relaxed text-ink-2">{s.summary}</p>
-      <Section title="Linked case"><RecList ids={[s.caseId]} onOpen={open} /></Section>
+      <Section title="Cases for this signal">
+        {!hydrated ? <p className="text-sm text-muted">Loading…</p> : cases.length ? <RecList ids={cases.map((c) => c.id)} onOpen={open} /> : <p className="text-sm text-muted">No case has been opened for this signal.</p>}
+        {hydrated && !active && (
+          <div className="mt-2 rounded-lg border border-line bg-white p-3 text-sm">
+            {role === "Analyst" ? <><p className="mb-2 text-ink-2">This signal has no active case. You can start an investigation from it.</p><Link href={`/cases?new=1&signal=${s.id}`} className="inline-flex rounded-lg bg-em-800 px-3 py-1.5 text-sm font-semibold text-white hover:bg-em-900" data-testid="drawer-create-case">Create case from this signal</Link></> : <p className="text-ink-2">No active case. Creating a case is an Analyst action in this demonstration (the {role} role cannot).</p>}
+          </div>
+        )}
+        {hydrated && active && <p className="mt-2 text-xs text-muted">This signal already has an active case ({active.id}); a duplicate cannot be created. <Link href={`/cases/${active.id}`} className="font-semibold text-em-700 underline" data-testid="drawer-open-workspace">Open the investigation workspace</Link>.</p>}
+      </Section>
       {s.metricId && <Section title="Metric"><RecList ids={[s.metricId]} onOpen={open} /></Section>}
       <Section title="Related entities"><RecList ids={s.entityIds} onOpen={open} /></Section>
       <Section title="Evidence references (illustrative)"><RecList ids={s.evidenceIds} onOpen={open} /></Section>
       <Assumptions items={s.assumptions} />
-      <StageBoundary stage={2} capability="Signal triage and case creation">Signals are seeded. Triage, acknowledgement and case creation arrive with case management.</StageBoundary>
     </>
   );
 }
 
-function CaseBody({ c, open }: { c: IntelligenceCase; open: (id: string) => void }) {
-  const { role: saved, hydrated } = useDemo();
-  const role = hydrated ? saved : null;
+function CaseBody({ c, open }: { c: CaseAggregate; open: (id: string) => void }) {
+  const { hydrated } = useDemo();
+  const brief = latestBrief(c);
+  const links = c.links.filter((l) => !l.unlinkedAt);
   return (
     <>
       <FlowPath current={c.id} />
-      <dl className="grid grid-cols-2 gap-3">
-        <Field label="Status">{c.status}</Field><Field label="Owner">{c.owner}</Field><Field label="Opened">{fmtTime(c.openedAt)}</Field>
-        <Field label="Expert input">{c.expertInputRequested ? (role === "Expert" ? "Requested — in your queue" : "Requested") : "Not requested"}</Field>
-      </dl>
+      <div className="flex flex-wrap items-center gap-2"><CaseStatusBadge status={c.status} /><PriorityBadge priority={c.priority} />{hydrated && brief && isBriefStale(c) && <StaleBadge />}</div>
+      <p className="text-sm text-ink-2"><b className="text-ink">Question:</b> {c.question || "Not yet written."}</p>
       <p className="text-sm leading-relaxed text-ink-2">{c.summary}</p>
-      <Section title="Next step"><p className="text-sm text-ink-2">{c.nextStep}</p></Section>
-      <Section title="Linked signals"><RecList ids={c.signalIds} onOpen={open} /></Section>
-      <Section title="Linked decisions"><RecList ids={c.decisionIds} onOpen={open} /></Section>
+      <dl className="grid grid-cols-2 gap-3">
+        <Field label="Owner">{personLabel(c.ownerId)}</Field><Field label="Due">{c.dueDate}</Field>
+        <Field label="Evidence links">{links.length} ({links.filter((l) => l.stance === "supports").length} supporting, {links.filter((l) => l.stance === "contradicts").length} contradicting)</Field>
+        <Field label="Tasks">{c.tasks.filter((t) => t.status === "Done").length} of {c.tasks.length} done</Field>
+        <Field label="Brief">{brief ? `v${brief.version}` : "None"}</Field><Field label="Opened">{fmtTime(c.createdAt)}</Field>
+      </dl>
+      <Link href={`/cases/${c.id}`} className="inline-flex rounded-lg bg-em-800 px-3.5 py-2 text-sm font-semibold text-white hover:bg-em-900" data-testid="drawer-open-workspace">Open investigation workspace</Link>
+      <Section title="Linked signals"><RecList ids={c.signalIds} onOpen={open} empty="None (standalone case)." /></Section>
+      <Section title="Linked decision proposals"><RecList ids={c.decisionIds} onOpen={open} empty="None linked." /></Section>
       <Section title="Related entities"><RecList ids={c.entityIds} onOpen={open} /></Section>
-      <Section title="Evidence references (illustrative)"><RecList ids={c.evidenceIds} onOpen={open} /></Section>
-      <Assumptions items={c.assumptions} />
-      <StageBoundary stage={2} capability="Case workspace">Notes, tasks, status changes and evidence review are not available in Stage 1; this view is read-only.</StageBoundary>
-      {c.expertInputRequested && <StageBoundary stage={4} capability="Expert collaboration">Expert comments and attachments are not available in Stage 1.</StageBoundary>}
+      <Section title="Evidence (illustrative)"><RecList ids={[...new Set(links.map((l) => l.evidenceId))]} onOpen={open} empty="No evidence linked yet." /></Section>
+      <Section title="Assumptions"><ul className="list-disc space-y-1 pl-5 text-sm text-ink-2">{c.assumptions.length ? c.assumptions.map((a) => <li key={a.id}>{a.text}</li>) : <li>None recorded.</li>}</ul></Section>
     </>
   );
 }
@@ -142,9 +166,9 @@ function DecisionBody({ d, open }: { d: Decision; open: (id: string) => void }) 
       <Section title="Related entities"><RecList ids={d.entityIds} onOpen={open} /></Section>
       <Section title="Evidence references (illustrative)"><RecList ids={d.evidenceIds} onOpen={open} /></Section>
       <Assumptions items={d.assumptions} />
-      <StageBoundary stage={6} capability="Approval workflow">
+      <StageBoundary stage={5} capability="Approval workflow">
         {role === "Approver" ? "As the simulated Approver you would decide here. " : role ? `The ${role} role cannot approve in the full product. ` : ""}
-        Recording approvals, delegated authority and audit trail are not available in Stage 1; decisions stay pending.
+        Recording approvals, delegated authority and an audit trail are not available in Stage 2; decisions stay pending proposals.
       </StageBoundary>
     </>
   );
@@ -152,6 +176,7 @@ function DecisionBody({ d, open }: { d: Decision; open: (id: string) => void }) 
 
 function EntityBody({ e, open }: { e: Entity; open: (id: string) => void }) {
   const sec = SECTOR_BY_ID[e.sectorId];
+  const { world } = useDemo();
   const refs = referencedBy(e.id);
   const group = (k: RecordKind) => refs.filter((r) => r.kind === k).map((r) => r.id);
   const links = CROSS_LINKS.filter((l) => l.fromEntityId === e.id || l.toEntityId === e.id);
@@ -174,7 +199,7 @@ function EntityBody({ e, open }: { e: Entity; open: (id: string) => void }) {
       {e.dependsOn && <Section title="Depends on"><RecList ids={e.dependsOn} onOpen={open} /></Section>}
       <Section title="Dependants"><RecList ids={group("entity")} onOpen={open} empty="No entity depends on this one." /></Section>
       <Section title="Signals"><RecList ids={group("signal")} onOpen={open} /></Section>
-      <Section title="Cases"><RecList ids={group("case")} onOpen={open} /></Section>
+      <Section title="Cases"><RecList ids={world.cases.filter((c) => c.entityIds.includes(e.id)).map((c) => c.id)} onOpen={open} /></Section>
       <Section title="Decisions"><RecList ids={group("decision")} onOpen={open} /></Section>
       <Section title="Metrics using this record"><RecList ids={group("metric")} onOpen={open} /></Section>
       {links.length > 0 && (
@@ -187,14 +212,21 @@ function EntityBody({ e, open }: { e: Entity; open: (id: string) => void }) {
 }
 
 function EvidenceBody({ ev, open }: { ev: Evidence; open: (id: string) => void }) {
-  const refs = referencedBy(ev.id).map((r) => r.id);
+  const { world, hydrated } = useDemo();
+  const v = currentVersion(ev);
+  const cases = hydrated ? casesForEvidence(world, ev.id) : [];
+  const fr = v ? freshness(v.sourceDate) : null;
   return (
     <>
-      <div className="rounded-lg border border-gd-500/50 bg-gd-100 p-3 text-sm text-ink-2"><b>Illustrative evidence.</b> This record describes a fictional document. There is no underlying file to open in Stage 1.</div>
-      <dl className="grid grid-cols-2 gap-3"><Field label="Type">{ev.kind}</Field><Field label="Source (fictional)">{ev.source}</Field><Field label="As of">{ev.asOf}</Field></dl>
+      <div className="flex flex-wrap items-center gap-2"><IllustrativeBadge /></div>
+      <div className="rounded-lg border border-gd-500/50 bg-gd-100 p-3 text-sm text-ink-2"><b>Illustrative evidence.</b> Fictional content created for this demonstration.{v ? " The readable text is in the evidence viewer." : " Only a summary exists; there is no readable source content, so it cannot be linked to a case."}</div>
+      <dl className="grid grid-cols-2 gap-3"><Field label="Type">{ev.kind}</Field><Field label="Source (fictional)">{ev.source}</Field><Field label="Source date">{ev.asOf}</Field>{v && <Field label="Version">v{v.version} of {ev.versions!.length}</Field>}{fr && <Field label="Freshness">{fr.label}</Field>}</dl>
       <p className="text-sm leading-relaxed text-ink-2">{ev.summary}</p>
-      <Section title="Cited by"><RecList ids={refs} onOpen={open} /></Section>
-      <StageBoundary stage={2} capability="Evidence inspection">Opening and annotating source documents is not available in Stage 1.</StageBoundary>
+      {v && <Link href={`/evidence/${ev.id}`} className="inline-flex rounded-lg bg-em-800 px-3.5 py-2 text-sm font-semibold text-white hover:bg-em-900" data-testid="drawer-open-evidence">Open readable evidence</Link>}
+      {v && <Section title="Limitations"><ul className="list-disc space-y-1 pl-5 text-sm text-ink-2">{v.limitations.map((l) => <li key={l}>{l}</li>)}</ul></Section>}
+      <Section title="Associated entities"><RecList ids={ev.entityIds ?? []} onOpen={open} /></Section>
+      <Section title="Cases using this evidence"><RecList ids={cases.map((c) => c.id)} onOpen={open} empty="Not linked to any case." /></Section>
+      <Section title="Cited by signals"><RecList ids={referencedBy(ev.id).filter((r) => r.kind === "signal").map((r) => r.id)} onOpen={open} /></Section>
     </>
   );
 }
@@ -203,7 +235,9 @@ export function RecordDrawer() {
   const sp = useSearchParams();
   const id = sp.get("r");
   const { openRecord, closeRecord } = useRecordNav();
-  const rec = getRecord(id);
+  const { world } = useDemo();
+  const agg = id ? world.caseById.get(id) : undefined;
+  const rec = agg ? ({ kind: "case", data: agg } as const) : getRecord(id);
   if (!id) return null;
   const sector = rec ? SECTOR_BY_ID[rec.data.sectorId].sector : null;
   return (
@@ -219,7 +253,7 @@ export function RecordDrawer() {
             {rec ? (
               <>
                 <div className="mb-1.5 flex flex-wrap items-center gap-2"><KindChip kind={rec.kind} /><IdTag id={rec.data.id} /><DemoTag /></div>
-                <h2 id="record-drawer-title" className="font-serif text-xl leading-snug text-ink">{recordTitle(rec.data.id)}</h2>
+                <h2 id="record-drawer-title" className="font-serif text-xl leading-snug text-ink">{agg ? agg.title : recordTitle(rec.data.id)}</h2>
                 <p className="mt-0.5 text-xs text-muted">{sector?.entityName} · {sector?.name}</p>
               </>
             ) : <h2 id="record-drawer-title" className="font-serif text-xl">Record not found</h2>}
@@ -231,7 +265,7 @@ export function RecordDrawer() {
         {!rec && <p className="text-sm text-ink-2">No seeded record has the ID <code>{id}</code>. Use search to find a record.</p>}
         {rec?.kind === "metric" && <MetricBody m={rec.data} open={openRecord} />}
         {rec?.kind === "signal" && <SignalBody s={rec.data} open={openRecord} />}
-        {rec?.kind === "case" && <CaseBody c={rec.data} open={openRecord} />}
+        {agg && <CaseBody c={agg} open={openRecord} />}
         {rec?.kind === "decision" && <DecisionBody d={rec.data} open={openRecord} />}
         {rec?.kind === "entity" && <EntityBody e={rec.data} open={openRecord} />}
         {rec?.kind === "evidence" && <EvidenceBody ev={rec.data} open={openRecord} />}

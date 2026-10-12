@@ -64,7 +64,7 @@ export function StageBoundary({ stage, capability, children }: { stage: number; 
     <div className="flex gap-2 rounded-lg border border-dashed border-gd-500/60 bg-gd-100/50 p-3 text-sm text-ink-2" role="note">
       <Info size={16} className="mt-0.5 shrink-0 text-gd-700" aria-hidden />
       <p>
-        <span className="font-semibold text-ink">Stage {stage} · {capability}.</span> {children ?? "Not part of Stage 1."}{" "}
+        <span className="font-semibold text-ink">Stage {stage} · {capability}.</span> {children ?? "Not part of this stage."}{" "}
         <Link href="/roadmap" className="font-medium text-em-700 underline underline-offset-2">Roadmap</Link>
       </p>
     </div>

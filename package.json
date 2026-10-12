@@ -10,7 +10,9 @@
     "verify:data": "tsx scripts/verify-data.ts",
     "typecheck": "tsc --noEmit",
     "e2e": "node scripts/e2e.mjs",
-    "verify": "npm run typecheck && npm run lint && npm run verify:data"
+    "e2e:stage2": "node scripts/e2e-stage2.mjs",
+    "verify": "npm run typecheck && npm run lint && npm run verify:data",
+    "verify:store": "tsx scripts/verify-store.ts"
   },
   "dependencies": {
     "lucide-react": "^1.55.0",

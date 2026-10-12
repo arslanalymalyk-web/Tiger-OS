@@ -43,8 +43,17 @@ Headline results from the seed (computed, not typed):
 ## Reporting periods and assumptions
 Snapshot attributes are at 30 Sep 2026 (or Sep 2026 monthly average, T12M where labelled). Series cover Apr–Sep 2026 (monthly) or Q2 2025–Q3 2026 (quarterly). Tolerances are illustrative demonstration thresholds. Decision amounts and uplift ranges are illustrative planning assumptions, not forecasts.
 
+## Stage 2 records
+Seed records are immutable code; user changes live in an overlay (`WorkState`) and are merged by `buildWorld` so counts, search, notifications and drawers share one source.
+- IDs: `CAS-<code>-nn` (seeded) and new cases take the next number for the sector; `HYP-<code>-nn-m`, `LNK-<code>-nn-m` (evidence links), `TSK-<code>-nn-m`, `FND-…`, `RRQ-…`/rounds, `BRF-<case>-v<n>`, `EVT-…`, `PER-<code>-nn` (fictional people), `OBJ-<code>-nn` (mandate objectives), `NTF-S2-<code>`. Counters never reuse an ID.
+- `Evidence` has versions (`EvidenceVersion` with `EvidenceBlock[]` and stable refs), entity ids, limitations and source date. Freshness is computed from the source date and the data-as-of date.
+- `CaseAggregate`: case fields, signal ids, hypotheses, evidence links (stance + history, soft delete), notes, tasks, review requests with rounds and submissions (findings with citations), briefs (versions with a `BriefBasis` fingerprint), events.
+- Backlinks: `Signal.caseId` (null until triaged), `Case.decisionIds`, `Decision.caseId` stay consistent; one active case per signal.
+- Brief staleness: `basisOf(case)` fingerprints hypotheses, active links (with evidence version), finding ids and task outcomes; a brief is stale when the fingerprint differs from its compiled basis.
+- Currency stays SAR; additive vs non-additive rules are unchanged. Brief text never shows a financial figure without a calculation.
+
 ## Persistence
-`localStorage` key `tigeris.demo.v1`: `{sectorId, role, readIds, entered}`. Reset deletes the key and restores defaults (Energy, Analyst, all notifications unread). Seed data lives in code and is never mutated.
+`localStorage` key `tigeris.demo.v2`: `{schemaVersion: 2, savedAt, ui: {sectorId, role, readIds, entered}, work: {cases, notifications, counters}}`. A Stage 1 key (`tigeris.demo.v1`) is migrated once (sector, role, read state, entered) and removed, with a visible notice. Saved data is validated by hand-written validators; if it cannot be read, a recovery banner explains why, nothing is overwritten, and an explicit two-step **Reset saved state** restores the seed. Reset (confirmed) removes every Stage 2 change. The state is local to this browser; history is local demonstration activity, not an audit log.
 
 ## Integrity checks
-`npm run verify:data` verifies unique IDs and sector codes, minimum content per sector, resolvable references, signal↔case↔decision back-links, series/snapshot agreement, group-total and memo exclusion, and chart↔metric agreement spot checks.
+`npm run verify:store` runs 462 checks over seeds, mutations, the state machine, brief staleness and persistence/migration/invalid-state handling. `npm run verify:data` verifies unique IDs and sector codes, minimum content per sector, resolvable references, signal↔case↔decision back-links, series/snapshot agreement, group-total and memo exclusion, and chart↔metric agreement spot checks.

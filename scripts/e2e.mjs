@@ -99,7 +99,7 @@ const drawerId = async (page, expected) => {
   await dlg.getByRole("button", { name: /Approve feasibility study/ }).first().click();
   check("Case → linked decision", (await drawerId(page, "DEC-ENR-01")) === "DEC-ENR-01");
   const dtxt = await dlg.innerText();
-  check("Decision shows IDs, assumptions, evidence refs, and stage boundary", /assumptions/i.test(dtxt) && dtxt.includes("EVD-ENR-01") && dtxt.includes("Stage 6"));
+  check("Decision shows IDs, assumptions, evidence refs, and stage boundary", /assumptions/i.test(dtxt) && dtxt.includes("EVD-ENR-01") && dtxt.includes("Stage 5"));
   await escClose(page);
   await page.waitForTimeout(300);
   check("Escape closes drawer", (await dlg.count()) === 0);
@@ -162,9 +162,9 @@ const drawerId = async (page, expected) => {
   await page.getByRole("dialog", { name: "Reset demonstration?" }).getByRole("button", { name: "Reset demonstration" }).click();
   await page.waitForURL("**/workspaces");
   await page.waitForTimeout(300);
-  check("Reset restores seeded state (all unread, Analyst)", (await unread()) === 11 && (await page.getByLabel("Simulated demonstration role").inputValue()) === "Analyst", `unread=${await unread()}`);
+  check("Reset restores seeded state (all unread, Analyst)", (await unread()) === 19 && (await page.getByLabel("Simulated demonstration role").inputValue()) === "Analyst", `unread=${await unread()}`);
   await page.reload();
-  check("Reset state persists (no stale storage)", (await unread()) === 11);
+  check("Reset state persists (no stale storage)", (await unread()) === 19);
   // reset cancel path
   await page.getByRole("button", { name: "Reset demonstration" }).first().click();
   await page.getByRole("button", { name: "Cancel" }).click();
@@ -198,7 +198,7 @@ const drawerId = async (page, expected) => {
   const seen = await page.evaluate(() => [...window.__seen]);
   check("No role flash: Analyst never rendered when Expert persisted", !seen.some((x) => /Analyst/.test(x)), seen.join(" | "));
   check("Persisted role and focus panel appear after hydration", seen.includes("sel:Expert") && seen.some((x) => x.startsWith("focus:Expert")), seen.join(" | "));
-  check("Persisted read count applied (9 unread)", (await page.getByTestId("unread-count").textContent()) === "9");
+  check("Persisted read count applied from migrated Stage 1 state (17 unread of 19)", (await page.getByTestId("unread-count").textContent()) === "17");
   await ctx.close();
   const raw = await (await fetch(BASE + "/sector/insurance")).text();
   check("Server HTML contains no role-specific content (loading state only)", !/Analyst focus|Expert focus|Approver focus/.test(raw) && raw.includes("Loading"));
@@ -286,16 +286,16 @@ const drawerId = async (page, expected) => {
   await page.goto(BASE + "/workspaces");
   await page.reload();
   await page.waitForFunction(() => document.querySelector('select[aria-label="Simulated demonstration role"]')?.value === "Approver");
-  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tigeris.demo.v1") || "null"));
-  check("Persisted state survives reload (role, sector, notifications)", stored?.role === "Approver" && stored?.sectorId === "insurance" && stored?.readIds?.length === 11, JSON.stringify(stored));
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tigeris.demo.v2") || "null"));
+  check("Persisted state survives reload (role, sector, notifications)", stored?.schemaVersion === 2 && stored?.ui?.role === "Approver" && stored?.ui?.sectorId === "insurance" && stored?.ui?.readIds?.length === 19, JSON.stringify(stored?.ui));
   check("Workspaces shows persisted last-selected sector (Insurance)", (await page.locator('[data-testid="workspace-insurance"]').innerText()).includes("Last selected"));
   check("Unread badge hidden when all read", (await page.getByTestId("unread-count").count()) === 0);
   await page.getByRole("button", { name: "Reset demonstration" }).first().click();
   await page.getByRole("dialog", { name: "Reset demonstration?" }).getByRole("button", { name: "Reset demonstration" }).click();
   await page.waitForTimeout(400);
-  const afterReset = await page.evaluate(() => localStorage.getItem("tigeris.demo.v1"));
+  const afterReset = await page.evaluate(() => localStorage.getItem("tigeris.demo.v2") ?? localStorage.getItem("tigeris.demo.v1"));
   check("Reset clears persisted demo state from localStorage", afterReset === null, String(afterReset));
-  check("Reset restores seeded UI state (Analyst, 11 unread, Energy last selected)", (await page.getByLabel("Simulated demonstration role").inputValue()) === "Analyst" && (await page.getByTestId("unread-count").textContent()) === "11" && (await page.locator('[data-testid="workspace-energy"]').innerText()).includes("Last selected"));
+  check("Reset restores seeded UI state (Analyst, 19 unread, Energy last selected)", (await page.getByLabel("Simulated demonstration role").inputValue()) === "Analyst" && (await page.getByTestId("unread-count").textContent()) === "19" && (await page.locator('[data-testid="workspace-energy"]').innerText()).includes("Last selected"));
   await ctx.close();
 }
 

@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { SECTORS, SECTOR_BY_ID, computeMetric, fmtNum, sectorCounts } from "@/data";
+import { SECTORS, SECTOR_BY_ID, computeMetric, fmtNum } from "@/data";
+import { sectorCounts } from "@/lib/stage2/world";
 import { useDemo } from "@/state/DemoProvider";
 import { DemoTag, SECTOR_ICONS } from "./ui";
 
 export function WorkspacesView() {
-  const { sectorId: savedSector, role: savedRole, hydrated } = useDemo();
+  const { sectorId: savedSector, role: savedRole, hydrated, world } = useDemo();
   const sectorId = hydrated ? savedSector : null;
   return (
     <div className="space-y-5">
@@ -21,7 +22,7 @@ export function WorkspacesView() {
           const seed = SECTOR_BY_ID[s.id];
           const m = seed.metrics[0];
           const r = computeMetric(m);
-          const c = sectorCounts(s.id);
+          const c = sectorCounts(world, s.id);
           const I = SECTOR_ICONS[s.id];
           const branded = s.id === "energy" || s.id === "banking";
           return (
@@ -41,7 +42,7 @@ export function WorkspacesView() {
                 <p className="font-serif text-2xl tabular-nums text-em-900">{fmtNum(r.value, m.decimals)} <span className="font-sans text-xs text-ink-2">{m.unit}</span></p>
                 <p className="text-[11px] text-muted">{m.period}</p>
               </div>
-              <p className="mt-3 text-xs text-ink-2">{c.signals} signals{c.bySev.critical ? <> · <b className="text-rd-800">{c.bySev.critical} critical</b></> : null} · {c.cases} cases · {c.decisions} decisions</p>
+              <p className="mt-3 text-xs text-ink-2">{c.signals} signals{c.bySev.critical ? <> · <b className="text-rd-800">{c.bySev.critical} critical</b></> : null} · {hydrated ? c.cases : "…"} active cases · {c.decisions} decisions</p>
               <Link href={`/sector/${s.id}`} className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-lg bg-em-800 px-3.5 py-2 text-sm font-semibold text-white hover:bg-em-900">Open command centre <ArrowRight size={14} aria-hidden /></Link>
             </article>
           );

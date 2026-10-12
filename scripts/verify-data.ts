@@ -32,7 +32,8 @@ for (const s of SEEDS) {
     for (const k of Object.keys(e.attrs)) ok(!!s.sector.attrs[k], `${e.id} attr ${k} defined in sector.attrs`);
   }
   for (const sg of s.signals) {
-    const c = s.cases.find((x) => x.id === sg.caseId); ok(!!c, `${sg.id} case exists`); ok(!!c?.signalIds.includes(sg.id), `${sg.id} listed in ${sg.caseId}`);
+    if (sg.caseId) { const c = s.cases.find((x) => x.id === sg.caseId); ok(!!c, `${sg.id} case exists`); ok(!!c?.signalIds.includes(sg.id), `${sg.id} listed in ${sg.caseId}`); }
+    else ok(!s.cases.some((x) => x.signalIds.includes(sg.id)), `${sg.id} (no primary case) is not listed in any seeded case`);
     [...sg.entityIds, ...sg.evidenceIds, ...(sg.metricId ? [sg.metricId] : [])].forEach((x) => ok(!!getRecord(x), `${sg.id} ref ${x}`));
   }
   for (const c of s.cases) {

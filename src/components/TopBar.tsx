@@ -3,14 +3,15 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Bell, ChevronDown, Info, Landmark, LogOut, Menu, RotateCcw, Search, X } from "lucide-react";
-import { INSTITUTION, KIND_LABEL, NOTIFICATIONS, SECTORS, SECTOR_BY_ID, fmtTime, search } from "@/data";
+import { INSTITUTION, SECTORS, SECTOR_BY_ID, fmtTime } from "@/data";
+import { WORLD_KIND_LABEL, searchWorld } from "@/lib/stage2/world";
 import type { Role, SectorId } from "@/lib/types";
 import { useRecordNav } from "@/lib/useRecordNav";
 import { ROLES, useDemo } from "@/state/DemoProvider";
 import { STAGES } from "@/data/roadmap";
 import { createPortal } from "react-dom";
 import { ModalDialog } from "./ModalDialog";
-import { DemoTag, KindChip, SECTOR_ICONS } from "./ui";
+import { DemoTag, SECTOR_ICONS } from "./ui";
 
 function useOutside(ref: React.RefObject<HTMLElement | null>, onOut: () => void, active: boolean) {
   useEffect(() => {
@@ -109,9 +110,11 @@ function SearchBox() {
   const ref = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const { openRecord } = useRecordNav();
-  const hits = useMemo(() => search(q), [q]);
+  const { world } = useDemo();
+  const router = useRouter();
+  const hits = useMemo(() => searchWorld(world, q), [world, q]);
   useOutside(ref, () => setOpen(false), open);
-  const choose = (id: string) => { input.current?.focus(); setOpen(false); setQ(""); openRecord(id); };
+  const choose = (h: (typeof hits)[number]) => { input.current?.focus(); setOpen(false); setQ(""); if (h.href) router.push(h.href); else openRecord(h.id); };
   return (
     <div ref={ref} className="relative w-full">
       <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" aria-hidden />
@@ -119,20 +122,20 @@ function SearchBox() {
         onKeyDown={(e) => {
           if (e.key === "ArrowDown") { e.preventDefault(); setActive((a) => Math.min(hits.length - 1, a + 1)); }
           if (e.key === "ArrowUp") { e.preventDefault(); setActive((a) => Math.max(0, a - 1)); }
-          if (e.key === "Enter" && hits[active]) choose(hits[active].id);
+          if (e.key === "Enter" && hits[active]) choose(hits[active]);
         }}
-        placeholder="Search seeded records (e.g. Sahil, LCR, SIG-LOG-01)" aria-label="Search seeded demonstration records" role="combobox" aria-expanded={open && q.length > 0} aria-controls="search-results" aria-autocomplete="list" aria-activedescendant={open && hits[active] ? `hit-${hits[active].id}` : undefined}
+        placeholder="Search records, cases and evidence (e.g. Sahil, LCR, SIG-LOG-01)" aria-label="Search seeded demonstration records" role="combobox" aria-expanded={open && q.length > 0} aria-controls="search-results" aria-autocomplete="list" aria-activedescendant={open && hits[active] ? `hit-${hits[active].id}` : undefined}
         className="w-full rounded-lg border border-line bg-white py-2 pl-9 pr-3 text-sm placeholder:text-muted focus:border-em-600" />
       {open && q.trim() && (
         <div id="search-results" role="listbox" className="absolute z-40 mt-1 max-h-[70vh] w-full min-w-[min(28rem,calc(100vw-1.5rem))] overflow-y-auto rounded-xl border border-line bg-white p-1.5 shadow-card">
           {hits.length === 0 ? <p className="p-3 text-sm text-muted">No seeded record matches “{q}”.</p> : hits.map((h, i) => (
-            <button key={h.id} id={`hit-${h.id}`} tabIndex={-1} role="option" aria-selected={i === active} onClick={() => choose(h.id)} onMouseEnter={() => setActive(i)}
+            <button key={`${h.kind}-${h.id}`} id={`hit-${h.id}`} tabIndex={-1} role="option" aria-selected={i === active} onClick={() => choose(h)} onMouseEnter={() => setActive(i)}
               className={`block w-full rounded-lg p-2.5 text-left ${i === active ? "bg-sg-100" : ""}`}>
-              <span className="flex flex-wrap items-center gap-2"><KindChip kind={h.kind} /><span className="font-mono text-[11px] text-muted">{h.id}</span><span className="text-[11px] text-muted">{SECTOR_BY_ID[h.sectorId].sector.short}</span></span>
+              <span className="flex flex-wrap items-center gap-2"><span className="rounded bg-ivory-2 px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-ink-2">{WORLD_KIND_LABEL[h.kind]}</span><span className="font-mono text-[11px] text-muted">{h.id}</span><span className="text-[11px] text-muted">{SECTOR_BY_ID[h.sectorId].sector.short}</span></span>
               <span className="mt-0.5 block text-sm font-medium text-ink">{h.title}</span>
             </button>
           ))}
-          <p className="border-t border-line-2 px-2.5 py-1.5 text-[11px] text-muted">Searches fictional seeded records only: {Object.values(KIND_LABEL).join(", ")}.</p>
+          <p className="border-t border-line-2 px-2.5 py-1.5 text-[11px] text-muted">Searches fictional records, current cases, tasks, findings, briefs and readable evidence in this browser.</p>
         </div>
       )}
     </div>
@@ -140,7 +143,7 @@ function SearchBox() {
 }
 
 function Notifications() {
-  const { readIds, unreadCount, markRead, markUnread, markAllRead, hydrated } = useDemo();
+  const { readIds, unreadCount, markRead, markUnread, markAllRead, hydrated, world } = useDemo();
   const { openRecord } = useRecordNav();
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -162,11 +165,11 @@ function Notifications() {
       {open && (
         <div className="absolute right-0 z-40 mt-1 max-h-[75vh] w-[26rem] max-w-[calc(100vw-1.5rem)] overflow-y-auto rounded-xl border border-line bg-white shadow-card">
           <div className="sticky top-0 flex items-center justify-between border-b border-line bg-white px-3 py-2">
-            <p className="text-sm font-semibold">Notifications <span className="font-normal text-muted">· seeded</span></p>
+            <p className="text-sm font-semibold">Notifications <span className="font-normal text-muted">· seeded and local</span></p>
             <button onClick={markAllRead} disabled={unreadCount === 0} className="text-xs font-medium text-em-700 underline underline-offset-2 disabled:text-muted disabled:no-underline">Mark all read</button>
           </div>
           <ul>
-            {NOTIFICATIONS.map((n) => {
+            {world.notifications.map((n) => {
               const unread = !readIds.includes(n.id);
               return (
                 <li key={n.id} className={`border-b border-line-2 p-3 ${unread ? "bg-sg-50" : ""}`} data-unread={unread}>
@@ -211,13 +214,13 @@ function AboutModal({ onClose }: { onClose: () => void }) {
   return (
     <Modal title="About this prototype" onClose={onClose} wide>
       <div className="space-y-3 text-sm leading-relaxed text-ink-2">
-        <p><b className="text-ink">TIGERIS</b> is shown as an investor-demonstration prototype of an AI-native sovereign capital intelligence operating system. This is <b>Stage 1</b>: a shared foundation and eight sector command centres.</p>
+        <p><b className="text-ink">TIGERIS</b> is shown as an investor-demonstration prototype of an AI-native sovereign capital intelligence operating system. This is <b>Stage 2</b>: the Stage 1 command centres plus intelligence cases, inspectable evidence, human investigation tasks, expert review and decision briefs.</p>
         <ul className="list-disc space-y-1 pl-5">
           <li>All institutions, people, figures and evidence are <b>fictional demonstration data</b>. Monetary values are in SAR.</li>
-          <li>Everything runs in your browser from seeded records. There are <b>no live feeds, no integrations, and no AI execution</b>.</li>
+          <li>Everything runs in your browser from seeded records. There are <b>no live feeds, no integrations, and no AI execution</b>. Briefs are compiled by deterministic templates; no message is sent to any expert.</li>
           <li>Sign-in fields and the Analyst / Expert / Approver selector are <b>simulated access</b>. They are a demonstration feature, not a security control.</li>
           <li>The prototype makes no claim of production readiness, sovereign hosting or compliance certification.</li>
-          <li>Selected sector, role and notification state are stored in this browser only. “Reset demonstration” restores the seeded state.</li>
+          <li>Your changes (cases, evidence links, tasks, reviews, briefs, activity, notification state) are stored in this browser only and described as local demonstration activity, not an audit log. “Reset demonstration” restores the seeded state.</li><li>“Reviewed” and “Closed” never mean a decision was approved or executed; approvals are not recorded in this stage.</li>
         </ul>
         <div className="rounded-lg bg-white p-3 ring-1 ring-line">
           <p className="mb-1 font-semibold text-ink">Stage boundaries</p>
@@ -233,7 +236,7 @@ function ResetModal({ onClose }: { onClose: () => void }) {
   const router = useRouter();
   return (
     <Modal title="Reset demonstration?" onClose={onClose}>
-      <p className="text-sm text-ink-2">This restores the original seeded state: sector returns to Energy, role to Analyst, and all notifications become unread. Your browser’s saved demonstration state will be cleared.</p>
+      <p className="text-sm text-ink-2">This restores all seeded records and removes every Stage 2 change made in this browser: cases you created, edits, evidence links, tasks, expert reviews, brief versions, activity and local notifications. Sector returns to Energy, role to Analyst, and all notifications become unread. The saved state is cleared. This cannot be undone.</p>
       <div className="mt-5 flex justify-end gap-2">
         <button onClick={onClose} className="rounded-lg border border-line bg-white px-4 py-2 text-sm font-medium hover:bg-ivory-2">Cancel</button>
         <button onClick={() => { reset(); onClose(); router.replace("/workspaces"); }} className="rounded-lg bg-em-800 px-4 py-2 text-sm font-semibold text-white hover:bg-em-900">Reset demonstration</button>

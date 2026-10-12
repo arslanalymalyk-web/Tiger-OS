@@ -8,28 +8,28 @@ PASS  Entry variant banking converges on /sector/banking
 PASS  Workspaces lists all 8 sectors
 PASS  Branded entry links reachable from sector selection
 PASS  Role chosen at entry persisted (Approver)
-PASS  Command centre energy: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=2 d=2
+PASS  Command centre energy: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=5 c=4 d=2
 PASS  Command centre energy: demonstration indicator visible
 PASS  Command centre energy: charts have axis labels
-PASS  Command centre banking: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=3 d=3
+PASS  Command centre banking: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=5 c=6 d=3
 PASS  Command centre banking: demonstration indicator visible
 PASS  Command centre banking: charts have axis labels
-PASS  Command centre insurance: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=3 d=3
+PASS  Command centre insurance: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=5 c=6 d=3
 PASS  Command centre insurance: demonstration indicator visible
 PASS  Command centre insurance: charts have axis labels
-PASS  Command centre manufacturing: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=2 d=2
+PASS  Command centre manufacturing: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=5 c=4 d=2
 PASS  Command centre manufacturing: demonstration indicator visible
 PASS  Command centre manufacturing: charts have axis labels
-PASS  Command centre logistics: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=2 d=2
+PASS  Command centre logistics: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=5 c=4 d=2
 PASS  Command centre logistics: demonstration indicator visible
 PASS  Command centre logistics: charts have axis labels
-PASS  Command centre realestate: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=2 d=2
+PASS  Command centre realestate: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=5 c=4 d=2
 PASS  Command centre realestate: demonstration indicator visible
 PASS  Command centre realestate: charts have axis labels
-PASS  Command centre infrastructure: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=2 d=2
+PASS  Command centre infrastructure: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=5 c=4 d=2
 PASS  Command centre infrastructure: demonstration indicator visible
 PASS  Command centre infrastructure: charts have axis labels
-PASS  Command centre sovereign: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=2 d=2
+PASS  Command centre sovereign: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=5 c=4 d=2
 PASS  Command centre sovereign: demonstration indicator visible
 PASS  Command centre sovereign: charts have axis labels
 PASS  Sector selector switches dashboard
@@ -43,7 +43,7 @@ PASS  Search result opens record
 PASS  Search by ID opens that record and switches sector
 PASS  Search shows empty state
 PASS  Notification opens relevant record
-PASS  Notification marked read (count decreased)  — 11 → 10
+PASS  Notification marked read (count decreased)  — 19 → 18
 PASS  Unread state persists across reload
 PASS  Role persists across reload
 PASS  Expert focus panel shows cases requesting expert input
@@ -52,12 +52,12 @@ PASS  Overview group capital total shown and equals 262,330
 PASS  /methodology renders
 PASS  /roadmap renders
 PASS  About panel states scope
-PASS  Reset restores seeded state (all unread, Analyst)  — unread=11
+PASS  Reset restores seeded state (all unread, Analyst)  — unread=19
 PASS  Reset state persists (no stale storage)
 PASS  Reset confirmation can be cancelled
-PASS  No role flash: Analyst never rendered when Expert persisted  — sel: | focus:Loading your simulated r | side:… | sel:Expert | focus:Expert focus: cases requ | side:Expert
-PASS  Persisted role and focus panel appear after hydration  — sel: | focus:Loading your simulated r | side:… | sel:Expert | focus:Expert focus: cases requ | side:Expert
-PASS  Persisted read count applied (9 unread)
+PASS  No role flash: Analyst never rendered when Expert persisted  — sel: | focus:Loading your simulated r | side:… | sel:Expert | focus:Expert focus: cases awai | side:Expert
+PASS  Persisted role and focus panel appear after hydration  — sel: | focus:Loading your simulated r | side:… | sel:Expert | focus:Expert focus: cases awai | side:Expert
+PASS  Persisted read count applied from migrated Stage 1 state (17 unread of 19)
 PASS  Server HTML contains no role-specific content (loading state only)
 PASS  Top bar and sidebar remain pinned after scrolling 900px  — {"top":0,"side":0}
 PASS  Skip link is first tab stop and becomes visible
@@ -76,11 +76,11 @@ PASS  Reset dialog takes focus
 PASS  Escape cancels Reset and returns focus to the Reset button
 PASS  Escape closes sector menu and returns focus to its button
 PASS  Search (keyboard) → drawer → Escape returns focus to the search box
-PASS  Persisted state survives reload (role, sector, notifications)  — {"sectorId":"insurance","role":"Approver","readIds":["NTF-01","NTF-02","NTF-03","NTF-04","NTF-05","NTF-06","NTF-07","NTF-08","NTF-09","NTF-10","NTF-11"],"entered":false}
+PASS  Persisted state survives reload (role, sector, notifications)  — {"sectorId":"insurance","role":"Approver","readIds":["NTF-11","NTF-01","NTF-02","NTF-03","NTF-04","NTF-S2-REA","NTF-S2-SOV","NTF-06","NTF-S2-MFG","NTF-05","NTF-S2-INS","NTF-S2-BNK","NTF-S2-LOG","NTF-S2-INF","NTF-S2-ENR","NTF-08","NTF-07","NTF-09","NTF-10"],"entered":false}
 PASS  Workspaces shows persisted last-selected sector (Insurance)
 PASS  Unread badge hidden when all read
 PASS  Reset clears persisted demo state from localStorage  — null
-PASS  Reset restores seeded UI state (Analyst, 11 unread, Energy last selected)
+PASS  Reset restores seeded UI state (Analyst, 19 unread, Energy last selected)
 PASS  Drawer is a native modal <dialog> (matches :modal), exactly one open
 PASS  Drawer has an accessible name from its visible title (aria-labelledby)  — Wadi Processing Hub carries 60.4% of production
 PASS  Background (#app-root) is inert while the drawer is open

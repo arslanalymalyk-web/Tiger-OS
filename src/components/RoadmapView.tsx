@@ -8,8 +8,8 @@ export function RoadmapView() {
     <div className="space-y-5">
       <header>
         <p className="eyebrow">Stage boundaries</p>
-        <h1 className="mt-1 font-serif text-3xl sm:text-4xl">What is in Stage 1, and what is not</h1>
-        <p className="mt-2 max-w-3xl text-[15px] text-ink-2">Stage 1 is a working, read-only foundation on fictional seeded data. Later capabilities are described here so that boundaries in the interface are explicit rather than unexplained inactive controls.</p>
+        <h1 className="mt-1 font-serif text-3xl sm:text-4xl">What is in Stages 1–2, and what is not</h1>
+        <p className="mt-2 max-w-3xl text-[15px] text-ink-2">Stages 1 and 2 are working software on fictional seeded data that run in your browser. Later capabilities are described here so that boundaries in the interface are explicit rather than unexplained inactive controls.</p>
       </header>
       <ol className="space-y-3">{STAGES.map((s) => (
         <li key={s.stage} className={`card p-5 ${s.status === "delivered" ? "border-em-600/50" : ""}`}>
@@ -22,8 +22,8 @@ export function RoadmapView() {
         </li>
       ))}</ol>
       <section className="card p-5 text-sm text-ink-2">
-        <h2 className="mb-2 text-sm font-semibold text-ink">Not claimed in Stage 1</h2>
-        <ul className="list-disc space-y-1 pl-5"><li>Live data feeds, integration health, or connection to any real system.</li><li>AI model execution or AI-generated analysis.</li><li>Production authentication, access control, audit logging or MFA.</li><li>Production readiness, sovereign hosting, or compliance certification.</li><li>Arabic / right-to-left interface.</li></ul>
+        <h2 className="mb-2 text-sm font-semibold text-ink">Not claimed in Stages 1–2</h2>
+        <ul className="list-disc space-y-1 pl-5"><li>Live data feeds, integration health, or connection to any real system.</li><li>AI model execution or AI-generated analysis.</li><li>Production authentication, access control, audit logging or MFA.</li><li>Production readiness, sovereign hosting, or compliance certification.</li><li>Arabic / right-to-left interface.</li><li>Messages to real experts or any notification outside this browser.</li><li>Recording an approval or execution of any decision; “Reviewed” and “Closed” never mean approved.</li><li>A hosted database or shared state between users: Stage 2 data lives in this browser only.</li><li>Resolution of the Stage 1 accessibility findings or any WCAG conformance claim.</li></ul>
       </section>
     </div>
   );

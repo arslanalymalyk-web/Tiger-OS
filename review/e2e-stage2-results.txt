@@ -1,0 +1,201 @@
+Running Stage 2 checks in chromium
+PASS  Cases page lists all 18 seeded cases
+PASS  Sector filter narrows to Logistics (2)
+PASS  Status filter adds to the sector filter (1)
+PASS  Priority filter finds the 2 Critical cases
+PASS  Owner filter finds Tariq Al-Ghamdi's case
+PASS  Search filters by title text
+PASS  A search with no results shows a clear empty state
+PASS  Clear filters from the empty state restores the list
+PASS  Eight signals have no active case
+PASS  Create-from-signal dialog is a named modal with the signal prefilled
+PASS  Case creation validates the title and says so
+PASS  Creating a case from a signal opens the new case (CAS-LOG-03) in Draft
+PASS  The new case is persisted locally
+PASS  Signal SIG-LOG-05 no longer appears as unassigned
+PASS  A signal with an active case shows a duplicate warning that offers the existing case
+PASS  “Open existing case” goes to CAS-LOG-01
+PASS  The newly linked signal is also protected from duplicates
+PASS  A standalone case can be created without a signal (CAS-ENR-03)
+PASS  Edited title and priority survive a reload
+PASS  No-change save is reported, not silently accepted
+PASS  Draft case offers Investigating and Closed only
+PASS  Draft → Investigating succeeds when anchored
+PASS  Investigating → Expert review is blocked with reasons
+PASS  Hypothesis is validated
+PASS  Primary hypothesis and an alternative explanation are recorded
+PASS  Evidence linked as supporting with references
+PASS  Linking the same evidence to the same hypothesis twice is prevented
+PASS  The same evidence can contradict another hypothesis (recorded as contradictory)
+PASS  Changing a stance is recorded in the link's history
+PASS  Unlinking keeps a visible history entry
+PASS  A citation chip opens the readable evidence at its paragraph (highlighted)
+PASS  Tasks are labelled as human assignments, not AI-agent work
+PASS  A task can be assigned to a named fictional person
+PASS  A task cannot be completed without findings and a note
+PASS  Task completes with findings and a note
+PASS  Seeded Logistics case is in Expert review with an open request
+PASS  Analyst does not see the expert panel
+PASS  Expert sees the expert panel labelled as demonstration (acting as the assigned expert)
+PASS  A review cannot be completed without a finding
+PASS  A finding without a citation is rejected
+PASS  A finding with a valid citation is added to the review
+PASS  “Revision requested” requires an explanation
+PASS  Revision requested returns the case to Investigating
+PASS  The expert's findings are retained on the review record
+PASS  Requesting review again creates round 2 and moves the case back to Expert review
+PASS  Earlier findings are still shown after the revised request
+PASS  Returning “Reviewed” records findings but does not approve (case stays in Expert review)
+PASS  Review history shows both rounds, the disagreement and the earlier revision request
+PASS  Approver cannot submit findings (no expert panel) and is told approvals are not recorded
+PASS  Saved brief shows “Needs refresh” after new expert findings and keeps v1
+PASS  Compile brief saves v2 and clears the refresh warning
+PASS  v2 includes the expert disagreement and cites evidence versions
+PASS  Brief offers monitoring and no-action options and states no impact figures are calculated
+PASS  An earlier version stays viewable and is marked read-only
+PASS  Editing the brief validates required fields
+PASS  Editing saves a new version (v3) without deleting earlier versions
+PASS  Changing a hypothesis marks the latest brief Needs refresh again and names the change
+PASS  Brief ready is blocked while the brief needs refresh
+PASS  Recompiling creates v4
+PASS  Expert review → Brief ready succeeds once reviewed and the brief is current
+PASS  Closing requires a note
+PASS  Closing a case states that no decision was approved or executed
+PASS  A closed case is read-only (Save is not offered)
+PASS  A closed case can be reopened to Investigating
+PASS  Evidence library lists all 37 readable items
+PASS  Evidence search matches readable content, not just titles
+PASS  Evidence search shows an empty state
+PASS  Evidence page shows ID, fictional source, source date, version, freshness, limitations and the Illustrative label
+PASS  Evidence content has stable paragraph and row references
+PASS  Switching to v1 shows the older version with a banner and no cause-code table
+PASS  The case shows that a newer evidence version is available
+PASS  Adopting a newer evidence version marks the brief Needs refresh
+PASS  Evidence can be linked to a case from the evidence page
+PASS  Analyst sees edit controls
+PASS  Approver sees a read-only case with an explanation (no Save, locked note shown)
+PASS  Role restrictions are labelled as demonstration behaviour, not security
+PASS  Approver can read the brief but has no Compile or Edit button
+PASS  Approver cannot assign or progress tasks
+PASS  Approver has no New case button and is told why
+PASS  Expert cannot compile or edit briefs
+PASS  Expert can progress a specialist's task but not an analyst's
+PASS  Review queue lists requests and tells the Expert how to answer
+PASS  Review queue filters by sector
+PASS  Review queue shows an empty state when nothing matches
+PASS  Overview active-case count follows the store
+PASS  Workspace card case count follows the store (Logistics 3)
+PASS  Command centre lists the new case and links to its workspace
+PASS  Signal SIG-LOG-05 now shows its case
+PASS  Search finds the new case by title
+PASS  A search result for a new case opens its record drawer with a workspace link
+PASS  Search finds evidence by readable content and tasks/hypotheses by text
+PASS  Creating a case adds an unread notification  — 19 → 20
+PASS  The new notification opens the case
+PASS  Notification read state persists after reload
+PASS  Stage 1 saved state is migrated with a visible notice
+PASS  Migrated role, sector and read state are kept
+PASS  Migration writes the Stage 2 format and removes the Stage 1 key
+PASS  Malformed saved state shows a recovery message that names the problem
+PASS  The unreadable saved data is not overwritten while the message is shown
+PASS  Changes are blocked with an explanation until the saved state is reset
+PASS  Explicit reset clears the unreadable data and removes the message
+PASS  After recovery the seeded cases are shown and editing works again
+PASS  Recovery message for unsupported newer schema
+PASS  Recovery message for invalid case data
+PASS  Stage 2 changes are persisted before Reset
+PASS  Reset confirmation describes removing Stage 2 changes
+PASS  Cancelling Reset keeps the changes
+PASS  Reset removes all Stage 2 work, read state and entry (only the route-synced sector selection may be re-saved)  — re-saved: sector selection only
+PASS  Reset restores the 18 seeded cases and the untriaged signal
+PASS  Reset restores the unlinked evidence link
+PASS  A case created before Reset is gone (not-found page, not an error)
+PASS  Walkthrough: signal drawer shows its active case and the workspace link (no duplicate creation offered)
+PASS  Walkthrough: the investigation workspace for CAS-LOG-01 opens
+PASS  Walkthrough: contradictory carrier statement opens as readable, illustrative evidence
+PASS  Walkthrough: the decision proposal DEC-LOG-01 opens from the case and is still only a proposal
+PASS  energy: seeded investigation has ≥3 distinct linked evidence items and a contradicting one  — links=4 distinct=3
+PASS  energy: evidence EVD-ENR-01 is readable with source, date, limitations and the Illustrative label
+PASS  energy: an investigation task is completed
+PASS  energy: the expert returns “Reviewed” with a cited finding (still Expert review, not approved)
+PASS  energy: the seeded draft brief needs refresh after the expert finding
+PASS  energy: compiling saves brief v2 including the expert finding
+PASS  energy: the case reaches Brief ready
+PASS  energy: the workflow is persisted locally
+PASS  banking: seeded investigation has ≥3 distinct linked evidence items and a contradicting one  — links=4 distinct=3
+PASS  banking: evidence EVD-BNK-01 is readable with source, date, limitations and the Illustrative label
+PASS  banking: an investigation task is completed
+PASS  banking: the expert returns “Reviewed” with a cited finding (still Expert review, not approved)
+PASS  banking: the seeded draft brief needs refresh after the expert finding
+PASS  banking: compiling saves brief v2 including the expert finding
+PASS  banking: the case reaches Brief ready
+PASS  banking: the workflow is persisted locally
+PASS  insurance: seeded investigation has ≥3 distinct linked evidence items and a contradicting one  — links=4 distinct=3
+PASS  insurance: evidence EVD-INS-01 is readable with source, date, limitations and the Illustrative label
+PASS  insurance: an investigation task is completed
+PASS  insurance: the expert returns “Reviewed” with a cited finding (still Expert review, not approved)
+PASS  insurance: the seeded draft brief needs refresh after the expert finding
+PASS  insurance: compiling saves brief v2 including the expert finding
+PASS  insurance: the case reaches Brief ready
+PASS  insurance: the workflow is persisted locally
+PASS  manufacturing: seeded investigation has ≥3 distinct linked evidence items and a contradicting one  — links=3 distinct=3
+PASS  manufacturing: evidence EVD-MFG-01 is readable with source, date, limitations and the Illustrative label
+PASS  manufacturing: an investigation task is completed
+PASS  manufacturing: the expert returns “Reviewed” with a cited finding (still Expert review, not approved)
+PASS  manufacturing: the seeded draft brief needs refresh after the expert finding
+PASS  manufacturing: compiling saves brief v2 including the expert finding
+PASS  manufacturing: the case reaches Brief ready
+PASS  manufacturing: the workflow is persisted locally
+PASS  logistics: seeded investigation has ≥3 distinct linked evidence items and a contradicting one  — links=6 distinct=4
+PASS  logistics: evidence EVD-LOG-01 is readable with source, date, limitations and the Illustrative label
+PASS  logistics: an investigation task is completed
+PASS  logistics: the expert returns “Reviewed” with a cited finding (still Expert review, not approved)
+PASS  logistics: the seeded draft brief needs refresh after the expert finding
+PASS  logistics: compiling saves brief v2 including the expert finding
+PASS  logistics: the case reaches Brief ready
+PASS  logistics: the workflow is persisted locally
+PASS  realestate: seeded investigation has ≥3 distinct linked evidence items and a contradicting one  — links=4 distinct=3
+PASS  realestate: evidence EVD-REA-01 is readable with source, date, limitations and the Illustrative label
+PASS  realestate: an investigation task is completed
+PASS  realestate: the expert returns “Reviewed” with a cited finding (still Expert review, not approved)
+PASS  realestate: the seeded draft brief needs refresh after the expert finding
+PASS  realestate: compiling saves brief v2 including the expert finding
+PASS  realestate: the case reaches Brief ready
+PASS  realestate: the workflow is persisted locally
+PASS  infrastructure: seeded investigation has ≥3 distinct linked evidence items and a contradicting one  — links=4 distinct=3
+PASS  infrastructure: evidence EVD-INF-01 is readable with source, date, limitations and the Illustrative label
+PASS  infrastructure: an investigation task is completed
+PASS  infrastructure: the expert returns “Reviewed” with a cited finding (still Expert review, not approved)
+PASS  infrastructure: the seeded draft brief needs refresh after the expert finding
+PASS  infrastructure: compiling saves brief v2 including the expert finding
+PASS  infrastructure: the case reaches Brief ready
+PASS  infrastructure: the workflow is persisted locally
+PASS  sovereign: seeded investigation has ≥3 distinct linked evidence items and a contradicting one  — links=4 distinct=3
+PASS  sovereign: evidence EVD-SOV-01 is readable with source, date, limitations and the Illustrative label
+PASS  sovereign: an investigation task is completed
+PASS  sovereign: the expert returns “Reviewed” with a cited finding (still Expert review, not approved)
+PASS  sovereign: the seeded draft brief needs refresh after the expert finding
+PASS  sovereign: compiling saves brief v2 including the expert finding
+PASS  sovereign: the case reaches Brief ready
+PASS  sovereign: the workflow is persisted locally
+PASS  Create-case dialog is a native modal with an accessible name, background inert and focus inside
+PASS  Tab cannot leave the create-case dialog
+PASS  Escape closes the dialog, restores the background and returns focus to “New case”
+PASS  Workspace sections are an accessible tablist with the active tab selected
+PASS  Tabs work with the keyboard
+PASS  Case drawer opens from the command centre and shows the new workspace link
+PASS  Escape closes the case drawer and focus returns to the opener
+PASS  Mobile no horizontal overflow /cases  — scrollWidth=390
+PASS  Mobile no horizontal overflow /cases/CAS-LOG-01  — scrollWidth=390
+PASS  Mobile no horizontal overflow /cases/CAS-LOG-01?tab=evidence  — scrollWidth=390
+PASS  Mobile no horizontal overflow /cases/CAS-LOG-01?tab=tasks  — scrollWidth=390
+PASS  Mobile no horizontal overflow /cases/CAS-LOG-01?tab=review  — scrollWidth=390
+PASS  Mobile no horizontal overflow /cases/CAS-LOG-01?tab=brief  — scrollWidth=390
+PASS  Mobile no horizontal overflow /cases/CAS-LOG-01?tab=activity  — scrollWidth=390
+PASS  Mobile no horizontal overflow /evidence  — scrollWidth=390
+PASS  Mobile no horizontal overflow /evidence/EVD-LOG-01  — scrollWidth=390
+PASS  Mobile no horizontal overflow /reviews  — scrollWidth=390
+PASS  Mobile create-case dialog fits the screen and is modal
+PASS  No console or page errors
+
+198/198 Stage 2 checks passed

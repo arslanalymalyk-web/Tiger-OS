@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-12T15:21:52.090Z",
+  "generated": "2026-10-12T16:31:06.282Z",
   "scans": [
     {
       "label": "desktop / (main entry)",
@@ -62,8 +62,8 @@
             },
             {
               "target": ".isolate > p",
-              "html": "<p class=\"text-sm text-ink-2\">Demonstration prototype · Stage 1</p>",
-              "text": "Demonstration prototype · Stage 1",
+              "html": "<p class=\"text-sm text-ink-2\">Demonstration prototype · Stage 2</p>",
+              "text": "Demonstration prototype · Stage 2",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
               "key": "bgOverlap",
               "data": {
@@ -870,6 +870,76 @@
       "violations": [],
       "incomplete": [],
       "passes": 25,
+      "screenshot": null
+    },
+    {
+      "label": "desktop /cases",
+      "violations": [],
+      "incomplete": [],
+      "passes": 28,
+      "screenshot": null
+    },
+    {
+      "label": "desktop /evidence",
+      "violations": [],
+      "incomplete": [],
+      "passes": 26,
+      "screenshot": null
+    },
+    {
+      "label": "desktop /evidence/EVD-LOG-01",
+      "violations": [],
+      "incomplete": [],
+      "passes": 31,
+      "screenshot": null
+    },
+    {
+      "label": "desktop /reviews",
+      "violations": [],
+      "incomplete": [],
+      "passes": 26,
+      "screenshot": null
+    },
+    {
+      "label": "desktop /cases/CAS-LOG-01?tab=overview",
+      "violations": [],
+      "incomplete": [],
+      "passes": 30,
+      "screenshot": null
+    },
+    {
+      "label": "desktop /cases/CAS-LOG-01?tab=evidence",
+      "violations": [],
+      "incomplete": [],
+      "passes": 30,
+      "screenshot": null
+    },
+    {
+      "label": "desktop /cases/CAS-LOG-01?tab=tasks",
+      "violations": [],
+      "incomplete": [],
+      "passes": 30,
+      "screenshot": null
+    },
+    {
+      "label": "desktop /cases/CAS-LOG-01?tab=review",
+      "violations": [],
+      "incomplete": [],
+      "passes": 30,
+      "screenshot": null
+    },
+    {
+      "label": "desktop /cases/CAS-LOG-01?tab=brief",
+      "violations": [],
+      "incomplete": [],
+      "passes": 30,
+      "screenshot": null
+    },
+    {
+      "label": "desktop /cases/CAS-LOG-01?tab=activity",
+      "violations": [],
+      "incomplete": [],
+      "passes": 30,
       "screenshot": null
     },
     {
@@ -4673,6 +4743,20 @@
       "screenshot": "a11y-screenshots/desktop-sector-sovereign.jpg"
     },
     {
+      "label": "desktop /cases (Create case dialog open)",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15,
+      "screenshot": null
+    },
+    {
+      "label": "desktop /cases/CAS-LOG-01?tab=review (Expert role)",
+      "violations": [],
+      "incomplete": [],
+      "passes": 30,
+      "screenshot": null
+    },
+    {
       "label": "desktop /sector/banking (chart table view)",
       "violations": [],
       "incomplete": [
@@ -5061,7 +5145,7 @@
       "label": "desktop /sector/banking (record drawer open: SIG-BNK-03)",
       "violations": [],
       "incomplete": [],
-      "passes": 20,
+      "passes": 17,
       "screenshot": null
     },
     {
@@ -5124,7 +5208,7 @@
               }
             },
             {
-              "target": ".text-\\[15px\\].leading-relaxed.mt-1",
+              "target": ".text-\\[15px\\].leading-relaxed",
               "html": "<p class=\"mt-1 text-[15px] leading-relaxed text-ink-2\">Maintain strong capital and liquidity, manage concentration in the credit book, and k",
               "text": "Maintain strong capital and liquidity, manage concentration in the cre",
               "reason": "Element's background color could not be determined due to a background gradient",
@@ -5354,7 +5438,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .gap-0\\.5.sm\\:items-end.flex-col > .text-\\[11px\\].text-muted",
+              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .gap-0\\.5.sm\\:items-end.flex-col > .text-muted.text-\\[11px\\]",
               "html": "<span class=\"text-[11px] text-muted\">→ <!-- -->CAS-BNK-02<!-- --> · <!-- -->2026-10-09 13:00 AST</span>",
               "text": "→ CAS-BNK-02 · 2026-10-09 13:00 AST",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -5364,7 +5448,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .gap-0\\.5.sm\\:items-end.flex-col > .text-\\[11px\\].text-muted",
+              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .gap-0\\.5.sm\\:items-end.flex-col > .text-muted.text-\\[11px\\]",
               "html": "<span class=\"text-[11px] text-muted\">→ <!-- -->CAS-BNK-03<!-- --> · <!-- -->2026-10-08 08:45 AST</span>",
               "text": "→ CAS-BNK-03 · 2026-10-08 08:45 AST",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -5374,7 +5458,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-02\"] > .gap-0\\.5.sm\\:items-end.flex-col > .text-\\[11px\\].text-muted",
+              "target": "button[data-testid=\"signal-SIG-BNK-02\"] > .gap-0\\.5.sm\\:items-end.flex-col > .text-muted.text-\\[11px\\]",
               "html": "<span class=\"text-[11px] text-muted\">→ <!-- -->CAS-BNK-01<!-- --> · <!-- -->2026-10-10 10:10 AST</span>",
               "text": "→ CAS-BNK-01 · 2026-10-10 10:10 AST",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -5384,9 +5468,19 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-01\"] > .gap-0\\.5.sm\\:items-end.flex-col > .text-\\[11px\\].text-muted",
+              "target": "button[data-testid=\"signal-SIG-BNK-01\"] > .gap-0\\.5.sm\\:items-end.flex-col > .text-muted.text-\\[11px\\]",
               "html": "<span class=\"text-[11px] text-muted\">→ <!-- -->CAS-BNK-01<!-- --> · <!-- -->2026-10-10 09:30 AST</span>",
               "text": "→ CAS-BNK-01 · 2026-10-10 09:30 AST",
+              "reason": "Element's background color could not be determined because it is overlapped by another element",
+              "key": "bgOverlap",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "button[data-testid=\"signal-SIG-BNK-05\"] > .gap-0\\.5.sm\\:items-end.flex-col > .text-muted.text-\\[11px\\]",
+              "html": "<span class=\"text-[11px] text-muted\">→ <!-- -->no active case<!-- --> · <!-- -->2026-10-11 08:20 AST</span>",
+              "text": "→ no active case · 2026-10-11 08:20 AST",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
               "key": "bgOverlap",
               "data": {
@@ -5538,16 +5632,6 @@
           "impact": "serious",
           "help": "Elements must meet minimum color contrast ratio thresholds",
           "nodes": [
-            {
-              "target": ".py-1\\.5.px-2\\.5.border-line-2",
-              "html": "<p class=\"border-t border-line-2 px-2.5 py-1.5 text-[11px] text-muted\">Searches fictional seeded records only: Metric, Signal, Intelligence ",
-              "text": "Searches fictional seeded records only: Metric, Signal, Intelligence c",
-              "reason": "Element's background color could not be determined because it partially overlaps other elements",
-              "key": "elmPartiallyObscuring",
-              "data": {
-                "ratio": 0
-              }
-            },
             {
               "target": ".leading-tight",
               "html": "<span class=\"hidden text-[10px] font-semibold uppercase leading-tight tracking-wider text-muted sm:block\">Simulated<br>role</span>",
@@ -5869,7 +5953,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .flex-1.min-w-0 > .text-ink.block.text-sm",
+              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .flex-1.min-w-0 > .text-ink.block.font-medium",
               "html": "<span class=\"block text-sm font-medium text-ink\">Real-estate NPL ratio 4.2% vs 2.3% book average</span>",
               "text": "Real-estate NPL ratio 4.2% vs 2.3% book average",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -5889,7 +5973,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .flex-1.min-w-0 > .text-ink.block.text-sm",
+              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .flex-1.min-w-0 > .text-ink.block.font-medium",
               "html": "<span class=\"block text-sm font-medium text-ink\">Payment availability 99.912% below 99.95% target</span>",
               "text": "Payment availability 99.912% below 99.95% target",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -5909,7 +5993,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-02\"] > .flex-1.min-w-0 > .text-ink.block.text-sm",
+              "target": "button[data-testid=\"signal-SIG-BNK-02\"] > .flex-1.min-w-0 > .text-ink.block.font-medium",
               "html": "<span class=\"block text-sm font-medium text-ink\">Wholesale funding outflow up 17.8% in five quarters</span>",
               "text": "Wholesale funding outflow up 17.8% in five quarters",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -5922,6 +6006,26 @@
               "target": "button[data-testid=\"signal-SIG-BNK-02\"] > .flex-1.min-w-0 > .block.text-ink-2.text-xs",
               "html": "<span class=\"block text-xs text-ink-2\">Growth in wholesale funding raises stressed outflow and refinancing sensitivity.</span>",
               "text": "Growth in wholesale funding raises stressed outflow and refinancing se",
+              "reason": "Element's background color could not be determined because it is overlapped by another element",
+              "key": "bgOverlap",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "button[data-testid=\"signal-SIG-BNK-01\"] > .flex-1.min-w-0 > .text-ink.block.font-medium",
+              "html": "<span class=\"block text-sm font-medium text-ink\">LCR down 2.7 pts over six quarters</span>",
+              "text": "LCR down 2.7 pts over six quarters",
+              "reason": "Element's background color could not be determined because it is overlapped by another element",
+              "key": "bgOverlap",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "button[data-testid=\"signal-SIG-BNK-01\"] > .flex-1.min-w-0 > .block.text-ink-2.text-xs",
+              "html": "<span class=\"block text-xs text-ink-2\">Coverage fell from 121.3% to 118.5% as stressed outflows grew faster than HQLA.</span>",
+              "text": "Coverage fell from 121.3% to 118.5% as stressed outflows grew faster t",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
               "key": "bgOverlap",
               "data": {
@@ -6075,7 +6179,7 @@
           "nodes": [
             {
               "target": ".space-y-3.leading-relaxed.text-ink-2 > p",
-              "html": "<p><b class=\"text-ink\">TIGERIS</b> is shown as an investor-demonstration prototype of an AI-native sovereign capital intelligence operating ",
+              "html": "<p>",
               "text": "TIGERIS is shown as an investor-demonstration prototype of an AI-nativ",
               "reason": "Element's background color could not be determined because it partially overlaps other elements",
               "key": "elmPartiallyObscuring",
@@ -6087,16 +6191,6 @@
               "target": ".list-disc > li:nth-child(1)",
               "html": "<li>All institutions, people, figures and evidence are <b>fictional demonstration data</b>. Monetary values are in SAR.</li>",
               "text": "All institutions, people, figures and evidence are fictional demonstra",
-              "reason": "Element's background color could not be determined because it partially overlaps other elements",
-              "key": "elmPartiallyObscuring",
-              "data": {
-                "ratio": 0
-              }
-            },
-            {
-              "target": ".list-disc > li:nth-child(2)",
-              "html": "<li>Everything runs in your browser from seeded records. There are <b>no live feeds, no integrations, and no AI execution</b>.</li>",
-              "text": "Everything runs in your browser from seeded records. There are no live",
               "reason": "Element's background color could not be determined because it partially overlaps other elements",
               "key": "elmPartiallyObscuring",
               "data": {
@@ -6135,8 +6229,18 @@
             },
             {
               "target": ".list-disc > li:nth-child(5)",
-              "html": "<li>Selected sector, role and notification state are stored in this browser only. “Reset demonstration” restores the seeded state.</li>",
-              "text": "Selected sector, role and notification state are stored in this browse",
+              "html": "<li>Your changes (cases, evidence links, tasks, reviews, briefs, activity, notification state) are stored in this browser only and described",
+              "text": "Your changes (cases, evidence links, tasks, reviews, briefs, activity,",
+              "reason": "Element's background color could not be determined because it partially overlaps other elements",
+              "key": "elmPartiallyObscuring",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": ".list-disc > li:nth-child(6)",
+              "html": "<li>“Reviewed” and “Closed” never mean a decision was approved or executed; approvals are not recorded in this stage.</li>",
+              "text": "“Reviewed” and “Closed” never mean a decision was approved or executed",
               "reason": "Element's background color could not be determined because it partially overlaps other elements",
               "key": "elmPartiallyObscuring",
               "data": {
@@ -6160,8 +6264,8 @@
           "nodes": [
             {
               "target": ".p-5.sm\\:p-6 > p",
-              "html": "<p class=\"text-sm text-ink-2\">This restores the original seeded state: sector returns to Energy, role to Analyst, and all notifications beco",
-              "text": "This restores the original seeded state: sector returns to Energy, rol",
+              "html": "<p class=\"text-sm text-ink-2\">",
+              "text": "This restores all seeded records and removes every Stage 2 change made",
               "reason": "Element's background color could not be determined because it partially overlaps other elements",
               "key": "elmPartiallyObscuring",
               "data": {
@@ -6235,8 +6339,8 @@
             },
             {
               "target": ".isolate > p",
-              "html": "<p class=\"text-sm text-ink-2\">Demonstration prototype · Stage 1</p>",
-              "text": "Demonstration prototype · Stage 1",
+              "html": "<p class=\"text-sm text-ink-2\">Demonstration prototype · Stage 2</p>",
+              "text": "Demonstration prototype · Stage 2",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
               "key": "bgOverlap",
               "data": {
@@ -7892,6 +7996,522 @@
       "incomplete": [],
       "passes": 25,
       "screenshot": null
+    },
+    {
+      "label": "mobile /cases",
+      "violations": [],
+      "incomplete": [],
+      "passes": 26,
+      "screenshot": null
+    },
+    {
+      "label": "mobile /evidence",
+      "violations": [],
+      "incomplete": [],
+      "passes": 26,
+      "screenshot": null
+    },
+    {
+      "label": "mobile /evidence/EVD-LOG-01",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": "#ref-T1R1 > .tabular-nums:nth-child(4)",
+              "html": "<td class=\"p-2 tabular-nums\">410</td>",
+              "text": "410",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T1R1 > .tabular-nums:nth-child(5)",
+              "html": "<td class=\"p-2 tabular-nums\">8.5</td>",
+              "text": "8.5",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T1R2 > .tabular-nums:nth-child(4)",
+              "html": "<td class=\"p-2 tabular-nums\">520</td>",
+              "text": "520",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T1R2 > .tabular-nums:nth-child(5)",
+              "html": "<td class=\"p-2 tabular-nums\">14.4</td>",
+              "text": "14.4",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T1R3 > .tabular-nums:nth-child(4)",
+              "html": "<td class=\"p-2 tabular-nums\">330</td>",
+              "text": "330",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T1R3 > .tabular-nums:nth-child(5)",
+              "html": "<td class=\"p-2 tabular-nums\">6.3</td>",
+              "text": "6.3",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T1R4 > .tabular-nums:nth-child(4)",
+              "html": "<td class=\"p-2 tabular-nums\">285</td>",
+              "text": "285",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T1R4 > .tabular-nums:nth-child(5)",
+              "html": "<td class=\"p-2 tabular-nums\">15.0</td>",
+              "text": "15.0",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T2R1 > .tabular-nums:nth-child(6)",
+              "html": "<td class=\"p-2 tabular-nums\">7.6</td>",
+              "text": "7.6",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T2R1 > .tabular-nums:nth-child(7)",
+              "html": "<td class=\"p-2 tabular-nums\">8.2</td>",
+              "text": "8.2",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T2R1 > .tabular-nums:nth-child(8)",
+              "html": "<td class=\"p-2 tabular-nums\">8.5</td>",
+              "text": "8.5",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T2R2 > .tabular-nums:nth-child(6)",
+              "html": "<td class=\"p-2 tabular-nums\">12.3</td>",
+              "text": "12.3",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T2R2 > .tabular-nums:nth-child(7)",
+              "html": "<td class=\"p-2 tabular-nums\">13.4</td>",
+              "text": "13.4",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T2R2 > .tabular-nums:nth-child(8)",
+              "html": "<td class=\"p-2 tabular-nums\">14.4</td>",
+              "text": "14.4",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T2R3 > .tabular-nums:nth-child(6)",
+              "html": "<td class=\"p-2 tabular-nums\">6.2</td>",
+              "text": "6.2",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T2R3 > .tabular-nums:nth-child(7)",
+              "html": "<td class=\"p-2 tabular-nums\">6.3</td>",
+              "text": "6.3",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T2R3 > .tabular-nums:nth-child(8)",
+              "html": "<td class=\"p-2 tabular-nums\">6.3</td>",
+              "text": "6.3",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T2R4 > .tabular-nums:nth-child(6)",
+              "html": "<td class=\"p-2 tabular-nums\">13.4</td>",
+              "text": "13.4",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T2R4 > .tabular-nums:nth-child(7)",
+              "html": "<td class=\"p-2 tabular-nums\">14.3</td>",
+              "text": "14.3",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T2R4 > .tabular-nums:nth-child(8)",
+              "html": "<td class=\"p-2 tabular-nums\">15.0</td>",
+              "text": "15.0",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T3R1 > .tabular-nums:nth-child(4)",
+              "html": "<td class=\"p-2 tabular-nums\">58.1</td>",
+              "text": "58.1",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T3R2 > .tabular-nums:nth-child(4)",
+              "html": "<td class=\"p-2 tabular-nums\">21.9</td>",
+              "text": "21.9",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T3R3 > .tabular-nums:nth-child(4)",
+              "html": "<td class=\"p-2 tabular-nums\">11.9</td>",
+              "text": "11.9",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#ref-T3R4 > .tabular-nums:nth-child(4)",
+              "html": "<td class=\"p-2 tabular-nums\">8.1</td>",
+              "text": "8.1",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            }
+          ]
+        }
+      ],
+      "passes": 32,
+      "screenshot": "a11y-screenshots/mobile-evidence-evd-log-01.jpg"
+    },
+    {
+      "label": "mobile /reviews",
+      "violations": [],
+      "incomplete": [],
+      "passes": 27,
+      "screenshot": null
+    },
+    {
+      "label": "mobile /cases/CAS-LOG-01?tab=overview",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": "#tab-review",
+              "html": "<button role=\"tab\" id=\"tab-review\" aria-selected=\"false\" aria-controls=\"panel-review\" data-testid=\"tab-review\" class=\"whitespace-nowrap roun",
+              "text": "Expert review1",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-brief",
+              "html": "<button role=\"tab\" id=\"tab-brief\" aria-selected=\"false\" aria-controls=\"panel-brief\" data-testid=\"tab-brief\" class=\"whitespace-nowrap rounded",
+              "text": "Decision brief",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-activity",
+              "html": "<button role=\"tab\" id=\"tab-activity\" aria-selected=\"false\" aria-controls=\"panel-activity\" data-testid=\"tab-activity\" class=\"whitespace-nowra",
+              "text": "Activity",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            }
+          ]
+        }
+      ],
+      "passes": 31,
+      "screenshot": "a11y-screenshots/mobile-cases-cas-log-01-tab-overview.jpg"
+    },
+    {
+      "label": "mobile /cases/CAS-LOG-01?tab=evidence",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": "#tab-review",
+              "html": "<button role=\"tab\" id=\"tab-review\" aria-selected=\"false\" aria-controls=\"panel-review\" data-testid=\"tab-review\" class=\"whitespace-nowrap roun",
+              "text": "Expert review1",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-brief",
+              "html": "<button role=\"tab\" id=\"tab-brief\" aria-selected=\"false\" aria-controls=\"panel-brief\" data-testid=\"tab-brief\" class=\"whitespace-nowrap rounded",
+              "text": "Decision brief",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-activity",
+              "html": "<button role=\"tab\" id=\"tab-activity\" aria-selected=\"false\" aria-controls=\"panel-activity\" data-testid=\"tab-activity\" class=\"whitespace-nowra",
+              "text": "Activity",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            }
+          ]
+        }
+      ],
+      "passes": 31,
+      "screenshot": "a11y-screenshots/mobile-cases-cas-log-01-tab-evidence.jpg"
+    },
+    {
+      "label": "mobile /cases/CAS-LOG-01?tab=tasks",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": "#tab-review",
+              "html": "<button role=\"tab\" id=\"tab-review\" aria-selected=\"false\" aria-controls=\"panel-review\" data-testid=\"tab-review\" class=\"whitespace-nowrap roun",
+              "text": "Expert review1",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-brief",
+              "html": "<button role=\"tab\" id=\"tab-brief\" aria-selected=\"false\" aria-controls=\"panel-brief\" data-testid=\"tab-brief\" class=\"whitespace-nowrap rounded",
+              "text": "Decision brief",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-activity",
+              "html": "<button role=\"tab\" id=\"tab-activity\" aria-selected=\"false\" aria-controls=\"panel-activity\" data-testid=\"tab-activity\" class=\"whitespace-nowra",
+              "text": "Activity",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            }
+          ]
+        }
+      ],
+      "passes": 31,
+      "screenshot": "a11y-screenshots/mobile-cases-cas-log-01-tab-tasks.jpg"
+    },
+    {
+      "label": "mobile /cases/CAS-LOG-01?tab=review",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": "#tab-brief",
+              "html": "<button role=\"tab\" id=\"tab-brief\" aria-selected=\"false\" aria-controls=\"panel-brief\" data-testid=\"tab-brief\" class=\"whitespace-nowrap rounded",
+              "text": "Decision brief",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-activity",
+              "html": "<button role=\"tab\" id=\"tab-activity\" aria-selected=\"false\" aria-controls=\"panel-activity\" data-testid=\"tab-activity\" class=\"whitespace-nowra",
+              "text": "Activity",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            }
+          ]
+        }
+      ],
+      "passes": 31,
+      "screenshot": "a11y-screenshots/mobile-cases-cas-log-01-tab-review.jpg"
+    },
+    {
+      "label": "mobile /cases/CAS-LOG-01?tab=brief",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": "#tab-review",
+              "html": "<button role=\"tab\" id=\"tab-review\" aria-selected=\"false\" aria-controls=\"panel-review\" data-testid=\"tab-review\" class=\"whitespace-nowrap roun",
+              "text": "Expert review1",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-activity",
+              "html": "<button role=\"tab\" id=\"tab-activity\" aria-selected=\"false\" aria-controls=\"panel-activity\" data-testid=\"tab-activity\" class=\"whitespace-nowra",
+              "text": "Activity",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            }
+          ]
+        }
+      ],
+      "passes": 31,
+      "screenshot": "a11y-screenshots/mobile-cases-cas-log-01-tab-brief.jpg"
+    },
+    {
+      "label": "mobile /cases/CAS-LOG-01?tab=activity",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": "#tab-review",
+              "html": "<button role=\"tab\" id=\"tab-review\" aria-selected=\"false\" aria-controls=\"panel-review\" data-testid=\"tab-review\" class=\"whitespace-nowrap roun",
+              "text": "Expert review1",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-brief",
+              "html": "<button role=\"tab\" id=\"tab-brief\" aria-selected=\"false\" aria-controls=\"panel-brief\" data-testid=\"tab-brief\" class=\"whitespace-nowrap rounded",
+              "text": "Decision brief",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            }
+          ]
+        }
+      ],
+      "passes": 31,
+      "screenshot": "a11y-screenshots/mobile-cases-cas-log-01-tab-activity.jpg"
     },
     {
       "label": "mobile /sector/energy",
@@ -11934,6 +12554,48 @@
       "screenshot": "a11y-screenshots/mobile-sector-sovereign.jpg"
     },
     {
+      "label": "mobile /cases (Create case dialog open)",
+      "violations": [],
+      "incomplete": [],
+      "passes": 16,
+      "screenshot": null
+    },
+    {
+      "label": "mobile /cases/CAS-LOG-01?tab=review (Expert role)",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": "#tab-brief",
+              "html": "<button role=\"tab\" id=\"tab-brief\" aria-selected=\"false\" aria-controls=\"panel-brief\" data-testid=\"tab-brief\" class=\"whitespace-nowrap rounded",
+              "text": "Decision brief",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-activity",
+              "html": "<button role=\"tab\" id=\"tab-activity\" aria-selected=\"false\" aria-controls=\"panel-activity\" data-testid=\"tab-activity\" class=\"whitespace-nowra",
+              "text": "Activity",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            }
+          ]
+        }
+      ],
+      "passes": 31,
+      "screenshot": "a11y-screenshots/mobile-cases-cas-log-01-tab-review-expert-role.jpg"
+    },
+    {
       "label": "mobile /sector/banking (chart table view)",
       "violations": [],
       "incomplete": [
@@ -12382,7 +13044,7 @@
       "label": "mobile /sector/banking (record drawer open: SIG-BNK-03)",
       "violations": [],
       "incomplete": [],
-      "passes": 20,
+      "passes": 17,
       "screenshot": null
     },
     {
@@ -12396,7 +13058,7 @@
           "nodes": [
             {
               "target": "input",
-              "html": "<input placeholder=\"Search seeded record...\" aria-label=\"Search seeded demons...\" role=\"combobox\" aria-expanded=\"false\" aria-controls=\"searc",
+              "html": "<input placeholder=\"Search records, case...\" aria-label=\"Search seeded demons...\" role=\"combobox\" aria-expanded=\"false\" aria-controls=\"searc",
               "text": "",
               "reason": "Element has no value; test color contrast with a value entered",
               "key": "emptyValue",
@@ -12455,7 +13117,7 @@
               }
             },
             {
-              "target": ".text-\\[15px\\].leading-relaxed.mt-1",
+              "target": ".text-\\[15px\\].leading-relaxed",
               "html": "<p class=\"mt-1 text-[15px] leading-relaxed text-ink-2\">Maintain strong capital and liquidity, manage concentration in the credit book, and k",
               "text": "Maintain strong capital and liquidity, manage concentration in the cre",
               "reason": "Element's background color could not be determined due to a background gradient",
@@ -12675,7 +13337,7 @@
               }
             },
             {
-              "target": "figure:nth-child(2) > .pt-2.leading-relaxed.mt-3 > .align-middle.inline-flex.flex-wrap > code",
+              "target": "figure:nth-child(2) > .pt-2.leading-relaxed.mt-3 > .align-middle.flex-wrap.inline-flex > code",
               "html": "<code class=\"rounded bg-ivory-2 px-1.5 py-0.5 font-mono text-[11px] text-ink-2\">CHT-BNK-02</code>",
               "text": "CHT-BNK-02",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -12687,7 +13349,7 @@
             {
               "target": "div[data-testid=\"command-centre-banking\"] > .sm\\:p-5 > h2",
               "html": "<h2 class=\"mb-3 flex items-center gap-2 text-sm font-semibold text-ink\">",
-              "text": "Priority signals4",
+              "text": "Priority signals5",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
               "key": "bgOverlap",
               "data": {
@@ -12695,9 +13357,9 @@
               }
             },
             {
-              "target": "div[data-testid=\"command-centre-banking\"] > .sm\\:p-5 > h2 > .px-2.bg-ivory-2.rounded-full",
-              "html": "<span class=\"rounded-full bg-ivory-2 px-2 text-xs text-muted\">4</span>",
-              "text": "4",
+              "target": "div[data-testid=\"command-centre-banking\"] > .sm\\:p-5 > h2 > .bg-ivory-2.px-2.rounded-full",
+              "html": "<span class=\"rounded-full bg-ivory-2 px-2 text-xs text-muted\">5</span>",
+              "text": "5",
               "reason": "Element content is too short to determine if it is actual text content",
               "key": "shortTextContent",
               "data": {
@@ -12715,7 +13377,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .flex-1.min-w-0 > .text-ink.text-sm.font-medium",
+              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .flex-1.min-w-0 > .text-ink.font-medium.text-sm",
               "html": "<span class=\"block text-sm font-medium text-ink\">Real-estate NPL ratio 4.2% vs 2.3% book average</span>",
               "text": "Real-estate NPL ratio 4.2% vs 2.3% book average",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -12725,7 +13387,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .flex-1.min-w-0 > .text-ink-2.block.text-xs",
+              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .flex-1.min-w-0 > .text-ink-2.text-xs.block",
               "html": "<span class=\"block text-xs text-ink-2\">Non-performing exposure of SAR 590 m on SAR 14,200 m. Concentration is 57% across the top two sectors",
               "text": "Non-performing exposure of SAR 590 m on SAR 14,200 m. Concentration is",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -12745,7 +13407,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .gap-0\\.5.sm\\:items-end.flex-col > .text-\\[11px\\].text-muted",
+              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .gap-0\\.5.sm\\:items-end.flex-col > .text-muted.text-\\[11px\\]",
               "html": "<span class=\"text-[11px] text-muted\">→ <!-- -->CAS-BNK-02<!-- --> · <!-- -->2026-10-09 13:00 AST</span>",
               "text": "→ CAS-BNK-02 · 2026-10-09 13:00 AST",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -12765,7 +13427,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .flex-1.min-w-0 > .text-ink.text-sm.font-medium",
+              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .flex-1.min-w-0 > .text-ink.font-medium.text-sm",
               "html": "<span class=\"block text-sm font-medium text-ink\">Payment availability 99.912% below 99.95% target</span>",
               "text": "Payment availability 99.912% below 99.95% target",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -12775,7 +13437,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .flex-1.min-w-0 > .text-ink-2.block.text-xs",
+              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .flex-1.min-w-0 > .text-ink-2.text-xs.block",
               "html": "<span class=\"block text-xs text-ink-2\">38 minutes of downtime in the 30-day window.</span>",
               "text": "38 minutes of downtime in the 30-day window.",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -12795,7 +13457,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .gap-0\\.5.sm\\:items-end.flex-col > .text-\\[11px\\].text-muted",
+              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .gap-0\\.5.sm\\:items-end.flex-col > .text-muted.text-\\[11px\\]",
               "html": "<span class=\"text-[11px] text-muted\">→ <!-- -->CAS-BNK-03<!-- --> · <!-- -->2026-10-08 08:45 AST</span>",
               "text": "→ CAS-BNK-03 · 2026-10-08 08:45 AST",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -12815,7 +13477,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-02\"] > .flex-1.min-w-0 > .text-ink.text-sm.font-medium",
+              "target": "button[data-testid=\"signal-SIG-BNK-02\"] > .flex-1.min-w-0 > .text-ink.font-medium.text-sm",
               "html": "<span class=\"block text-sm font-medium text-ink\">Wholesale funding outflow up 17.8% in five quarters</span>",
               "text": "Wholesale funding outflow up 17.8% in five quarters",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -13322,7 +13984,7 @@
             {
               "target": "div[data-testid=\"command-centre-banking\"] > .sm\\:p-5 > h2",
               "html": "<h2 class=\"mb-3 flex items-center gap-2 text-sm font-semibold text-ink\">",
-              "text": "Priority signals4",
+              "text": "Priority signals5",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
               "key": "bgOverlap",
               "data": {
@@ -13331,8 +13993,8 @@
             },
             {
               "target": "div[data-testid=\"command-centre-banking\"] > .sm\\:p-5 > h2 > .px-2.bg-ivory-2.rounded-full",
-              "html": "<span class=\"rounded-full bg-ivory-2 px-2 text-xs text-muted\">4</span>",
-              "text": "4",
+              "html": "<span class=\"rounded-full bg-ivory-2 px-2 text-xs text-muted\">5</span>",
+              "text": "5",
               "reason": "Element content is too short to determine if it is actual text content",
               "key": "shortTextContent",
               "data": {
@@ -13350,7 +14012,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .flex-1.min-w-0 > .text-ink.block.text-sm",
+              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .flex-1.min-w-0 > .text-ink.block.font-medium",
               "html": "<span class=\"block text-sm font-medium text-ink\">Real-estate NPL ratio 4.2% vs 2.3% book average</span>",
               "text": "Real-estate NPL ratio 4.2% vs 2.3% book average",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -13370,7 +14032,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .gap-0\\.5.sm\\:items-end.items-start > code",
+              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .gap-0\\.5.sm\\:items-end.shrink-0 > code",
               "html": "<code class=\"rounded bg-ivory-2 px-1.5 py-0.5 font-mono text-[11px] text-ink-2\">SIG-BNK-03</code>",
               "text": "SIG-BNK-03",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -13380,7 +14042,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .gap-0\\.5.sm\\:items-end.items-start > .text-\\[11px\\].text-muted",
+              "target": "button[data-testid=\"signal-SIG-BNK-03\"] > .gap-0\\.5.sm\\:items-end.shrink-0 > .text-\\[11px\\].text-muted",
               "html": "<span class=\"text-[11px] text-muted\">→ <!-- -->CAS-BNK-02<!-- --> · <!-- -->2026-10-09 13:00 AST</span>",
               "text": "→ CAS-BNK-02 · 2026-10-09 13:00 AST",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -13400,7 +14062,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .flex-1.min-w-0 > .text-ink.block.text-sm",
+              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .flex-1.min-w-0 > .text-ink.block.font-medium",
               "html": "<span class=\"block text-sm font-medium text-ink\">Payment availability 99.912% below 99.95% target</span>",
               "text": "Payment availability 99.912% below 99.95% target",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -13420,7 +14082,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .gap-0\\.5.sm\\:items-end.items-start > code",
+              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .gap-0\\.5.sm\\:items-end.shrink-0 > code",
               "html": "<code class=\"rounded bg-ivory-2 px-1.5 py-0.5 font-mono text-[11px] text-ink-2\">SIG-BNK-04</code>",
               "text": "SIG-BNK-04",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -13430,7 +14092,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .gap-0\\.5.sm\\:items-end.items-start > .text-\\[11px\\].text-muted",
+              "target": "button[data-testid=\"signal-SIG-BNK-04\"] > .gap-0\\.5.sm\\:items-end.shrink-0 > .text-\\[11px\\].text-muted",
               "html": "<span class=\"text-[11px] text-muted\">→ <!-- -->CAS-BNK-03<!-- --> · <!-- -->2026-10-08 08:45 AST</span>",
               "text": "→ CAS-BNK-03 · 2026-10-08 08:45 AST",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -13450,7 +14112,7 @@
               }
             },
             {
-              "target": "button[data-testid=\"signal-SIG-BNK-02\"] > .flex-1.min-w-0 > .text-ink.block.text-sm",
+              "target": "button[data-testid=\"signal-SIG-BNK-02\"] > .flex-1.min-w-0 > .text-ink.block.font-medium",
               "html": "<span class=\"block text-sm font-medium text-ink\">Wholesale funding outflow up 17.8% in five quarters</span>",
               "text": "Wholesale funding outflow up 17.8% in five quarters",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
@@ -13683,8 +14345,8 @@
           "nodes": [
             {
               "target": ".p-5.sm\\:p-6 > p",
-              "html": "<p class=\"text-sm text-ink-2\">This restores the original seeded state: sector returns to Energy, role to Analyst, and all notifications beco",
-              "text": "This restores the original seeded state: sector returns to Energy, rol",
+              "html": "<p class=\"text-sm text-ink-2\">",
+              "text": "This restores all seeded records and removes every Stage 2 change made",
               "reason": "Element's background color could not be determined because it partially overlaps other elements",
               "key": "elmPartiallyObscuring",
               "data": {

@@ -11,8 +11,10 @@ import { logistics } from "./logistics";
 import { manufacturing } from "./manufacturing";
 import { realestate } from "./realestate";
 import { sovereign } from "./sovereign";
+import { S2 } from "./stage2/content";
+import type { Objective, Person } from "@/lib/stage2/types";
 
-export const DATA_VERSION = "stage1-seed-1";
+export const DATA_VERSION = "stage2-seed-1";
 
 export const INSTITUTION = {
   name: "Al Noor Sovereign Group",
@@ -36,9 +38,24 @@ const memo: Entity = makeEntity(
   { excludeFromGroupTotal: "Already counted within the seven sector entities' capital employed (eliminated on consolidation)." },
 );
 
-export const SEEDS: SectorSeed[] = ordered.map((s) =>
-  s.sector.id === "sovereign" ? { ...s, entities: [...s.entities, memo] } : s,
-);
+/** Merge Stage 2 content: readable evidence replaces/extends Stage 1 evidence; new untriaged signals are added. */
+function withStage2(s: SectorSeed): SectorSeed {
+  const c = S2[s.sector.id];
+  const evidence = new Map(s.evidence.map((e) => [e.id, e]));
+  for (const e of c.evidence) evidence.set(e.id, { ...evidence.get(e.id), ...e });
+  return {
+    ...s,
+    entities: s.sector.id === "sovereign" ? [...s.entities, memo] : s.entities,
+    evidence: [...evidence.values()].sort((a, b) => a.id.localeCompare(b.id)),
+    signals: [...s.signals, ...c.newSignals],
+  };
+}
+export const SEEDS: SectorSeed[] = ordered.map(withStage2);
+export const PEOPLE: Person[] = SECTOR_ORDER_IDS().flatMap((id) => S2[id].people);
+export const PEOPLE_BY_ID = Object.fromEntries(PEOPLE.map((x) => [x.id, x])) as Record<string, Person>;
+export const OBJECTIVES: Objective[] = SECTOR_ORDER_IDS().flatMap((id) => S2[id].objectives);
+export const OBJECTIVE_BY_ID = Object.fromEntries(OBJECTIVES.map((x) => [x.id, x])) as Record<string, Objective>;
+function SECTOR_ORDER_IDS(): SectorId[] { return ordered.map((s) => s.sector.id); }
 export const SECTORS: Sector[] = SEEDS.map((s) => s.sector);
 export const SECTOR_BY_ID = Object.fromEntries(SEEDS.map((s) => [s.sector.id, s])) as Record<SectorId, SectorSeed>;
 export const SECTOR_IDS = SECTORS.map((s) => s.id);
@@ -138,6 +155,10 @@ export const NOTIFICATIONS: Notification[] = [
   { id: "NTF-09", sectorId: "banking", at: "2026-10-09T13:30", title: "Case opened: Real-estate credit watchlist", body: "Non-performing exposure is above book average.", recordId: "CAS-BNK-02" },
   { id: "NTF-10", sectorId: "energy", at: "2026-10-09T11:00", title: "Case opened: Wadi hub concentration", body: "Expert input requested.", recordId: "CAS-ENR-01" },
   { id: "NTF-11", sectorId: "sovereign", at: "2026-10-12T08:00", title: "Demonstration data loaded", body: `Seed ${DATA_VERSION}: fictional records for eight sectors. No live feeds.` },
+  ...(Object.keys(S2) as SectorId[]).map((id) => ({
+    id: `NTF-S2-${S2[id].investigation.caseId.split("-")[1]}`, sectorId: id, at: S2[id].notification.at,
+    title: S2[id].notification.title, body: S2[id].notification.body, recordId: S2[id].investigation.caseId,
+  })),
 ];
 
 // ---------- Search ----------
