@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/* TIGERIS design tokens — see DESIGN_SYSTEM.md */
+@theme {
+  --color-ivory: #faf7f0;
+  --color-ivory-2: #f3eee2;
+  --color-paper: #ffffff;
+  --color-ink: #0e2a23;
+  --color-ink-2: #34453f;
+  --color-muted: #5a6761;
+  --color-line: #e3dccb;
+  --color-line-2: #eee8d9;
+
+  --color-em-950: #0a2a22;
+  --color-em-900: #0f3d32;
+  --color-em-800: #165040;
+  --color-em-700: #1f6150;
+  --color-em-600: #2b7a66;
+
+  --color-sg-50: #eef4ef;
+  --color-sg-100: #e1ede5;
+  --color-sg-300: #b4cdbc;
+  --color-sg-500: #6e9a83;
+  --color-sg-700: #3b6650;
+
+  --color-gd-100: #f4ecd6;
+  --color-gd-300: #d9c18c;
+  --color-gd-500: #b08d4a;
+  --color-gd-700: #86672b;
+
+  --color-am-100: #fbefd2;
+  --color-am-600: #b26f0a;
+  --color-am-800: #7a4b04;
+
+  --color-rd-100: #f8e3df;
+  --color-rd-600: #b3402f;
+  --color-rd-800: #8a2d20;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --shadow-card: 0 1px 2px rgba(14, 42, 35, 0.04), 0 8px 24px rgba(14, 42, 35, 0.06);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-em-700);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-gd-700);
+}
+
+.card {
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+}
+
+@keyframes slide-in {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.slide-in { animation: slide-in 160ms ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .slide-in { animation: none; }
+}
