@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArrowRight, X } from "lucide-react";
 import type { Decision, Entity, Evidence, IntelligenceCase, MetricDef, Signal } from "@/lib/types";
@@ -9,7 +8,7 @@ import {
 } from "@/data";
 import { useRecordNav } from "@/lib/useRecordNav";
 import { useDemo } from "@/state/DemoProvider";
-import { restoreDrawerFocus, trapTab } from "@/lib/focus";
+import { ModalDialog } from "./ModalDialog";
 import { DemoTag, IdTag, KindChip, Section, SeverityBadge, StageBoundary, StatusPill } from "./ui";
 
 function RecLink({ id, onOpen }: { id: string; onOpen: (id: string) => void }) {
@@ -205,54 +204,39 @@ export function RecordDrawer() {
   const id = sp.get("r");
   const { openRecord, closeRecord } = useRecordNav();
   const rec = getRecord(id);
-  const panel = useRef<HTMLDivElement>(null);
-
-  const wasOpen = useRef(false);
-  const isOpen = !!id;
-  // Escape closes; Tab is trapped inside the dialog.
-  useEffect(() => {
-    if (!isOpen) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closeRecord(); else trapTab(e, panel.current); };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [isOpen, closeRecord]);
-  // Focus the panel when opened or when navigating between records; return focus to the opener on close.
-  useEffect(() => {
-    if (isOpen) { wasOpen.current = true; panel.current?.focus(); panel.current?.scrollTo({ top: 0 }); }
-    else if (wasOpen.current) { wasOpen.current = false; restoreDrawerFocus(); }
-  }, [isOpen, id]);
-
   if (!id) return null;
   const sector = rec ? SECTOR_BY_ID[rec.data.sectorId].sector : null;
   return (
-    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Record detail">
-      <div className="absolute inset-0 bg-em-950/40" onClick={closeRecord} aria-hidden />
-      <div ref={panel} tabIndex={-1} className="slide-in absolute right-0 top-0 flex h-full w-full flex-col overflow-y-auto bg-ivory shadow-2xl outline-none sm:w-[520px]">
-        <header className="sticky top-0 z-10 border-b border-line bg-ivory/95 px-5 py-4 backdrop-blur">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              {rec ? (
-                <>
-                  <div className="mb-1.5 flex flex-wrap items-center gap-2"><KindChip kind={rec.kind} /><IdTag id={rec.data.id} /><DemoTag /></div>
-                  <h2 className="font-serif text-xl leading-snug text-ink">{recordTitle(rec.data.id)}</h2>
-                  <p className="mt-0.5 text-xs text-muted">{sector?.entityName} · {sector?.name}</p>
-                </>
-              ) : <h2 className="font-serif text-xl">Record not found</h2>}
-            </div>
-            <button onClick={closeRecord} aria-label="Close detail" className="rounded-md p-1.5 text-ink-2 hover:bg-ivory-2"><X size={20} /></button>
+    <ModalDialog
+      labelledBy="record-drawer-title"
+      onClose={closeRecord}
+      focusKey={id}
+      className="slide-in fixed inset-y-0 left-auto right-0 m-0 h-full max-h-none w-full max-w-none overflow-y-auto bg-ivory p-0 text-ink shadow-2xl outline-none backdrop:bg-em-950/40 sm:w-[520px]"
+    >
+      <header className="sticky top-0 z-10 border-b border-line bg-ivory/95 px-5 py-4 backdrop-blur">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            {rec ? (
+              <>
+                <div className="mb-1.5 flex flex-wrap items-center gap-2"><KindChip kind={rec.kind} /><IdTag id={rec.data.id} /><DemoTag /></div>
+                <h2 id="record-drawer-title" className="font-serif text-xl leading-snug text-ink">{recordTitle(rec.data.id)}</h2>
+                <p className="mt-0.5 text-xs text-muted">{sector?.entityName} · {sector?.name}</p>
+              </>
+            ) : <h2 id="record-drawer-title" className="font-serif text-xl">Record not found</h2>}
           </div>
-        </header>
-        <div className="space-y-5 px-5 py-5">
-          {!rec && <p className="text-sm text-ink-2">No seeded record has the ID <code>{id}</code>. Use search to find a record.</p>}
-          {rec?.kind === "metric" && <MetricBody m={rec.data} open={openRecord} />}
-          {rec?.kind === "signal" && <SignalBody s={rec.data} open={openRecord} />}
-          {rec?.kind === "case" && <CaseBody c={rec.data} open={openRecord} />}
-          {rec?.kind === "decision" && <DecisionBody d={rec.data} open={openRecord} />}
-          {rec?.kind === "entity" && <EntityBody e={rec.data} open={openRecord} />}
-          {rec?.kind === "evidence" && <EvidenceBody ev={rec.data} open={openRecord} />}
-          {rec && <p className="border-t border-line pt-3 text-[11px] text-muted">{KIND_LABEL[rec.kind]} record · seeded fictional data · SAR used for all monetary values</p>}
+          <button onClick={closeRecord} aria-label="Close detail" className="rounded-md p-1.5 text-ink-2 hover:bg-ivory-2"><X size={20} /></button>
         </div>
+      </header>
+      <div className="space-y-5 px-5 py-5">
+        {!rec && <p className="text-sm text-ink-2">No seeded record has the ID <code>{id}</code>. Use search to find a record.</p>}
+        {rec?.kind === "metric" && <MetricBody m={rec.data} open={openRecord} />}
+        {rec?.kind === "signal" && <SignalBody s={rec.data} open={openRecord} />}
+        {rec?.kind === "case" && <CaseBody c={rec.data} open={openRecord} />}
+        {rec?.kind === "decision" && <DecisionBody d={rec.data} open={openRecord} />}
+        {rec?.kind === "entity" && <EntityBody e={rec.data} open={openRecord} />}
+        {rec?.kind === "evidence" && <EvidenceBody ev={rec.data} open={openRecord} />}
+        {rec && <p className="border-t border-line pt-3 text-[11px] text-muted">{KIND_LABEL[rec.kind]} record · seeded fictional data · SAR used for all monetary values</p>}
       </div>
-    </div>
+    </ModalDialog>
   );
 }

@@ -53,7 +53,8 @@ function Sidebar({ onNav }: { onNav: () => void }) {
 export function Shell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[260px_minmax(0,1fr)]">
+    <>
+    <div id="app-root" className="min-h-screen lg:grid lg:grid-cols-[260px_minmax(0,1fr)]">
       <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[70] focus:rounded-lg focus:bg-em-900 focus:px-4 focus:py-2 focus:text-white">Skip to main content</a>
       <aside className="sticky top-0 hidden h-screen lg:block"><Sidebar onNav={() => {}} /></aside>
       {open && (
@@ -70,7 +71,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-[1280px] px-3 py-5 sm:px-5 sm:py-6">{children}</main>
         <footer className="border-t border-line px-5 py-4 text-xs text-muted">TIGERIS AI OS · Stage 1 demonstration · All data fictional and illustrative · No production, hosting or compliance claims.</footer>
       </div>
-      <Suspense fallback={null}><RecordDrawer /></Suspense>
     </div>
+    {/* Outside #app-root: the modal drawer must not sit inside the subtree it makes inert. */}
+    <Suspense fallback={null}><RecordDrawer /></Suspense>
+    </>
   );
 }

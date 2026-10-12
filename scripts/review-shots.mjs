@@ -16,13 +16,15 @@ for (const [label, vp] of [["desktop", { width: 1440, height: 900 }], ["mobile",
   await page.goto(BASE + "/"); await page.getByRole("button", { name: "Enter demonstration" }).click(); await page.waitForURL("**/workspaces");
   await shot("workspaces");
   await page.goto(BASE + "/overview"); await page.waitForSelector("figure svg"); await shot("overview");
+  await page.goto(BASE + "/methodology"); await shot("methodology");
+  await page.goto(BASE + "/roadmap"); await shot("roadmap");
   for (const s of SECTORS) { await page.goto(`${BASE}/sector/${s}`); await page.waitForSelector("figure svg"); await shot(`sector-${s}`); }
   await page.goto(`${BASE}/sector/energy`);
   await page.getByLabel("Search seeded demonstration records").fill("Sahil"); await shot("search-open", false);
   await page.keyboard.press("Escape"); await page.getByLabel("Search seeded demonstration records").fill("");
   await page.getByRole("button", { name: /Notifications/ }).click(); await shot("notifications-open", false); await page.keyboard.press("Escape");
   await page.locator('[data-testid="signal-SIG-ENR-01"]').click(); await shot("drawer-signal", false);
-  await page.locator('[role="dialog"][aria-label="Record detail"]').getByRole("button", { name: /Wadi hub concentration/ }).first().click(); await page.waitForTimeout(300); await shot("drawer-case", false);
+  await page.locator('dialog[open][aria-labelledby="record-drawer-title"]').getByRole("button", { name: /Wadi hub concentration/ }).first().click(); await page.waitForTimeout(300); await shot("drawer-case", false);
   await page.keyboard.press("Escape");
   await page.locator('[data-testid="metric-MET-ENR-02"]').click(); await shot("drawer-metric", false); await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "About this prototype" }).click(); await shot("about", false); await page.keyboard.press("Escape");

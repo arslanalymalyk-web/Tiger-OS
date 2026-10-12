@@ -31,10 +31,12 @@ Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 (tokens in 
 
 ## UI rules learned in review
 - Anything that depends on persisted state (role, sector, read state) must render a neutral state until `useDemo().hydrated` is true — never show defaults that then change.
-- Dialogs/drawers: focus in on open, trap Tab (`src/lib/focus.ts`), Escape closes, return focus to the opener. Link to records only through `useRecordNav().openRecord`.
+- Dialogs/drawers use `ModalDialog` (native `<dialog>` + `showModal()`; sets `inert` on `#app-root`, wraps Tab, Escape/backdrop close, restores focus to the opener). Always give a dialog `aria-labelledby` pointing at its visible title. A modal must be rendered **outside** `#app-root` (the drawer in `Shell`) or portalled to `<body>` (About/Reset). Link to records only through `useRecordNav().openRecord`.
+- Never put `overflow-x: hidden` on `html`/`body` (breaks `position: sticky`); use `overflow-x: clip`.
+- axe "incomplete" results are unresolved, not passes: list them (see `REVIEW.md` §8) and require a manual check.
 - Chart colours come from `SERIES_COLORS` (≥ 4.5:1 on white); keep legend + markers + Table view. Re-run `scripts/a11y.mjs` after UI changes; scrollable regions need `tabIndex={0}` + `role="region"` + a label.
 - Gold text uses `gd-700` (#7a5c22) only.
 
 ## Commands
-`npm run dev` · `npm run build` · `npm run typecheck` · `npm run lint` · `npm run verify:data` · `npm run verify` (typecheck+lint+data) · `npm run e2e` (needs `npm start -- -p 3100` and Chromium; `BROWSER=firefox|webkit` if installed) · `node scripts/a11y.mjs` (axe-core) · `node scripts/review-shots.mjs`.
+`npm run dev` · `npm run build` · `npm run typecheck` · `npm run lint` · `npm run verify:data` · `npm run verify` (typecheck+lint+data) · `npm run e2e` (needs `npm start -- -p 3100` and Chromium; `BROWSER=firefox|webkit` if installed) · `node scripts/a11y.mjs http://localhost:3100 ./review` (axe-core; writes findings + annotated screenshots) · `node scripts/review-shots.mjs`.
 Run `verify:data` after editing any seed file.

@@ -59,6 +59,7 @@ PASS  No role flash: Analyst never rendered when Expert persisted  — sel: | fo
 PASS  Persisted role and focus panel appear after hydration  — sel: | focus:Loading your simulated r | side:… | sel:Expert | focus:Expert focus: cases requ | side:Expert
 PASS  Persisted read count applied (9 unread)
 PASS  Server HTML contains no role-specific content (loading state only)
+PASS  Top bar and sidebar remain pinned after scrolling 900px  — {"top":0,"side":0}
 PASS  Skip link is first tab stop and becomes visible
 PASS  Skip link moves focus to main content
 PASS  Visible focus ring on the first 12 tab stops
@@ -80,6 +81,34 @@ PASS  Workspaces shows persisted last-selected sector (Insurance)
 PASS  Unread badge hidden when all read
 PASS  Reset clears persisted demo state from localStorage  — null
 PASS  Reset restores seeded UI state (Analyst, 11 unread, Energy last selected)
+PASS  Drawer is a native modal <dialog> (matches :modal), exactly one open
+PASS  Drawer has an accessible name from its visible title (aria-labelledby)  — Wadi Processing Hub carries 60.4% of production
+PASS  Background (#app-root) is inert while the drawer is open
+PASS  Drawer takes focus on open
+PASS  Background controls cannot be focused programmatically
+PASS  Pointer hit-testing over a background control lands on the drawer backdrop, not the control  — {"tag":"DIALOG","isControl":false}
+PASS  Tab (60×) and Shift+Tab (30×) never leave the drawer
+PASS  Clicking inside the drawer does not close it
+PASS  Escape closes the drawer and removes the dialog
+PASS  Background is no longer inert after close
+PASS  Focus returns to the element that opened the drawer  — signal-SIG-ENR-01
+PASS  Background controls can be focused again
+PASS  Background control works again (click opens its drawer)
+PASS  Clicking the backdrop over a background control closes the drawer without activating that control  — open=0 menuOpen=false
+PASS  Focus restored to the opener and background interactive after backdrop close  — signal-SIG-ENR-01
+PASS  Signal → case: still exactly one modal, background inert, title updated, focus in drawer  — Wadi hub concentration and export redundancy
+PASS  Case → decision: one modal, inert, title updated, focus in drawer  — Approve feasibility study for a Wadi hub bypass link
+PASS  Navigating between drawers moves focus to the new drawer content (dialog is focused)
+PASS  Decision → linked signal via path control: one modal, inert, focus in drawer  — SAR 16,500 m employed at single-route assets
+PASS  Browser Back steps through the drawers while keeping the background inert  — CAS-ENR-01:1/true/true | DEC-ENR-01:1/true/true | SIG-ENR-03:1/true/true | DEC-ENR-01:1/true/true | CAS-ENR-01:1/true/true | SIG-ENR-01:1/true/true
+PASS  Back past the first drawer closes it, restores the background and returns focus to the original opener  — {"open":0,"modal":false,"title":null,"inert":false,"focusInside":false,"focusOnDialog":false,"activeTestId":"signal-SIG-ENR-01","activeLabel":null}
+PASS  Escape from a second-level drawer restores focus to the original opener and the background  — {"open":0,"modal":false,"title":null,"inert":false,"focusInside":false,"focusOnDialog":false,"activeTestId":"signal-SIG-ENR-01","activeLabel":null}
+PASS  About this prototype dialog: native modal, named, background inert  — {"open":1,"modal":true,"title":"About this prototype","inert":true,"focusInside":true,"focusOnDialog":true,"activeTestId":null,"activeLabel":null}
+PASS  About this prototype dialog: background controls cannot take focus
+PASS  About this prototype dialog: Escape closes, background restored, focus back on opener  — {"open":0,"modal":false,"title":null,"inert":false,"focusInside":false,"focusOnDialog":false,"activeTestId":null,"activeLabel":"About this prototype"}
+PASS  Reset demonstration dialog: native modal, named, background inert  — {"open":1,"modal":true,"title":"Reset demonstration?","inert":true,"focusInside":true,"focusOnDialog":true,"activeTestId":null,"activeLabel":null}
+PASS  Reset demonstration dialog: background controls cannot take focus
+PASS  Reset demonstration dialog: Escape closes, background restored, focus back on opener  — {"open":0,"modal":false,"title":null,"inert":false,"focusInside":false,"focusOnDialog":false,"activeTestId":null,"activeLabel":"Reset demonstration"}
 PASS  Mobile no horizontal overflow /  — scrollWidth=390 innerWidth=390
 PASS  Mobile no horizontal overflow /entry/energy  — scrollWidth=390 innerWidth=390
 PASS  Mobile no horizontal overflow /entry/banking  — scrollWidth=390 innerWidth=390
@@ -97,6 +126,8 @@ PASS  Mobile no horizontal overflow /sector/infrastructure  — scrollWidth=390 
 PASS  Mobile no horizontal overflow /sector/sovereign  — scrollWidth=390 innerWidth=390
 PASS  Mobile navigation drawer opens
 PASS  Mobile drawer no horizontal overflow
+PASS  Mobile drawer: native modal, background inert, focus inside  — {"modal":true,"inert":true,"inside":true}
+PASS  Mobile drawer: Escape closes and background is restored
 PASS  No console or page errors
 
-99/99 checks passed
+130/130 checks passed

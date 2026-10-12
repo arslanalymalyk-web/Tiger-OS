@@ -4,7 +4,6 @@ import { useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { recordSector } from "@/data";
 import { useDemo } from "@/state/DemoProvider";
-import { rememberDrawerTrigger } from "./focus";
 
 /** Opens/closes the record drawer via the `?r=<RECORD-ID>` query parameter so records are linkable. */
 export function useRecordNav() {
@@ -14,7 +13,6 @@ export function useRecordNav() {
 
   const openRecord = useCallback(
     (id: string) => {
-      rememberDrawerTrigger();
       const sec = recordSector(id);
       if (sec) setSector(sec);
       // On a sector page, jump to the record's own sector so the dashboard behind the drawer matches.

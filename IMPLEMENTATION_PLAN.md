@@ -6,6 +6,9 @@ Shared foundation, entries, eight command centres, drawers, search, notification
 ## Stage 1 review and polish pass — delivered
 Hydration-flash fix, chart palette ≥ 4.5:1, visual review fixes, drawer/dialog focus management, axe-core scan, expanded browser checks, review package (`REVIEW.md`, `review/`). Firefox/WebKit checks were not run (browsers not installed in the environment).
 
+## Stage 1 modal-drawer accessibility fix — delivered
+Drawer, About and Reset moved to the native `<dialog>` primitive (`ModalDialog`): inert background, named dialogs, contained focus, Escape/backdrop close, focus restoration, correct behaviour across linked-record navigation and Back. Sticky top bar regression fixed. 130 browser checks pass in Chromium; 1,315 axe colour-contrast nodes remain unresolved and are listed in `REVIEW.md` §8 for manual verification. Still not run: Firefox, WebKit, screen readers.
+
 ## Future stages (not started; described so boundaries are explicit)
 | Stage | Capabilities | Notes |
 |---|---|---|

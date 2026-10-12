@@ -28,11 +28,13 @@ async function newPage(viewport) {
   page.on("console", (m) => m.type() === "error" && errors.push(`console: ${m.text()}`));
   return { ctx, page };
 }
+// Escape, then wait until any modal dialog has actually been removed (closing is an async router transition).
+const escClose = async (page) => { await page.keyboard.press("Escape"); await page.waitForFunction(() => !document.querySelector("dialog[open]"), null, { timeout: 3000 }).catch(() => {}); };
 const drawerId = async (page, expected) => {
   // The drawer updates after an async router transition; wait for the expected ID when given.
-  if (expected) await page.waitForFunction((id) => document.querySelector('[role="dialog"][aria-label="Record detail"] header code')?.textContent?.trim() === id, expected, { timeout: 5000 }).catch(() => {});
-  else await page.waitForSelector('[role="dialog"][aria-label="Record detail"] header code', { timeout: 5000 }).catch(() => {});
-  return (await page.locator('[role="dialog"][aria-label="Record detail"] header code').first().textContent().catch(() => null))?.trim();
+  if (expected) await page.waitForFunction((id) => document.querySelector('dialog[open][aria-labelledby="record-drawer-title"] header code')?.textContent?.trim() === id, expected, { timeout: 5000 }).catch(() => {});
+  else await page.waitForSelector('dialog[open][aria-labelledby="record-drawer-title"] header code', { timeout: 5000 }).catch(() => {});
+  return (await page.locator('dialog[open][aria-labelledby="record-drawer-title"] header code').first().textContent().catch(() => null))?.trim();
 };
 
 {
@@ -91,14 +93,14 @@ const drawerId = async (page, expected) => {
   await page.goto(`${BASE}/sector/energy`);
   await page.locator('[data-testid="signal-SIG-ENR-01"]').click();
   check("Signal opens drawer", (await drawerId(page)) === "SIG-ENR-01");
-  const dlg = page.locator('[role="dialog"][aria-label="Record detail"]');
+  const dlg = page.locator('dialog[open][aria-labelledby="record-drawer-title"]');
   await dlg.getByRole("button", { name: /Wadi hub concentration and export redundancy/ }).first().click();
   check("Signal → linked case", (await drawerId(page, "CAS-ENR-01")) === "CAS-ENR-01");
   await dlg.getByRole("button", { name: /Approve feasibility study/ }).first().click();
   check("Case → linked decision", (await drawerId(page, "DEC-ENR-01")) === "DEC-ENR-01");
   const dtxt = await dlg.innerText();
   check("Decision shows IDs, assumptions, evidence refs, and stage boundary", /assumptions/i.test(dtxt) && dtxt.includes("EVD-ENR-01") && dtxt.includes("Stage 6"));
-  await page.keyboard.press("Escape");
+  await escClose(page);
   await page.waitForTimeout(300);
   check("Escape closes drawer", (await dlg.count()) === 0);
   // metric drawer
@@ -106,18 +108,18 @@ const drawerId = async (page, expected) => {
   await drawerId(page, "MET-ENR-02");
   const mt = await dlg.innerText();
   check("Metric drawer shows formula, period and contributing records", /formula/i.test(mt) && mt.includes("Sep 2026") && mt.includes("ENT-ENR-04") && mt.includes("60.4"));
-  await page.keyboard.press("Escape");
+  await escClose(page);
 
   // ---- Search
   const search = page.getByLabel("Search seeded demonstration records");
   await search.fill("Sahil");
   await page.getByRole("option").first().click();
   check("Search result opens record", /^(SIG|ENT|CAS|DEC)-/.test((await drawerId(page)) ?? ""));
-  await page.keyboard.press("Escape");
+  await escClose(page);
   await search.fill("SIG-LOG-01");
   await page.getByRole("option").first().click();
   check("Search by ID opens that record and switches sector", (await drawerId(page, "SIG-LOG-01")) === "SIG-LOG-01" && page.url().includes("/sector/logistics"));
-  await page.keyboard.press("Escape");
+  await escClose(page);
   await search.fill("zzzzzz");
   check("Search shows empty state", (await page.locator("#search-results").innerText()).includes("No seeded record"));
   await search.fill("");
@@ -129,7 +131,7 @@ const drawerId = async (page, expected) => {
   await page.getByRole("button", { name: /Notifications/ }).click();
   await page.getByText("Critical signal: Western trucking delays").click();
   check("Notification opens relevant record", (await drawerId(page)) === "SIG-LOG-01");
-  await page.keyboard.press("Escape");
+  await escClose(page);
   check("Notification marked read (count decreased)", (await unread()) === startUnread - 1, `${startUnread} → ${await unread()}`);
   await page.reload();
   await page.waitForSelector('[data-testid="unread-count"]');
@@ -155,7 +157,7 @@ const drawerId = async (page, expected) => {
   // ---- About + reset
   await page.getByRole("button", { name: "About this prototype" }).click();
   check("About panel states scope", (await page.getByRole("dialog", { name: "About this prototype" }).innerText()).includes("no live feeds"));
-  await page.keyboard.press("Escape");
+  await escClose(page);
   await page.getByRole("button", { name: "Reset demonstration" }).first().click();
   await page.getByRole("dialog", { name: "Reset demonstration?" }).getByRole("button", { name: "Reset demonstration" }).click();
   await page.waitForURL("**/workspaces");
@@ -205,10 +207,15 @@ const drawerId = async (page, expected) => {
 // ---- Keyboard, focus management, persistence, reset
 {
   const { ctx, page } = await newPage({ width: 1440, height: 900 });
-  const inDialog = () => page.evaluate(() => !!document.activeElement?.closest('[role="dialog"]'));
+  const inDialog = () => page.evaluate(() => !!document.activeElement?.closest('dialog[open]'));
   const activeId = () => page.evaluate(() => document.activeElement?.getAttribute("data-testid") || document.activeElement?.getAttribute("aria-label") || document.activeElement?.id || document.activeElement?.tagName);
   await page.goto(BASE + "/sector/energy");
   await page.waitForSelector("figure svg");
+  // Top bar and sidebar stay pinned while the page scrolls (regression: overflow-x:hidden on body broke position:sticky)
+  await page.evaluate(() => window.scrollTo(0, 900)); await page.waitForTimeout(150);
+  const pinned = await page.evaluate(() => ({ top: Math.round(document.querySelector("header").getBoundingClientRect().top), side: Math.round(document.querySelector("aside").getBoundingClientRect().top) }));
+  check("Top bar and sidebar remain pinned after scrolling 900px", pinned.top === 0 && pinned.side === 0, JSON.stringify(pinned));
+  await page.evaluate(() => window.scrollTo(0, 0));
   // visible focus + skip link
   await page.keyboard.press("Tab");
   const skip = await page.evaluate(() => { const e = document.activeElement; const cs = getComputedStyle(e); return { text: e.textContent, vis: e.getBoundingClientRect().width > 1, outline: cs.outlineStyle }; });
@@ -221,7 +228,7 @@ const drawerId = async (page, expected) => {
   // Drawer: keyboard open, focus in, trap, Escape, return
   const sig = page.locator('[data-testid="signal-SIG-ENR-01"]');
   await sig.focus(); await page.keyboard.press("Enter");
-  await page.waitForSelector('[role="dialog"][aria-label="Record detail"]');
+  await page.waitForSelector('dialog[open][aria-labelledby="record-drawer-title"]');
   await page.waitForTimeout(150);
   check("Drawer takes focus on open", await inDialog());
   let trapped = true;
@@ -230,52 +237,52 @@ const drawerId = async (page, expected) => {
   let trappedBack = true;
   for (let i = 0; i < 30; i++) { await page.keyboard.press("Shift+Tab"); if (!(await inDialog())) { trappedBack = false; break; } }
   check("Shift+Tab stays trapped inside the drawer", trappedBack);
-  await page.keyboard.press("Escape");
+  await escClose(page);
   await page.waitForTimeout(250);
   check("Escape closes drawer and focus returns to the opening signal button", (await activeId()) === "signal-SIG-ENR-01", await activeId());
   // drawer via mouse then close button
   await page.locator('[data-testid="metric-MET-ENR-01"]').click();
-  await page.waitForSelector('[role="dialog"][aria-label="Record detail"]');
+  await page.waitForSelector('dialog[open][aria-labelledby="record-drawer-title"]');
   await page.getByRole("button", { name: "Close detail" }).click();
   await page.waitForTimeout(250);
   check("Close button returns focus to the opening metric card", (await activeId()) === "metric-MET-ENR-01", await activeId());
   // drawer-to-drawer navigation does not change what focus returns to
-  await sig.click(); await page.waitForSelector('[role="dialog"][aria-label="Record detail"]');
-  await page.locator('[role="dialog"][aria-label="Record detail"]').getByRole("button", { name: /Wadi hub concentration/ }).first().click();
+  await sig.click(); await page.waitForSelector('dialog[open][aria-labelledby="record-drawer-title"]');
+  await page.locator('dialog[open][aria-labelledby="record-drawer-title"]').getByRole("button", { name: /Wadi hub concentration/ }).first().click();
   await drawerId(page, "CAS-ENR-01");
-  await page.keyboard.press("Escape"); await page.waitForTimeout(250);
+  await escClose(page); await page.waitForTimeout(250);
   check("Focus returns to the original opener after navigating signal → case", (await activeId()) === "signal-SIG-ENR-01", await activeId());
   // About + Reset dialogs
   const about = page.getByRole("button", { name: "About this prototype" });
   await about.focus(); await page.keyboard.press("Enter");
-  await page.waitForSelector('[role="dialog"][aria-label="About this prototype"]');
+  await page.getByRole("dialog", { name: "About this prototype" }).waitFor();
   check("About dialog takes focus", await inDialog());
   let t2 = true; for (let i = 0; i < 12; i++) { await page.keyboard.press("Tab"); if (!(await inDialog())) t2 = false; }
   check("About dialog traps Tab", t2);
-  await page.keyboard.press("Escape"); await page.waitForTimeout(200);
+  await escClose(page); await page.waitForTimeout(200);
   check("Escape closes About and focus returns to the About button", (await page.evaluate(() => document.activeElement?.getAttribute("aria-label"))) === "About this prototype");
   const resetBtn = page.getByRole("button", { name: "Reset demonstration" }).first();
   await resetBtn.focus(); await page.keyboard.press("Enter");
-  await page.waitForSelector('[role="dialog"][aria-label="Reset demonstration?"]');
+  await page.getByRole("dialog", { name: "Reset demonstration?" }).waitFor();
   check("Reset dialog takes focus", await inDialog());
-  await page.keyboard.press("Escape"); await page.waitForTimeout(200);
+  await escClose(page); await page.waitForTimeout(200);
   check("Escape cancels Reset and returns focus to the Reset button", (await page.evaluate(() => document.activeElement?.getAttribute("aria-label") || document.activeElement?.textContent?.trim())) === "Reset demonstration");
   // Menus
   await page.getByRole("button", { name: /Sector/ }).first().click();
-  await page.keyboard.press("Escape");
+  await escClose(page);
   check("Escape closes sector menu and returns focus to its button", /Sector/.test(await page.evaluate(() => document.activeElement?.textContent ?? "")));
   // Search keyboard
   const input = page.getByLabel("Search seeded demonstration records");
   await input.focus(); await page.keyboard.type("Rimal"); await page.keyboard.press("ArrowDown"); await page.keyboard.press("Enter");
-  await page.waitForSelector('[role="dialog"][aria-label="Record detail"]');
-  await page.keyboard.press("Escape"); await page.waitForTimeout(250);
+  await page.waitForSelector('dialog[open][aria-labelledby="record-drawer-title"]');
+  await escClose(page); await page.waitForTimeout(250);
   check("Search (keyboard) → drawer → Escape returns focus to the search box", (await page.evaluate(() => document.activeElement?.getAttribute("role"))) === "combobox");
   // Persistence of sector, role and notifications, and reset
   await page.goto(BASE + "/sector/insurance");
   await page.getByLabel("Simulated demonstration role").selectOption("Approver");
   await page.getByRole("button", { name: /Notifications/ }).click();
   await page.getByRole("button", { name: "Mark all read" }).click();
-  await page.keyboard.press("Escape");
+  await escClose(page);
   await page.goto(BASE + "/workspaces");
   await page.reload();
   await page.waitForFunction(() => document.querySelector('select[aria-label="Simulated demonstration role"]')?.value === "Approver");
@@ -289,6 +296,118 @@ const drawerId = async (page, expected) => {
   const afterReset = await page.evaluate(() => localStorage.getItem("tigeris.demo.v1"));
   check("Reset clears persisted demo state from localStorage", afterReset === null, String(afterReset));
   check("Reset restores seeded UI state (Analyst, 11 unread, Energy last selected)", (await page.getByLabel("Simulated demonstration role").inputValue()) === "Analyst" && (await page.getByTestId("unread-count").textContent()) === "11" && (await page.locator('[data-testid="workspace-energy"]').innerText()).includes("Last selected"));
+  await ctx.close();
+}
+
+
+// ---- Modal drawer: background isolation, focus containment, Escape, focus restoration, linked-record navigation
+{
+  const { ctx, page } = await newPage({ width: 1440, height: 900 });
+  const DRAWER = 'dialog[open][aria-labelledby="record-drawer-title"]';
+  const state = () => page.evaluate(() => {
+    const dlg = [...document.querySelectorAll("dialog[open]")];
+    const d = dlg[0];
+    const lab = d?.getAttribute("aria-labelledby");
+    const title = lab ? document.getElementById(lab)?.textContent?.trim() : null;
+    return {
+      open: dlg.length, modal: !!d && d.matches(":modal"), title,
+      inert: document.getElementById("app-root")?.inert === true,
+      focusInside: !!document.activeElement?.closest("dialog[open]"),
+      focusOnDialog: document.activeElement === d,
+      activeTestId: document.activeElement?.getAttribute("data-testid") ?? null,
+      activeLabel: document.activeElement?.getAttribute("aria-label") ?? null,
+    };
+  });
+  const settle = (ms = 250) => page.waitForTimeout(ms);
+  await page.goto(BASE + "/sector/energy");
+  await page.waitForSelector("figure svg");
+  await page.waitForFunction(() => document.querySelector('select[aria-label="Simulated demonstration role"]')?.value);
+
+  // A. Open from a signal: semantics, isolation, containment
+  const sig = page.locator('[data-testid="signal-SIG-ENR-01"]');
+  await sig.click(); await page.waitForSelector(DRAWER); await settle();
+  let st = await state();
+  check("Drawer is a native modal <dialog> (matches :modal), exactly one open", st.open === 1 && st.modal);
+  check("Drawer has an accessible name from its visible title (aria-labelledby)", st.title === "Wadi Processing Hub carries 60.4% of production" && (await page.getByRole("dialog", { name: "Wadi Processing Hub carries 60.4% of production" }).count()) === 1, String(st.title));
+  check("Background (#app-root) is inert while the drawer is open", st.inert);
+  check("Drawer takes focus on open", st.focusOnDialog || st.focusInside);
+  await page.evaluate(() => document.querySelector('[data-testid="metric-MET-ENR-01"]').focus());
+  check("Background controls cannot be focused programmatically", (await state()).focusInside);
+  // The sticky top bar is always on screen, so its sector selector is a reliable background control to probe.
+  const SECTOR_BTN = '[data-testid="sector-selector"]';
+  const bgHit = await page.evaluate((sel) => { const b = document.querySelector(sel); const r = b.getBoundingClientRect(); const el = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2); return { tag: el?.tagName, isControl: !!el?.closest(sel) }; }, SECTOR_BTN);
+  check("Pointer hit-testing over a background control lands on the drawer backdrop, not the control", bgHit.tag === "DIALOG" && !bgHit.isControl, JSON.stringify(bgHit));
+  let held = true;
+  for (let i = 0; i < 60; i++) { await page.keyboard.press("Tab"); if (!(await state()).focusInside) { held = false; break; } }
+  for (let i = 0; i < 30 && held; i++) { await page.keyboard.press("Shift+Tab"); if (!(await state()).focusInside) { held = false; break; } }
+  check("Tab (60×) and Shift+Tab (30×) never leave the drawer", held);
+  await page.locator(DRAWER).getByRole("heading", { level: 2 }).click();
+  await settle(150);
+  check("Clicking inside the drawer does not close it", (await state()).open === 1);
+
+  // B. Escape: closes, background restored, focus back on opener, background usable
+  await escClose(page); await settle();
+  st = await state();
+  check("Escape closes the drawer and removes the dialog", st.open === 0);
+  check("Background is no longer inert after close", !st.inert);
+  check("Focus returns to the element that opened the drawer", st.activeTestId === "signal-SIG-ENR-01", String(st.activeTestId));
+  await page.evaluate(() => document.querySelector('[data-testid="metric-MET-ENR-01"]').focus());
+  check("Background controls can be focused again", (await state()).activeTestId === "metric-MET-ENR-01");
+  await page.locator('[data-testid="metric-MET-ENR-02"]').click();
+  check("Background control works again (click opens its drawer)", (await drawerId(page, "MET-ENR-02")) === "MET-ENR-02");
+  await escClose(page); await settle();
+
+  // C. Backdrop click closes without activating whatever is behind it
+  await sig.click(); await page.waitForSelector(DRAWER); await settle();
+  const pt = await page.evaluate((sel) => { const r = document.querySelector(sel).getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; }, SECTOR_BTN);
+  await page.mouse.click(pt.x, pt.y); await settle();
+  st = await state();
+  const menuOpen = await page.evaluate((sel) => document.querySelector(sel)?.getAttribute("aria-expanded") === "true", SECTOR_BTN);
+  check("Clicking the backdrop over a background control closes the drawer without activating that control", st.open === 0 && !menuOpen, `open=${st.open} menuOpen=${menuOpen}`);
+  check("Focus restored to the opener and background interactive after backdrop close", st.activeTestId === "signal-SIG-ENR-01" && !st.inert, String(st.activeTestId));
+
+  // D. Navigation between linked record drawers (signal → case → decision → signal), then browser Back
+  await sig.click(); await page.waitForSelector(DRAWER); await settle();
+  const trail = [];
+  const note = async (expectedId) => { await drawerId(page, expectedId); await settle(150); const s2 = await state(); trail.push(`${expectedId}:${s2.open}/${s2.inert}/${s2.focusInside}`); return s2; };
+  let s1 = await state(); const t1 = s1.title;
+  await page.locator(DRAWER).getByRole("button", { name: /Wadi hub concentration and export redundancy/ }).first().click();
+  let s2 = await note("CAS-ENR-01");
+  check("Signal → case: still exactly one modal, background inert, title updated, focus in drawer", s2.open === 1 && s2.modal && s2.inert && s2.focusInside && s2.title !== t1 && s2.title === "Wadi hub concentration and export redundancy", String(s2.title));
+  await page.locator(DRAWER).getByRole("button", { name: /Approve feasibility study/ }).first().click();
+  let s3 = await note("DEC-ENR-01");
+  check("Case → decision: one modal, inert, title updated, focus in drawer", s3.open === 1 && s3.inert && s3.focusInside && s3.title === "Approve feasibility study for a Wadi hub bypass link", String(s3.title));
+  check("Navigating between drawers moves focus to the new drawer content (dialog is focused)", s3.focusOnDialog);
+  await page.locator(DRAWER).locator("nav[aria-label='Signal to case to decision path']").getByRole("button", { name: "SIG-ENR-03" }).click();
+  let s4 = await note("SIG-ENR-03");
+  check("Decision → linked signal via path control: one modal, inert, focus in drawer", s4.open === 1 && s4.inert && s4.focusInside && /single-route assets/.test(s4.title ?? ""), String(s4.title));
+  await page.goBack(); let b1 = await note("DEC-ENR-01");
+  await page.goBack(); let b2 = await note("CAS-ENR-01");
+  await page.goBack(); let b3 = await note("SIG-ENR-01");
+  check("Browser Back steps through the drawers while keeping the background inert", b1.inert && b2.inert && b3.inert && b1.open === 1 && b2.open === 1 && b3.open === 1, trail.join(" | "));
+  await page.goBack(); await settle();
+  st = await state();
+  check("Back past the first drawer closes it, restores the background and returns focus to the original opener", st.open === 0 && !st.inert && st.activeTestId === "signal-SIG-ENR-01", JSON.stringify(st));
+  // Escape from a deep drawer still restores to the original opener
+  await sig.click(); await page.waitForSelector(DRAWER); await settle();
+  await page.locator(DRAWER).getByRole("button", { name: /Wadi hub concentration and export redundancy/ }).first().click(); await drawerId(page, "CAS-ENR-01");
+  await escClose(page); await settle();
+  st = await state();
+  check("Escape from a second-level drawer restores focus to the original opener and the background", st.open === 0 && !st.inert && st.activeTestId === "signal-SIG-ENR-01", JSON.stringify(st));
+
+  // E. About and Reset dialogs use the same primitive
+  for (const [btnName, dlgName] of [["About this prototype", "About this prototype"], ["Reset demonstration", "Reset demonstration?"]]) {
+    const btn = page.getByRole("button", { name: btnName }).first();
+    await btn.focus(); await page.keyboard.press("Enter");
+    await page.getByRole("dialog", { name: dlgName }).waitFor(); await settle(150);
+    const m = await state();
+    check(`${dlgName.replace("?", "")} dialog: native modal, named, background inert`, m.open === 1 && m.modal && m.inert && m.title === dlgName, JSON.stringify(m));
+    await page.evaluate(() => document.querySelector('select[aria-label="Simulated demonstration role"]')?.focus());
+    check(`${dlgName.replace("?", "")} dialog: background controls cannot take focus`, (await state()).focusInside);
+    await escClose(page); await settle(150);
+    const m2 = await state();
+    check(`${dlgName.replace("?", "")} dialog: Escape closes, background restored, focus back on opener`, m2.open === 0 && !m2.inert && (m2.activeLabel === btnName || (await page.evaluate(() => document.activeElement?.textContent?.trim())) === btnName), JSON.stringify(m2));
+  }
   await ctx.close();
 }
 
@@ -315,6 +434,10 @@ const drawerId = async (page, expected) => {
   await page.screenshot({ path: `${SHOTS}/mobile-drawer.png` });
   const w = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: window.innerWidth }));
   check("Mobile drawer no horizontal overflow", w.sw <= w.iw + 1);
+  const mob = await page.evaluate(() => ({ modal: !!document.querySelector("dialog[open]")?.matches(":modal"), inert: document.getElementById("app-root")?.inert === true, inside: !!document.activeElement?.closest("dialog[open]") }));
+  check("Mobile drawer: native modal, background inert, focus inside", mob.modal && mob.inert && mob.inside, JSON.stringify(mob));
+  await escClose(page); await page.waitForTimeout(250);
+  check("Mobile drawer: Escape closes and background is restored", (await page.evaluate(() => document.querySelectorAll("dialog[open]").length === 0 && document.getElementById("app-root")?.inert === false)));
   await page.goto(BASE + "/entry/energy"); await page.screenshot({ path: `${SHOTS}/mobile-entry-energy.png`, fullPage: true });
   await ctx.close();
 }

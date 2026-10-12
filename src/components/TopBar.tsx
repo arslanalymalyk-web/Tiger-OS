@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Bell, ChevronDown, Info, Landmark, LogOut, Menu, RotateCcw, Search, X } from "lucide-react";
 import { INSTITUTION, KIND_LABEL, NOTIFICATIONS, SECTORS, SECTOR_BY_ID, fmtTime, search } from "@/data";
@@ -8,7 +8,8 @@ import type { Role, SectorId } from "@/lib/types";
 import { useRecordNav } from "@/lib/useRecordNav";
 import { ROLES, useDemo } from "@/state/DemoProvider";
 import { STAGES } from "@/data/roadmap";
-import { trapTab } from "@/lib/focus";
+import { createPortal } from "react-dom";
+import { ModalDialog } from "./ModalDialog";
 import { DemoTag, KindChip, SECTOR_ICONS } from "./ui";
 
 function useOutside(ref: React.RefObject<HTMLElement | null>, onOut: () => void, active: boolean) {
@@ -22,7 +23,7 @@ function useOutside(ref: React.RefObject<HTMLElement | null>, onOut: () => void,
   }, [active, onOut, ref]);
 }
 
-function Menu_({ label, icon, children, align = "left", width = "w-72" }: { label: React.ReactNode; icon?: React.ReactNode; children: (close: () => void) => React.ReactNode; align?: "left" | "right"; width?: string }) {
+function Menu_({ label, icon, children, align = "left", width = "w-72", testId }: { label: React.ReactNode; icon?: React.ReactNode; children: (close: () => void) => React.ReactNode; align?: "left" | "right"; width?: string; testId?: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const btn = useRef<HTMLButtonElement>(null);
@@ -35,7 +36,7 @@ function Menu_({ label, icon, children, align = "left", width = "w-72" }: { labe
   }, [open]);
   return (
     <div ref={ref} className="relative">
-      <button ref={btn} onClick={() => setOpen((o) => !o)} aria-haspopup="true" aria-expanded={open} className="flex items-center gap-1.5 rounded-lg border border-line bg-white px-2.5 py-1.5 text-sm text-ink hover:border-em-600">
+      <button ref={btn} data-testid={testId} onClick={() => setOpen((o) => !o)} aria-haspopup="true" aria-expanded={open} className="flex items-center gap-1.5 rounded-lg border border-line bg-white px-2.5 py-1.5 text-sm text-ink hover:border-em-600">
         {icon}<span className="max-w-[8rem] truncate">{label}</span><ChevronDown size={14} className="text-muted" aria-hidden />
       </button>
       {open && <div className={`absolute z-40 mt-1 ${width} ${align === "right" ? "right-0" : "left-0"} max-w-[calc(100vw-1.5rem)] rounded-xl border border-line bg-white p-1.5 shadow-card`}>{children(() => setOpen(false))}</div>}
@@ -74,7 +75,7 @@ function SectorSelector() {
   const cur = sectorId ? SECTOR_BY_ID[sectorId].sector : null;
   const Icon = sectorId ? SECTOR_ICONS[sectorId] : Landmark;
   return (
-    <Menu_ label={cur?.short ?? "Select sector"} icon={<><span className="hidden text-[10px] font-semibold uppercase tracking-wider text-muted sm:inline">Sector</span><Icon size={14} className="text-em-700" aria-hidden /></>}>
+    <Menu_ testId="sector-selector" label={cur?.short ?? "Select sector"} icon={<><span className="hidden text-[10px] font-semibold uppercase tracking-wider text-muted sm:inline">Sector</span><Icon size={14} className="text-em-700" aria-hidden /></>}>
       {(close) => SECTORS.map((s) => {
         const I = SECTOR_ICONS[s.id];
         return (
@@ -192,22 +193,17 @@ function Notifications() {
 }
 
 function Modal({ title, onClose, children, wide }: { title: string; onClose: () => void; children: React.ReactNode; wide?: boolean }) {
-  const box = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const opener = document.activeElement as HTMLElement | null;
-    box.current?.focus();
-    const k = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); else trapTab(e, box.current); };
-    window.addEventListener("keydown", k);
-    return () => { window.removeEventListener("keydown", k); if (opener && document.contains(opener)) opener.focus(); };
-  }, [onClose]);
-  return (
-    <div className="fixed inset-0 z-[60] grid place-items-center p-3" role="dialog" aria-modal="true" aria-label={title}>
-      <div className="absolute inset-0 bg-em-950/50" onClick={onClose} aria-hidden />
-      <div ref={box} tabIndex={-1} className={`outline-none relative max-h-[90vh] w-full overflow-y-auto rounded-2xl bg-ivory p-5 shadow-2xl sm:p-6 ${wide ? "max-w-2xl" : "max-w-md"}`}>
-        <div className="mb-3 flex items-start justify-between gap-3"><h2 className="font-serif text-xl">{title}</h2><button onClick={onClose} aria-label="Close" className="rounded-md p-1 hover:bg-ivory-2"><X size={18} /></button></div>
+  const titleId = useId();
+  // Rendered in a portal so that #app-root (which contains the top bar) can be made inert while the dialog is open.
+  return createPortal(
+    <ModalDialog labelledBy={titleId} onClose={onClose}
+      className={`m-auto max-h-[90vh] w-[calc(100%-1.5rem)] overflow-y-auto rounded-2xl bg-ivory p-0 text-ink shadow-2xl outline-none backdrop:bg-em-950/50 ${wide ? "max-w-2xl" : "max-w-md"}`}>
+      <div className="p-5 sm:p-6">
+        <div className="mb-3 flex items-start justify-between gap-3"><h2 id={titleId} className="font-serif text-xl">{title}</h2><button onClick={onClose} aria-label="Close" className="rounded-md p-1 hover:bg-ivory-2"><X size={18} /></button></div>
         {children}
       </div>
-    </div>
+    </ModalDialog>,
+    document.body,
   );
 }
 
