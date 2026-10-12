@@ -89,13 +89,13 @@ PASS  Command centre lists the new case and links to its workspace
 PASS  Signal SIG-LOG-05 now shows its case
 PASS  Search finds the new case by title
 PASS  A search result for a new case opens its record drawer with a workspace link
-PASS  Search finds evidence by readable content and tasks/hypotheses by text
+PASS  Search finds evidence by readable content and tasks/hypotheses by text  — INTELLIGENCE CASE CAS-LOG-03 Logistics Gateway Port vessel w | SIGNAL SIG-LOG-05 Logistics Gateway Port vessel waiting time | EVIDENCE EVD-LOG-04 Logistics Red Sea Gateway Port operation | Analyst | Expert | Approver
 PASS  Creating a case adds an unread notification  — 19 → 20
 PASS  The new notification opens the case
 PASS  Notification read state persists after reload
 PASS  Stage 1 saved state is migrated with a visible notice
 PASS  Migrated role, sector and read state are kept
-PASS  Migration writes the Stage 2 format and removes the Stage 1 key
+PASS  Migration writes the Stage 3 format and removes the Stage 1 key
 PASS  Malformed saved state shows a recovery message that names the problem
 PASS  The unreadable saved data is not overwritten while the message is shown
 PASS  Changes are blocked with an explanation until the saved state is reset
@@ -104,7 +104,7 @@ PASS  After recovery the seeded cases are shown and editing works again
 PASS  Recovery message for unsupported newer schema
 PASS  Recovery message for invalid case data
 PASS  Stage 2 changes are persisted before Reset
-PASS  Reset confirmation describes removing Stage 2 changes
+PASS  Reset confirmation describes removing Stage 2 and Stage 3 changes
 PASS  Cancelling Reset keeps the changes
 PASS  Reset removes all Stage 2 work, read state and entry (only the route-synced sector selection may be re-saved)  — re-saved: sector selection only
 PASS  Reset restores the 18 seeded cases and the untriaged signal

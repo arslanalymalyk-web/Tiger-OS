@@ -38,7 +38,7 @@ const openCase = async (page, id, tab = "overview") => { await goto(page, `/case
 const statusOf = async (page) => (await tid(page, "case-status").first().textContent())?.trim();
 const errText = async (page) => ((await tid(page, "form-errors").first().innerText().catch(() => "")) || "");
 const wait = (page, ms = 150) => page.waitForTimeout(ms);
-const stored = (page) => page.evaluate(() => { const v = localStorage.getItem("tigeris.demo.v2"); return v ? JSON.parse(v) : null; });
+const stored = (page) => page.evaluate(() => { const v = localStorage.getItem("tigeris.demo.v3"); return v ? JSON.parse(v) : null; });
 const SECTORS = [["energy", "ENR"], ["banking", "BNK"], ["insurance", "INS"], ["manufacturing", "MFG"], ["logistics", "LOG"], ["realestate", "REA"], ["infrastructure", "INF"], ["sovereign", "SOV"]];
 
 // ============================================================ A. Cases list, filters, empty state
@@ -307,7 +307,7 @@ await section("roles", async (page) => {
   check("Analyst sees edit controls", (await tid(page, "save-case").count()) === 1);
   await role(page, "Approver");
   await page.waitForTimeout(150);
-  check("Approver sees a read-only case with an explanation (no Save, locked note shown)", (await tid(page, "save-case").count()) === 0 && (await tid(page, "locked-note").count()) >= 1 && /Approvals cannot be recorded in Stage 2/.test(await tid(page, "role-notice").innerText()));
+  check("Approver sees a read-only case with an explanation (no Save, locked note shown)", (await tid(page, "save-case").count()) === 0 && (await tid(page, "locked-note").count()) >= 1 && /Approvals cannot be recorded yet/.test(await tid(page, "role-notice").innerText()));
   check("Role restrictions are labelled as demonstration behaviour, not security", /not production authentication or security/.test(await tid(page, "role-notice").innerText()));
   await tid(page, "tab-brief").click(); await wait(page, 400);
   check("Approver can read the brief but has no Compile or Edit button", (await tid(page, "brief-view").count()) === 1 && (await tid(page, "compile-brief").count()) === 0 && (await tid(page, "edit-brief").count()) === 0);
@@ -355,9 +355,11 @@ await section("dashboard-search-notifications", async (page) => {
   await page.locator('dialog[open][aria-labelledby="record-drawer-title"]').waitFor();
   check("A search result for a new case opens its record drawer with a workspace link", (await tid(page, "drawer-open-workspace").count()) === 1);
   await page.keyboard.press("Escape");
+  await page.waitForFunction(() => !document.querySelector("dialog[open]"), null, { timeout: 5000 });
+  await search.fill("");
   await search.fill("crane");
   await page.getByRole("option").filter({ hasText: "EVD-LOG-04" }).first().waitFor().catch(() => {});
-  check("Search finds evidence by readable content and tasks/hypotheses by text", (await page.getByRole("option").filter({ hasText: "EVD-LOG-04" }).count()) >= 1);
+  check("Search finds evidence by readable content and tasks/hypotheses by text", (await page.getByRole("option").filter({ hasText: "EVD-LOG-04" }).count()) >= 1, (await page.getByRole("option").allInnerTexts()).map((t) => t.replace(/\s+/g, " ").slice(0, 60)).join(" | "));
   await search.fill("");
   const unread1 = Number(await tid(page, "unread-count").textContent());
   check("Creating a case adds an unread notification", unread1 === unread0 + 1, `${unread0} → ${unread1}`);
@@ -373,7 +375,7 @@ await section("dashboard-search-notifications", async (page) => {
 // ============================================================ J. Migration, recovery, reset
 await (async () => {
   // Migration from Stage 1 saved state
-  const h = await fresh({ init: () => { try { if (!localStorage.getItem("tigeris.demo.v2") && !sessionStorage.getItem("seeded")) { localStorage.setItem("tigeris.demo.v1", JSON.stringify({ sectorId: "infrastructure", role: "Approver", readIds: ["NTF-01", "NTF-03"], entered: true })); sessionStorage.setItem("seeded", "1"); } } catch {} } });
+  const h = await fresh({ init: () => { try { if (!localStorage.getItem("tigeris.demo.v3") && !sessionStorage.getItem("seeded")) { localStorage.setItem("tigeris.demo.v1", JSON.stringify({ sectorId: "infrastructure", role: "Approver", readIds: ["NTF-01", "NTF-03"], entered: true })); sessionStorage.setItem("seeded", "1"); } } catch {} } });
   const page = h.page;
   try {
     await goto(page, "/workspaces");
@@ -381,17 +383,17 @@ await (async () => {
     check("Stage 1 saved state is migrated with a visible notice", /migrated/.test(await tid(page, "migration-banner").innerText()));
     check("Migrated role, sector and read state are kept", (await page.getByLabel("Simulated demonstration role").inputValue()) === "Approver" && (await tid(page, "workspace-infrastructure").innerText()).includes("Last selected") && Number(await tid(page, "unread-count").textContent()) === 17);
     const st = await stored(page);
-    check("Migration writes the Stage 2 format and removes the Stage 1 key", st?.schemaVersion === 2 && (await page.evaluate(() => localStorage.getItem("tigeris.demo.v1"))) === null);
+    check("Migration writes the Stage 3 format and removes the Stage 1 key", st?.schemaVersion === 3 && (await page.evaluate(() => localStorage.getItem("tigeris.demo.v1"))) === null);
   } catch (e) { check("migration: completed", false, String(e.message).split("\n")[0]); }
   await h.ctx.close();
 })();
 
 await section("recovery", async (page, ctx) => {
-  await ctx.addInitScript(() => { try { if (!sessionStorage.getItem("bad")) { localStorage.setItem("tigeris.demo.v2", "{this is not json"); sessionStorage.setItem("bad", "1"); } } catch {} });
+  await ctx.addInitScript(() => { try { if (!sessionStorage.getItem("bad")) { localStorage.setItem("tigeris.demo.v3", "{this is not json"); sessionStorage.setItem("bad", "1"); } } catch {} });
   await goto(page, "/cases");
   await tid(page, "recovery-banner").waitFor();
   check("Malformed saved state shows a recovery message that names the problem", /not valid JSON/.test(await tid(page, "recovery-banner").innerText()));
-  check("The unreadable saved data is not overwritten while the message is shown", (await page.evaluate(() => localStorage.getItem("tigeris.demo.v2"))) === "{this is not json");
+  check("The unreadable saved data is not overwritten while the message is shown", (await page.evaluate(() => localStorage.getItem("tigeris.demo.v3"))) === "{this is not json");
   await tid(page, "new-case-button").click();
   await tid(page, "create-sector").selectOption("energy");
   await tid(page, "create-title").fill("Should not be saved while recovering");
@@ -401,13 +403,13 @@ await section("recovery", async (page, ctx) => {
   await tid(page, "recovery-reset").click();
   await tid(page, "recovery-confirm").click();
   await page.waitForTimeout(400);
-  check("Explicit reset clears the unreadable data and removes the message", (await tid(page, "recovery-banner").count()) === 0 && (await page.evaluate(() => localStorage.getItem("tigeris.demo.v2"))) === null);
+  check("Explicit reset clears the unreadable data and removes the message", (await tid(page, "recovery-banner").count()) === 0 && (await page.evaluate(() => localStorage.getItem("tigeris.demo.v3"))) === null);
   await goto(page, "/cases");
   check("After recovery the seeded cases are shown and editing works again", (await tid(page, "case-count").innerText()).includes("18 of 18") && (await tid(page, "new-case-button").count()) === 1);
 });
-for (const [label, value] of [["unsupported newer schema", JSON.stringify({ schemaVersion: 99, ui: {}, work: {} })], ["invalid case data", JSON.stringify({ schemaVersion: 2, ui: { sectorId: "energy", role: "Analyst", readIds: [], entered: true }, work: { cases: { "CAS-ENR-09": { id: "CAS-ENR-09" } }, notifications: [], counters: { case: {}, notification: 0 } } })]]) {
+for (const [label, value] of [["unsupported newer schema", JSON.stringify({ schemaVersion: 99, ui: {}, work: {} })], ["invalid case data", JSON.stringify({ schemaVersion: 3, ui: { sectorId: "energy", role: "Analyst", readIds: [], entered: true }, work: { cases: { "CAS-ENR-09": { id: "CAS-ENR-09" } }, notifications: [], counters: { case: {}, notification: 0 } } })]]) {
   await section(`recovery-${label}`, async (page, ctx) => {
-    await ctx.addInitScript((v) => { try { if (!sessionStorage.getItem("bad")) { localStorage.setItem("tigeris.demo.v2", v); sessionStorage.setItem("bad", "1"); } } catch {} }, value);
+    await ctx.addInitScript((v) => { try { if (!sessionStorage.getItem("bad")) { localStorage.setItem("tigeris.demo.v3", v); sessionStorage.setItem("bad", "1"); } } catch {} }, value);
     await goto(page, "/cases");
     await tid(page, "recovery-banner").waitFor();
     check(`Recovery message for ${label}`, (await tid(page, "recovery-banner").innerText()).length > 60);
@@ -426,14 +428,14 @@ await section("reset", async (page) => {
   check("Stage 2 changes are persisted before Reset", Object.keys((await stored(page)).work.cases).length === 2);
   await page.getByRole("button", { name: "Reset demonstration" }).first().click();
   await page.getByRole("dialog", { name: "Reset demonstration?" }).waitFor();
-  check("Reset confirmation describes removing Stage 2 changes", /removes every Stage 2 change/.test(await page.getByRole("dialog", { name: "Reset demonstration?" }).innerText()));
+  check("Reset confirmation describes removing Stage 2 and Stage 3 changes", /removes every Stage 2 and Stage 3 change/.test(await page.getByRole("dialog", { name: "Reset demonstration?" }).innerText()));
   await page.getByRole("button", { name: "Cancel" }).click();
   check("Cancelling Reset keeps the changes", Object.keys((await stored(page)).work.cases).length === 2);
   await page.getByRole("button", { name: "Reset demonstration" }).first().click();
   await page.getByRole("dialog", { name: "Reset demonstration?" }).getByRole("button", { name: "Reset demonstration" }).click();
   await page.waitForURL("**/workspaces");
   await wait(page, 900);
-  const afterReset = await page.evaluate(() => localStorage.getItem("tigeris.demo.v2"));
+  const afterReset = await page.evaluate(() => localStorage.getItem("tigeris.demo.v3"));
   const resetState = afterReset ? JSON.parse(afterReset) : null;
   check("Reset removes all Stage 2 work, read state and entry (only the route-synced sector selection may be re-saved)", resetState === null || (Object.keys(resetState.work.cases).length === 0 && resetState.work.notifications.length === 0 && resetState.ui.readIds.length === 0 && resetState.ui.entered === false && resetState.ui.role === "Analyst"), afterReset ? "re-saved: sector selection only" : "storage key cleared");
   await goto(page, "/cases");

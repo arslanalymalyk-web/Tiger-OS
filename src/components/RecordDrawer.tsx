@@ -168,7 +168,7 @@ function DecisionBody({ d, open }: { d: Decision; open: (id: string) => void }) 
       <Assumptions items={d.assumptions} />
       <StageBoundary stage={5} capability="Approval workflow">
         {role === "Approver" ? "As the simulated Approver you would decide here. " : role ? `The ${role} role cannot approve in the full product. ` : ""}
-        Recording approvals, delegated authority and an audit trail are not available in Stage 2; decisions stay pending proposals.
+        Recording approvals, delegated authority and an audit trail are not available yet (Stage 5); decisions stay pending proposals.
       </StageBoundary>
     </>
   );

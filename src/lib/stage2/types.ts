@@ -1,5 +1,6 @@
 /** Stage 2 model: investigation workspace aggregates, reviews and decision briefs. All records are fictional/local. */
 import type { Role, SectorId } from "../types";
+import { emptyAi, type AiState } from "../stage3/types";
 
 export const CASE_STATUSES = ["Draft", "Investigating", "Expert review", "Brief ready", "Closed"] as const;
 export type CaseStatus = (typeof CASE_STATUSES)[number];
@@ -44,7 +45,10 @@ export interface EvidenceLink {
   note: string; refs: string[]; linkedAt: string; linkedBy: string;
   unlinkedAt?: string; unlinkedBy?: string; history: StanceChange[];
 }
+/** Where a record came from when it was created from a reviewed Stage 3 proposal. */
+export interface AiOrigin { kind: "assistant-proposal"; runId: string; mode: "ai" | "deterministic" | "mock-provider"; provider?: string; model?: string; edited: boolean; acceptedAt: string }
 export interface Task {
+  origin?: AiOrigin;
   id: string; title: string; description: string; assigneeId: string; dueDate: string; status: TaskStatus;
   evidenceIds: string[]; findings: string; completionNote: string; createdAt: string; completedAt?: string;
 }
@@ -84,7 +88,7 @@ export interface BriefBasis {
   reviews: { requestId: string; round: number; outcome: ReviewOutcome | "Pending" }[];
 }
 export interface BriefVersion {
-  id: string; version: number; createdAt: string; createdBy: string; source: "compiled" | "edited";
+  id: string; version: number; createdAt: string; createdBy: string; source: "compiled" | "edited" | "assistant-draft"; origin?: AiOrigin;
   note: string; content: BriefContent; basis: BriefBasis;
 }
 export interface CaseEvent { id: string; at: string; actor: string; type: string; text: string }
@@ -107,15 +111,17 @@ export interface CaseAggregate {
 
 export interface StoredNotification { id: string; sectorId: SectorId; at: string; title: string; body: string; recordId?: string }
 export interface WorkState {
+  /** Stage 3: local assistant runs (provenance, output, dispositions). */
+  ai: AiState;
   /** Copy-on-write overrides of seeded cases plus cases created in Stage 2, keyed by case ID. */
   cases: Record<string, CaseAggregate>;
   notifications: StoredNotification[];
   counters: { case: Partial<Record<SectorId, number>>; notification: number };
 }
-export const emptyWork = (): WorkState => ({ cases: {}, notifications: [], counters: { case: {}, notification: 0 } });
+export const emptyWork = (): WorkState => ({ ai: emptyAi(), cases: {}, notifications: [], counters: { case: {}, notification: 0 } });
 
 export type Action =
   | "case.create" | "case.edit" | "case.transition" | "evidence.link" | "task.edit" | "task.progress"
-  | "review.request" | "review.submit" | "brief.compile" | "brief.edit";
+  | "review.request" | "review.submit" | "brief.compile" | "brief.edit" | "ai.run" | "ai.review";
 export interface Ctx { role: Role; now: string }
 export type Result<T = unknown> = { ok: true; work: WorkState; value: T } | { ok: false; errors: string[]; code?: string; caseId?: string };

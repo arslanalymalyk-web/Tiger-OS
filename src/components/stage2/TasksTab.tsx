@@ -15,7 +15,7 @@ export function TasksTab({ c }: { c: CaseAggregate }) {
   const canEdit = can(role, "task.edit") && c.status !== "Closed";
   return (
     <>
-      <p className="rounded-lg border border-dashed border-gd-500/60 bg-gd-100/50 p-3 text-sm text-ink-2" role="note">These are <b>human investigation assignments</b> for named people. They are not executed by an AI agent; AI assistance is a later stage.</p>
+      <p className="rounded-lg border border-dashed border-gd-500/60 bg-gd-100/50 p-3 text-sm text-ink-2" role="note">These are <b>human investigation assignments</b> for named people. They are not executed by an AI agent. The AI assistance tab can propose tasks, but a proposal becomes a task only when an Analyst accepts it.</p>
       <CardSection title={`Investigation tasks (${c.tasks.length})`}>
         {c.tasks.length === 0 ? <p className="text-sm text-muted">No tasks yet.</p> : <ul className="space-y-3">{c.tasks.map((t) => <TaskCard key={t.id} c={c} t={t} />)}</ul>}
         {!canEdit && <div className="mt-3"><Locked action="task.edit" what="assign tasks"><span /></Locked></div>}
@@ -37,6 +37,7 @@ function TaskCard({ c, t }: { c: CaseAggregate; t: Task }) {
   return (
     <li className="rounded-lg border border-line p-3" data-testid={`task-${t.id}`} id={`focus-${t.id}`}>
       <div className="flex flex-wrap items-center gap-2"><span className="text-sm font-semibold">{t.title}</span><code className="font-mono text-[11px] text-muted">{t.id}</code><span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${t.status === "Done" ? "border-sg-500/40 bg-sg-100 text-sg-700" : t.status === "Blocked" ? "border-am-600/30 bg-am-100 text-am-800" : "border-line bg-ivory-2"}`} data-testid={`task-status-${t.id}`}>{t.status}</span></div>
+      {t.origin && <p className="mt-1 text-xs text-ink-2" data-testid={`task-origin-${t.id}`}>Created from assistant proposal <b>{t.origin.runId}</b> ({t.origin.mode === "ai" ? `AI-generated · ${t.origin.provider} · ${t.origin.model}` : t.origin.mode === "deterministic" ? "deterministic demonstration, not AI" : "mocked provider, not AI"}), accepted {fmtDate(t.origin.acceptedAt)}{t.origin.edited ? " after Analyst edits" : ""}.</p>}
       <p className="mt-1 text-xs text-ink-2">Assignee: <b>{personLabel(t.assigneeId)}</b> ({assignee?.kind}) · due {fmtDate(t.dueDate)}</p>
       {t.description && <p className="mt-1 text-sm">{t.description}</p>}
       {t.evidenceIds.length > 0 && <p className="mt-1 text-xs text-muted">Evidence: {t.evidenceIds.map((id) => <Link key={id} href={`/evidence/${id}`} className="mr-2 font-mono text-em-700 underline">{id}</Link>)}</p>}

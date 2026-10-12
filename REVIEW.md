@@ -1,4 +1,84 @@
-# Stage 2 review package
+# Stage 3 review package
+
+Stage 3 — *AI Command and Evidence-Grounded Assistance* — is implemented on branch `claude/gifted-pasteur-r27uuo`. It is **not merged and not deployed**; Stage 4 has not been started. All data is fictional. **No real model call was made or verified in this build** (no credentials were available). Roles are demonstration behaviour, not security. Run history is local demonstration history, not an immutable audit log. Nothing here claims WCAG compliance, production readiness or compliance certification.
+
+## T1. Run it
+```bash
+npm install && npm run build && npm start -- -p 3100                 # no provider: "AI provider not configured"
+TIGERIS_AI_TEST_MOCK=1 TIGERIS_AI_TIMEOUT_MS=3000 npm start -- -p 3101 &  # test fixture only (labelled "Mocked provider, not AI")
+npm run verify && npm run verify:store && npm run verify:ai
+npm run e2e && npm run e2e:stage2 && npm run e2e:stage3 -- http://localhost:3100 http://localhost:3101
+node scripts/a11y.mjs http://localhost:3100 ./review
+```
+Real provider (optional): set `ANTHROPIC_API_KEY` and `TIGERIS_AI_MODEL` in `.env.local` (see README “AI provider setup”), restart, then `npm run smoke:provider`.
+
+## T2. What was implemented
+- **`/ai-command`**: four assistants and responsibilities; approved capabilities and evidence scope; provider status; filterable run history (status, mode, role, case, timestamps, provider/model, disposition, Needs refresh).
+- **AI assistance tab on every case** (all eight sectors): five operations, exact evidence scope shown before a run, deterministic demonstration run (“not AI”) always available, AI run only when a provider is configured.
+- **Validated, cited output** separated into source-supported findings / inferences / contradictions / missing information / next steps, “insufficient evidence”, rejected items with reasons. Citations are checked against the supplied evidence version and reference; quotations must appear in the passage; figures must appear in the supplied material; instruction-like passages are not accepted as evidence; no financial impact is calculated.
+- **Human review**: edit, accept or discard task and brief proposals; acceptance creates a normal task / new brief version with `origin` recorded; stale proposals cannot be accepted; Expert findings untouched; Experts run but cannot accept; Approver is read-only.
+- **Server-side provider adapter** (Anthropic Messages API via the official SDK, explicit model, no tools, no retries, credentials only in server env) and a no-credential mode that never silently falls back.
+- **Run management**: states, 45 s default timeout (configurable), local cancellation with the “may not stop the provider” caveat, late results discarded, duplicate-submit protection (client, store and server), input/output limits, visible rate-limit/provider/malformed/refusal errors, provider-reported usage only.
+- **Provenance and staleness**, persistence schema 3 with Stage 2/Stage 1 migration, recovery and Reset; interrupted runs shown as failed.
+
+## T3. Client walkthrough (about 6 minutes, no credentials needed)
+1. **Enter demonstration** as Analyst → **AI command**: note “AI provider not configured”, the four assistants, the capabilities list and the empty run history.
+2. Open **CAS-LOG-01 → AI assistance**. Read the exact scope (EVD-LOG-01, 02, 04, 05 at v1; hypotheses, tasks, notes; “not retrieved” statement).
+3. **Run deterministic demonstration** → *Summarize*: badge “Deterministic demonstration (not AI)”, “no model used”, cited findings. Click a citation chip to read the highlighted passage.
+4. Ask “What is the weather forecast for Paris next week?” → **Insufficient evidence**. Ask “What does the port bulletin say about release congestion?” → cited passage.
+5. *Identify conflicting evidence and missing information* → missing information list. *Suggest next investigation tasks* → proposals; **Edit** one, **Accept** it → Tasks tab shows a new task with its origin; **Discard** another (case unchanged).
+6. *Draft a decision brief* → **Edit** next step → **Accept as new brief version** → Decision brief tab shows v2 with origin; v1 retained; Stage 2 **Compile brief** still present.
+7. On Hypotheses & evidence, change a hypothesis status → return to AI assistance: the earlier run shows **Needs refresh** with the reason and its Accept button is disabled.
+8. Switch role to **Expert** (can run, cannot accept) and **Approver** (read-only). **Reset demonstration** removes all runs.
+9. (Operator) Start the fixture server (`TIGERIS_AI_TEST_MOCK=1`) to see mocked-provider runs, rejected citations, failures, timeout and cancellation; or configure a real provider.
+
+## T4. Screenshots (`review/stage3-screenshots/`, Chromium)
+`ai-command-no-provider.png`, `ai-command-runs.png`, `case-assistance-scope.png` (also the no-provider state), `cited-output.png`, `human-acceptance.png`, `brief-proposal-accepted.png`, `run-rejected-citations.png` (mocked provider), `run-error-provider-failure.png` (mocked provider), `run-needs-refresh.png`, `mobile-ai-command.png`, `mobile-case-assistance.png`.
+
+## T5. Verification — actual results (final build, Chromium only)
+| Check | Result |
+|---|---|
+| `tsc --noEmit`, `npm run lint`, `npm run build` | pass, no errors or warnings |
+| `npm run verify:data` | all integrity checks pass |
+| `npm run verify:store` (Stage 2) | 462 / 462 |
+| `npm run verify:ai` (Stage 3 logic) | 221 / 221 — **mock provider fixture and pure logic; no real model call** (`review/verify-ai-results.txt`) |
+| Stage 1 browser checks | 130 / 130 |
+| Stage 2 browser checks | 198 / 198 |
+| Stage 3 browser checks (`scripts/e2e-stage3.mjs`) | 168 / 168 — plain server (no provider) plus **mock-fixture server; outputs on the latter are not AI** (`review/e2e-stage3-results.txt`) |
+| axe-core (`scripts/a11y.mjs`) | 76 scans, **0 violations**, **1,433 unresolved “incomplete”** colour-contrast nodes — see §8 |
+| Real provider smoke test (`npm run smoke:provider`) | **NOT PERFORMED** — no credentials (`review/smoke-provider-result.txt`) |
+
+Stage 3 tests cover: valid/invalid citations (id, version, reference, quotation, instruction passage); invented figures and calculated financial impact; unsupported questions and insufficient evidence; contradictory content (two distinct cited passages required); instructions embedded in evidence; provider failure, rate limit, auth, refusal, malformed and over-long responses; timeout and cancellation (late result discarded); duplicate submission; input changes during a run and stale outputs; accept/edit/discard and role restrictions; persistence, migration, interrupted runs, corrupted saved runs and Reset; one assistance workflow in every sector (deterministic) and one with the mocked provider in every sector; keyboard operation of the controls; mobile overflow at 390 px.
+
+**Not run / not available:** any real model call; Firefox and WebKit; screen readers; human or manual testing. The browser checks are automated Chromium sessions, not human testing. Unresolved contrast items (§8, now including the new pages) are **not** claimed to pass.
+
+Fixes during this pass: a stale-run bug found by testing (the selected run view did not switch until a provider call returned, hiding Cancel while running) was fixed by selecting the run as soon as it starts; one existing Stage 2 browser check was made robust against a drawer-closing race.
+
+## T6. Limitations
+- **No real model has been exercised.** Prompt quality, model behaviour, token use and latency are unmeasured. The validators are deterministic heuristics: they confirm that citations exist and quotations are verbatim, but **cannot confirm that a passage supports a claim** — the UI says so and a reviewer must judge.
+- Validation is conservative and can reject legitimate text (for example wording that resembles an instruction, or numbers not in the supplied material). Rejected items are listed.
+- Deterministic demonstration output is simple text assembly (it quotes passages); it is useful for the workflow, not a measure of AI quality.
+- Cancelling or timing out stops waiting locally; the provider may still process (and bill) the request. The server-side duplicate guard is per process only.
+- Evidence scope is the case's linked evidence only; there is no retrieval or search over other records.
+- State is local to one browser (no backend, no multi-user, no real authentication); role limits are cosmetic demonstration behaviour. Notifications and history are local.
+- Financial impact is not calculated (Stage 4); approvals, execution, integrations and monitoring do not exist.
+- Only Chromium was exercised; contrast and screen-reader behaviour are unverified manually.
+
+## T7. Client-review checklist
+- [ ] Without credentials the app clearly says “AI provider not configured” and nothing pretends to be AI.
+- [ ] Deterministic and mocked outputs are unmistakably labelled; none is described as AI-generated.
+- [ ] The scope shown before a run matches expectations (linked evidence only).
+- [ ] Citations open the right passage; rejected items and “Insufficient evidence” are understandable.
+- [ ] Proposals never change a case until accepted; accepted tasks/briefs show their origin.
+- [ ] “Needs refresh” and disabled acceptance are understandable.
+- [ ] Role limits (Analyst / Expert / Approver) are clearly labelled as demonstration behaviour.
+- [ ] An operator with a real key runs `npm run smoke:provider` and reviews real output quality before any AI claim is made.
+- [ ] Keyboard use and a phone-width viewport are acceptable (a human must confirm).
+- [ ] Unresolved contrast items in §8 assigned for manual measurement.
+
+---
+
+# Stage 2 review package (retained)
 
 Stage 2 — *Intelligence Cases, Evidence and Expert Collaboration* — is implemented on branch `claude/gifted-pasteur-r27uuo`. It is **not merged and not deployed**. Stage 3 has not been started. All data is fictional and illustrative; there is no AI, no integration and no message to any real person. Roles are demonstration behaviour, not security. History is local demonstration activity, not an audit log. Nothing here claims WCAG compliance.
 
@@ -169,9 +249,9 @@ Source: `scripts/a11y.mjs` (axe-core, WCAG 2.0/2.1 A+AA, Chromium). Files: `revi
 
 **Manual check required (general):** at 100% zoom, sample the rendered foreground and background colours of each listed element with a contrast tool (browser DevTools contrast picker or Colour Contrast Analyser), including hover/focus states, and record the ratio. Re-check text over the entry-page illustration at 200% zoom. A person should confirm results; the automated scan cannot.
 
-Scans: 66; violating nodes: 0; unresolved ("incomplete") nodes: 1358.
+Scans: 76; violating nodes: 0; unresolved ("incomplete") nodes: 1433.
 
-Pages/states with no violations and no unresolved items: `/workspaces`, `/roadmap`, `/cases`, `/evidence`, `/reviews`, `/cases (Create case dialog open)`, `/sector/banking (record drawer open: SIG-BNK-03)`.
+Pages/states with no violations and no unresolved items: `/workspaces`, `/roadmap`, `/cases`, `/evidence`, `/reviews`, `/ai-command`, `/cases (Create case dialog open)`, `/sector/banking (record drawer open: SIG-BNK-03)`.
 
 | Page / state | Screenshots (annotated) | Element family | Why axe left it unresolved | Nodes (desktop / mobile) | Example element | Manual check required |
 |---|---|---|---|---|---|---|
@@ -190,12 +270,15 @@ Pages/states with no violations and no unresolved items: `/workspaces`, `/roadma
 | `/overview` | [desktop](review/a11y-screenshots/desktop-overview.jpg), [mobile](review/a11y-screenshots/mobile-overview.jpg) | Chart SVG text (axis ticks, axis titles, category or value labels) | text too short to classify | 2 / 2 | `text[y="208"][x="71"][dominant-baseline="middle"] — “0”` | Measure rendered text colour against the white card for each label style (ticks #5a6761, titles/categories #34453f, values #0e2a23); 11px text needs 4.5:1. Axe cannot resolve SVG text backgrounds. |
 | `/methodology` | [mobile](review/a11y-screenshots/mobile-methodology.jpg) | Other text | partially obscured by another element | 0 / 89 | `#energy > .overflow-x-auto.mt-3[role="region"] > table > tbody > .border-line-2. — “kboe/dSep 2026 monthly average”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
 | `/evidence/EVD-LOG-01` | [mobile](review/a11y-screenshots/mobile-evidence-evd-log-01.jpg) | Other text | partially obscured by another element | 0 / 24 | `#ref-T1R1 > .tabular-nums:nth-child(4) — “410”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
-| `/cases/CAS-LOG-01?tab=overview` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-overview.jpg) | Other text | partially obscured by another element | 0 / 3 | `#tab-review — “Expert review1”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
-| `/cases/CAS-LOG-01?tab=evidence` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-evidence.jpg) | Other text | partially obscured by another element | 0 / 3 | `#tab-review — “Expert review1”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
-| `/cases/CAS-LOG-01?tab=tasks` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-tasks.jpg) | Other text | partially obscured by another element | 0 / 3 | `#tab-review — “Expert review1”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
-| `/cases/CAS-LOG-01?tab=review` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-review.jpg) | Other text | partially obscured by another element | 0 / 2 | `#tab-brief — “Decision brief”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
-| `/cases/CAS-LOG-01?tab=brief` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-brief.jpg) | Other text | partially obscured by another element | 0 / 2 | `#tab-review — “Expert review1”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
-| `/cases/CAS-LOG-01?tab=activity` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-activity.jpg) | Other text | partially obscured by another element | 0 / 2 | `#tab-review — “Expert review1”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
+| `/cases/CAS-LOG-01?tab=overview` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-overview.jpg) | Other text | partially obscured by another element | 0 / 4 | `#tab-review — “Expert review1”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
+| `/cases/CAS-LOG-01?tab=evidence` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-evidence.jpg) | Other text | partially obscured by another element | 0 / 4 | `#tab-review — “Expert review1”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
+| `/cases/CAS-LOG-01?tab=tasks` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-tasks.jpg) | Other text | partially obscured by another element | 0 / 4 | `#tab-review — “Expert review1”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
+| `/cases/CAS-LOG-01?tab=review` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-review.jpg) | Other text | partially obscured by another element | 0 / 3 | `#tab-brief — “Decision brief”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
+| `/cases/CAS-LOG-01?tab=brief` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-brief.jpg) | Other text | partially obscured by another element | 0 / 3 | `#tab-review — “Expert review1”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
+| `/cases/CAS-LOG-01?tab=ai` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-ai.jpg) | Table cell text | partially obscured by another element | 0 / 12 | `th:nth-child(3) — “Stance(s)”` | Sample text colour vs. row background in default, hover and scrolled states (muted, emerald-link and mono ID styles on white); 4.5:1 for normal text. |
+| `/cases/CAS-LOG-01?tab=ai` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-ai.jpg) | Other text | partially obscured by another element | 0 / 3 | `#tab-review — “Expert review1”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
+| `/cases/CAS-LOG-01?tab=ai` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-ai.jpg) | Table cell text | text too short to classify | 0 / 3 | `tr[data-testid="scope-EVD-LOG-02"] > td:nth-child(5) — “5”` | Sample text colour vs. row background in default, hover and scrolled states (muted, emerald-link and mono ID styles on white); 4.5:1 for normal text. |
+| `/cases/CAS-LOG-01?tab=activity` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-activity.jpg) | Other text | partially obscured by another element | 0 / 3 | `#tab-review — “Expert review1”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
 | `/sector/energy` | [desktop](review/a11y-screenshots/desktop-sector-energy.jpg), [mobile](review/a11y-screenshots/mobile-sector-energy.jpg) | Chart SVG text (axis ticks, axis titles, category or value labels) | contains an image/SVG node | 28 / 24 | `text[y="193.2"] — “100”` | Measure rendered text colour against the white card for each label style (ticks #5a6761, titles/categories #34453f, values #0e2a23); 11px text needs 4.5:1. Axe cannot resolve SVG text backgrounds. |
 | `/sector/energy` | [desktop](review/a11y-screenshots/desktop-sector-energy.jpg), [mobile](review/a11y-screenshots/mobile-sector-energy.jpg) | Table cell text | partially obscured by another element | 4 / 9 | `tr:nth-child(8) > td:nth-child(1) > .hover\:underline.underline-offset-2.text-em — “Dhahab Condensate Field”` | Sample text colour vs. row background in default, hover and scrolled states (muted, emerald-link and mono ID styles on white); 4.5:1 for normal text. |
 | `/sector/energy` | [desktop](review/a11y-screenshots/desktop-sector-energy.jpg), [mobile](review/a11y-screenshots/mobile-sector-energy.jpg) | Definition-list label/value text | background is a gradient (or contains one) | 5 / 5 | `div:nth-child(1) > dt — “Reporting period”` | Sample each label/value against the card background at the text position (header card uses a white→sage gradient); 4.5:1 normal, 3:1 large text. |
@@ -259,7 +342,14 @@ Pages/states with no violations and no unresolved items: `/workspaces`, `/roadma
 | `/sector/sovereign` | [desktop](review/a11y-screenshots/desktop-sector-sovereign.jpg), [mobile](review/a11y-screenshots/mobile-sector-sovereign.jpg) | Heading text | background is a gradient (or contains one) | 1 / 1 | `h1 — “Sovereign Capital command centre”` | Sample heading colour vs. the local background (gradient header card, or illustration on entry pages); 3:1 for large text. |
 | `/sector/sovereign` | [desktop](review/a11y-screenshots/desktop-sector-sovereign.jpg), [mobile](review/a11y-screenshots/mobile-sector-sovereign.jpg) | Chart SVG text (axis ticks, axis titles, category or value labels) | background overlapped by another element | 0 / 1 | `text[text-anchor="end"][fill="#34453f"]:nth-child(9) — “Sukuk”` | Measure rendered text colour against the white card for each label style (ticks #5a6761, titles/categories #34453f, values #0e2a23); 11px text needs 4.5:1. Axe cannot resolve SVG text backgrounds. |
 | `/sector/sovereign` | [desktop](review/a11y-screenshots/desktop-sector-sovereign.jpg), [mobile](review/a11y-screenshots/mobile-sector-sovereign.jpg) | Other text | partially obscured by another element | 0 / 1 | `.text-gd-700.text-\[10px\].block — “memo · not summed”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
-| `/cases/CAS-LOG-01?tab=review (Expert role)` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-review-expert-role.jpg) | Other text | partially obscured by another element | 0 / 2 | `#tab-brief — “Decision brief”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
+| `/cases/CAS-LOG-01?tab=review (Expert role)` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-review-expert-role.jpg) | Other text | partially obscured by another element | 0 / 3 | `#tab-brief — “Decision brief”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
+| `/cases/CAS-LOG-01?tab=ai (task-proposal run output open)` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-ai-task-proposal-run-output-open.jpg) | Table cell text | partially obscured by another element | 0 / 12 | `th:nth-child(3) — “Stance(s)”` | Sample text colour vs. row background in default, hover and scrolled states (muted, emerald-link and mono ID styles on white); 4.5:1 for normal text. |
+| `/cases/CAS-LOG-01?tab=ai (task-proposal run output open)` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-ai-task-proposal-run-output-open.jpg) | Other text | partially obscured by another element | 0 / 3 | `#tab-review — “Expert review1”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
+| `/cases/CAS-LOG-01?tab=ai (task-proposal run output open)` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-ai-task-proposal-run-output-open.jpg) | Table cell text | text too short to classify | 0 / 3 | `tr[data-testid="scope-EVD-LOG-02"] > td:nth-child(5) — “5”` | Sample text colour vs. row background in default, hover and scrolled states (muted, emerald-link and mono ID styles on white); 4.5:1 for normal text. |
+| `/cases/CAS-LOG-01?tab=ai (insufficient-evidence output)` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-ai-insufficient-evidence-output.jpg) | Table cell text | partially obscured by another element | 0 / 12 | `th:nth-child(3) — “Stance(s)”` | Sample text colour vs. row background in default, hover and scrolled states (muted, emerald-link and mono ID styles on white); 4.5:1 for normal text. |
+| `/cases/CAS-LOG-01?tab=ai (insufficient-evidence output)` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-ai-insufficient-evidence-output.jpg) | Other text | partially obscured by another element | 0 / 3 | `#tab-review — “Expert review1”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
+| `/cases/CAS-LOG-01?tab=ai (insufficient-evidence output)` | [mobile](review/a11y-screenshots/mobile-cases-cas-log-01-tab-ai-insufficient-evidence-output.jpg) | Table cell text | text too short to classify | 0 / 3 | `tr[data-testid="scope-EVD-LOG-02"] > td:nth-child(5) — “5”` | Sample text colour vs. row background in default, hover and scrolled states (muted, emerald-link and mono ID styles on white); 4.5:1 for normal text. |
+| `/ai-command (with runs)` | [mobile](review/a11y-screenshots/mobile-ai-command-with-runs.jpg) | Table cell text | partially obscured by another element | 0 / 13 | `th:nth-child(5) — “Status”` | Sample text colour vs. row background in default, hover and scrolled states (muted, emerald-link and mono ID styles on white); 4.5:1 for normal text. |
 | `/sector/banking (chart table view)` | [desktop](review/a11y-screenshots/desktop-sector-banking-chart-table-view.jpg), [mobile](review/a11y-screenshots/mobile-sector-banking-chart-table-view.jpg) | Table cell text | partially obscured by another element | 13 / 20 | `tr:nth-child(8) > td:nth-child(1) > .hover\:underline.underline-offset-2.text-em — “Corporate Deposit Base”` | Sample text colour vs. row background in default, hover and scrolled states (muted, emerald-link and mono ID styles on white); 4.5:1 for normal text. |
 | `/sector/banking (chart table view)` | [desktop](review/a11y-screenshots/desktop-sector-banking-chart-table-view.jpg), [mobile](review/a11y-screenshots/mobile-sector-banking-chart-table-view.jpg) | Chart SVG text (axis ticks, axis titles, category or value labels) | contains an image/SVG node | 15 / 14 | `text[y="238"] — “100”` | Measure rendered text colour against the white card for each label style (ticks #5a6761, titles/categories #34453f, values #0e2a23); 11px text needs 4.5:1. Axe cannot resolve SVG text backgrounds. |
 | `/sector/banking (chart table view)` | [desktop](review/a11y-screenshots/desktop-sector-banking-chart-table-view.jpg), [mobile](review/a11y-screenshots/mobile-sector-banking-chart-table-view.jpg) | Definition-list label/value text | background is a gradient (or contains one) | 5 / 5 | `div:nth-child(1) > dt — “Reporting period”` | Sample each label/value against the card background at the text position (header card uses a white→sage gradient); 4.5:1 normal, 3:1 large text. |
@@ -292,5 +382,5 @@ Pages/states with no violations and no unresolved items: `/workspaces`, `/roadma
 | `/sector/banking (search results open)` | [desktop](review/a11y-screenshots/desktop-sector-banking-search-results-open.jpg), [mobile](review/a11y-screenshots/mobile-sector-banking-search-results-open.jpg) | Other text | partially overlaps other elements | 1 / 0 | `.leading-tight — “Simulatedrole”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
 | `/sector/banking (search results open)` | [desktop](review/a11y-screenshots/desktop-sector-banking-search-results-open.jpg), [mobile](review/a11y-screenshots/mobile-sector-banking-search-results-open.jpg) | Heading text | background overlapped by another element | 0 / 1 | `div[data-testid="command-centre-banking"] > .sm\:p-5 > h2 — “Priority signals5”` | Sample heading colour vs. the local background (gradient header card, or illustration on entry pages); 3:1 for large text. |
 | `/sector/banking (search results open)` | [desktop](review/a11y-screenshots/desktop-sector-banking-search-results-open.jpg), [mobile](review/a11y-screenshots/mobile-sector-banking-search-results-open.jpg) | Heading text | text too short to classify | 0 / 1 | `div[data-testid="command-centre-banking"] > .sm\:p-5 > h2 > .px-2.bg-ivory-2.rou — “5”` | Sample heading colour vs. the local background (gradient header card, or illustration on entry pages); 3:1 for large text. |
-| `/sector/banking (About dialog open)` | [desktop](review/a11y-screenshots/desktop-sector-banking-about-dialog-open.jpg) | Other text | partially overlaps other elements | 7 / 0 | `.space-y-3.leading-relaxed.text-ink-2 > p — “TIGERIS is shown as an investor-demonstr”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
+| `/sector/banking (About dialog open)` | [desktop](review/a11y-screenshots/desktop-sector-banking-about-dialog-open.jpg) | Other text | partially overlaps other elements | 8 / 0 | `.space-y-3.leading-relaxed.text-ink-2 > p — “TIGERIS is shown as an investor-demonstr”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |
 | `/sector/banking (Reset dialog open)` | [desktop](review/a11y-screenshots/desktop-sector-banking-reset-dialog-open.jpg), [mobile](review/a11y-screenshots/mobile-sector-banking-reset-dialog-open.jpg) | Other text | partially overlaps other elements | 1 / 1 | `.p-5.sm\:p-6 > p — “This restores all seeded records and rem”` | Sample colour pair at the element and compare with 4.5:1 (normal) or 3:1 (large). |

@@ -1,5 +1,1 @@
-
-> tigeris@0.1.0 verify:store
-> tsx scripts/verify-store.ts
-
 Stage 2 store checks: 462/462 passed

@@ -56,7 +56,7 @@ for (const [name, vp] of [["desktop", { width: 1440, height: 900 }], ["mobile", 
   const ctx = await browser.newContext({ viewport: vp });
   const page = await ctx.newPage();
   const closeAll = async () => { await page.keyboard.press("Escape"); await page.waitForFunction(() => !document.querySelector("dialog[open]"), null, { timeout: 3000 }).catch(() => {}); };
-  for (const p of ["/", "/entry/energy", "/entry/banking", "/workspaces", "/overview", "/methodology", "/roadmap", "/cases", "/evidence", "/evidence/EVD-LOG-01", "/reviews", ...["overview", "evidence", "tasks", "review", "brief", "activity"].map((t) => `/cases/CAS-LOG-01?tab=${t}`), ...SECTORS.map((s) => `/sector/${s}`)]) {
+  for (const p of ["/", "/entry/energy", "/entry/banking", "/workspaces", "/overview", "/methodology", "/roadmap", "/cases", "/evidence", "/evidence/EVD-LOG-01", "/reviews", "/ai-command", ...["overview", "evidence", "tasks", "review", "brief", "ai", "activity"].map((t) => `/cases/CAS-LOG-01?tab=${t}`), ...SECTORS.map((s) => `/sector/${s}`)]) {
     await page.goto(BASE + p); await page.waitForTimeout(500); await scan(page, `${name} ${p === "/" ? "/ (main entry)" : p}`);
   }
   await page.goto(BASE + "/cases"); await page.waitForTimeout(600);
@@ -65,6 +65,12 @@ for (const [name, vp] of [["desktop", { width: 1440, height: 900 }], ["mobile", 
   await page.getByRole("combobox", { name: "Simulated demonstration role" }).selectOption("Expert").catch(() => {});
   await page.goto(BASE + "/cases/CAS-LOG-01?tab=review"); await page.waitForTimeout(600); await scan(page, `${name} /cases/CAS-LOG-01?tab=review (Expert role)`);
   await page.getByRole("combobox", { name: "Simulated demonstration role" }).selectOption("Analyst").catch(() => {});
+  await page.goto(BASE + "/cases/CAS-LOG-01?tab=ai"); await page.waitForTimeout(800);
+  await page.getByTestId("op-tasks").check(); await page.getByTestId("run-det").click(); await page.waitForTimeout(800);
+  await scan(page, `${name} /cases/CAS-LOG-01?tab=ai (task-proposal run output open)`);
+  await page.getByTestId("op-question").check(); await page.getByTestId("ai-question").fill("What is the weather in Paris?"); await page.getByTestId("run-det").click(); await page.waitForTimeout(800);
+  await scan(page, `${name} /cases/CAS-LOG-01?tab=ai (insufficient-evidence output)`);
+  await page.goto(BASE + "/ai-command"); await page.waitForTimeout(600); await scan(page, `${name} /ai-command (with runs)`);
   await page.goto(BASE + "/sector/banking"); await page.waitForSelector("figure svg");
   await page.getByRole("button", { name: "Table" }).first().click(); await scan(page, `${name} /sector/banking (chart table view)`);
   await page.locator('[data-testid="signal-SIG-BNK-03"]').click(); await page.waitForTimeout(400); await scan(page, `${name} /sector/banking (record drawer open: SIG-BNK-03)`);

@@ -286,14 +286,14 @@ const drawerId = async (page, expected) => {
   await page.goto(BASE + "/workspaces");
   await page.reload();
   await page.waitForFunction(() => document.querySelector('select[aria-label="Simulated demonstration role"]')?.value === "Approver");
-  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tigeris.demo.v2") || "null"));
-  check("Persisted state survives reload (role, sector, notifications)", stored?.schemaVersion === 2 && stored?.ui?.role === "Approver" && stored?.ui?.sectorId === "insurance" && stored?.ui?.readIds?.length === 19, JSON.stringify(stored?.ui));
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tigeris.demo.v3") || "null"));
+  check("Persisted state survives reload (role, sector, notifications)", stored?.schemaVersion === 3 && stored?.ui?.role === "Approver" && stored?.ui?.sectorId === "insurance" && stored?.ui?.readIds?.length === 19, JSON.stringify(stored?.ui));
   check("Workspaces shows persisted last-selected sector (Insurance)", (await page.locator('[data-testid="workspace-insurance"]').innerText()).includes("Last selected"));
   check("Unread badge hidden when all read", (await page.getByTestId("unread-count").count()) === 0);
   await page.getByRole("button", { name: "Reset demonstration" }).first().click();
   await page.getByRole("dialog", { name: "Reset demonstration?" }).getByRole("button", { name: "Reset demonstration" }).click();
   await page.waitForTimeout(400);
-  const afterReset = await page.evaluate(() => localStorage.getItem("tigeris.demo.v2") ?? localStorage.getItem("tigeris.demo.v1"));
+  const afterReset = await page.evaluate(() => localStorage.getItem("tigeris.demo.v3") ?? localStorage.getItem("tigeris.demo.v1"));
   check("Reset clears persisted demo state from localStorage", afterReset === null, String(afterReset));
   check("Reset restores seeded UI state (Analyst, 19 unread, Energy last selected)", (await page.getByLabel("Simulated demonstration role").inputValue()) === "Analyst" && (await page.getByTestId("unread-count").textContent()) === "19" && (await page.locator('[data-testid="workspace-energy"]').innerText()).includes("Last selected"));
   await ctx.close();

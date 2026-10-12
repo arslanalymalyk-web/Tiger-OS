@@ -1,4 +1,4 @@
-# Product specification — Stage 2
+# Product specification — Stage 3
 
 ## Purpose
 Demonstrate to investors how TIGERIS turns institutional data into signals, intelligence cases and decisions across sovereign sectors. Stage 1 is the shared foundation plus eight working command centres on fictional data.
@@ -35,7 +35,20 @@ Journey in every sector: **Signal → investigation → evidence → expert revi
 - **Decision brief**: "Compile brief" is deterministic (no AI). It assembles structured sections from case records, never invents financial figures, and states when no impact is calculated. Analysts can edit; every save is a new version with timestamp and evidence/finding refs. A brief shows **Needs refresh** when linked hypotheses, evidence versions, findings or task outcomes change after it was compiled; prior versions stay available.
 - **Roles (demonstration behaviour, not security)**: Analyst edits; Expert reviews; Approver reads only.
 - **Cross-surface consistency**: sector counts, search, notifications, drawers and the overview derive from the same case/evidence records.
-- Persistence: versioned local store (`tigeris.demo.v2`) with Stage 1 migration, validation and a visible recovery message with an explicit reset.
+- Persistence: versioned local store (`tigeris.demo.v2` in Stage 2; now `tigeris.demo.v3`, see Stage 3) with Stage 1 migration, validation and a visible recovery message with an explicit reset.
+
+## Stage 3 scope (delivered): AI command and evidence-grounded assistance
+- **AI command** (`/ai-command`): four bounded assistants (Case summarizer; Evidence and contradiction analyst; Investigation task planner; Decision-brief drafting assistant) with responsibilities, approved capabilities and evidence scope, provider status, and run history (status, requesting demo role, case, timestamps, provider/model, output mode, disposition, Needs refresh). No claim of continuous monitoring, background autonomy or action execution.
+- **Case assistance** (tab on every case, all eight sectors): summarize; conflicting evidence and missing information; suggest tasks; draft a brief; answer a question. Runs are user-triggered. The **exact scope** is shown first: only evidence linked to the case (at the linked version) plus its hypotheses, tasks, recorded expert findings and notes. Nothing else is retrieved.
+- **Output**: separated into source-supported findings, inferences/assumptions, contradictions, missing information and suggested next steps; or “insufficient evidence”. Each factual claim cites evidence ID, version and passage reference with a verbatim quotation. The app validates that citations resolve against the supplied content, that quotations appear in the passage, that figures appear in the supplied material, and that embedded instructions are not treated as evidence; invalid items are rejected and listed with reasons. A valid citation does not prove support; the UI says a reviewer must judge that. No financial impact is calculated.
+- **Human review**: proposals never change a case. An Analyst may edit, accept or discard. Accepting a task creates a normal Stage 2 task; accepting a brief creates a new brief version; both record their origin (run, mode, provider/model, edited). Expert findings stay separate. Stale proposals cannot be accepted.
+- **Roles (demonstration behaviour)**: Analyst runs and reviews; Expert may run analytical assistance and submit findings but not accept proposals; Approver is read-only (cannot start runs).
+- **Modes**: *AI-generated* (a configured provider), *Deterministic demonstration (not AI)* (always available, rule-based), and *Mocked provider* (automated-test fixture only). Without credentials the app says “AI provider not configured”; it never silently switches modes after a failure.
+- **Run management**: queued/running/completed/failed/cancelled, timeout, local cancellation (explained as possibly not stopping the provider), duplicate-submit protection, input/output limits, visible rate-limit/provider/malformed-response errors, provider-reported usage only (no invented cost).
+- **Provenance and staleness**: each run stores its case, operation, input versions and snapshot fingerprint, mode, provider/model and prompt-template version, citations, timestamps and review disposition. Outputs are marked **Needs refresh** when the case changes, including during a run; old outputs are kept. Local demonstration history, not an immutable audit log.
+
+## Out of scope in Stage 3
+Scenario calculations and financial impact (Stage 4), delegated authority/approvals (5), simulated execution (6), outcomes (7), data integration and assurance (8); continuous monitoring or any AI action. A real model call is not verified in this build (no credentials were available).
 
 ## Out of scope in Stage 2
 AI assistance (Stage 3), scenarios (4), delegated authority and approvals (5), simulated execution (6), outcome tracking (7), data integration and assurance (8). Shown as stage boundaries. No messages are sent to real experts.

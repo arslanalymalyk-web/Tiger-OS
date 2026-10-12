@@ -19,6 +19,7 @@ import { TasksTab } from "./TasksTab";
 import { ReviewTab } from "./ReviewTab";
 import { BriefTab } from "./BriefTab";
 import { ActivityTab } from "./ActivityTab";
+import { AssistPanel } from "../stage3/AssistPanel";
 
 const TABS = [
   { id: "overview", label: "Overview" },
@@ -26,6 +27,7 @@ const TABS = [
   { id: "tasks", label: "Tasks" },
   { id: "review", label: "Expert review" },
   { id: "brief", label: "Decision brief" },
+  { id: "ai", label: "AI assistance" },
   { id: "activity", label: "Activity" },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
@@ -97,6 +99,7 @@ function Inner({ caseId }: { caseId: string }) {
         {tab === "tasks" && <TasksTab c={c} />}
         {tab === "review" && <ReviewTab c={c} />}
         {tab === "brief" && <BriefTab c={c} />}
+        {tab === "ai" && <AssistPanel c={c} />}
         {tab === "activity" && <ActivityTab c={c} />}
       </div>
     </div>

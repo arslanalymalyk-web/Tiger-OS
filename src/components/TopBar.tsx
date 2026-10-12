@@ -214,7 +214,7 @@ function AboutModal({ onClose }: { onClose: () => void }) {
   return (
     <Modal title="About this prototype" onClose={onClose} wide>
       <div className="space-y-3 text-sm leading-relaxed text-ink-2">
-        <p><b className="text-ink">TIGERIS</b> is shown as an investor-demonstration prototype of an AI-native sovereign capital intelligence operating system. This is <b>Stage 2</b>: the Stage 1 command centres plus intelligence cases, inspectable evidence, human investigation tasks, expert review and decision briefs.</p>
+        <p><b className="text-ink">TIGERIS</b> is shown as an investor-demonstration prototype of an AI-native sovereign capital intelligence operating system. This is <b>Stage 3</b>: the Stage 1 command centres and Stage 2 case workflow plus an AI command page and bounded, evidence-grounded assistance (real model calls only if an operator configures a provider; otherwise clearly labelled deterministic demonstration outputs).</p>
         <ul className="list-disc space-y-1 pl-5">
           <li>All institutions, people, figures and evidence are <b>fictional demonstration data</b>. Monetary values are in SAR.</li>
           <li>Everything runs in your browser from seeded records. There are <b>no live feeds, no integrations, and no AI execution</b>. Briefs are compiled by deterministic templates; no message is sent to any expert.</li>
@@ -236,7 +236,7 @@ function ResetModal({ onClose }: { onClose: () => void }) {
   const router = useRouter();
   return (
     <Modal title="Reset demonstration?" onClose={onClose}>
-      <p className="text-sm text-ink-2">This restores all seeded records and removes every Stage 2 change made in this browser: cases you created, edits, evidence links, tasks, expert reviews, brief versions, activity and local notifications. Sector returns to Energy, role to Analyst, and all notifications become unread. The saved state is cleared. This cannot be undone.</p>
+      <p className="text-sm text-ink-2">This restores all seeded records and removes every Stage 2 and Stage 3 change made in this browser: cases you created, edits, evidence links, tasks, expert reviews, brief versions, assistant runs and proposals, activity and local notifications. Sector returns to Energy, role to Analyst, and all notifications become unread. The saved state is cleared. This cannot be undone.</p>
       <div className="mt-5 flex justify-end gap-2">
         <button onClick={onClose} className="rounded-lg border border-line bg-white px-4 py-2 text-sm font-medium hover:bg-ivory-2">Cancel</button>
         <button onClick={() => { reset(); onClose(); router.replace("/workspaces"); }} className="rounded-lg bg-em-800 px-4 py-2 text-sm font-semibold text-white hover:bg-em-900">Reset demonstration</button>

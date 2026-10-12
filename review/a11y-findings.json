@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-12T16:31:06.282Z",
+  "generated": "2026-10-12T18:19:28.111Z",
   "scans": [
     {
       "label": "desktop / (main entry)",
@@ -62,8 +62,8 @@
             },
             {
               "target": ".isolate > p",
-              "html": "<p class=\"text-sm text-ink-2\">Demonstration prototype · Stage 2</p>",
-              "text": "Demonstration prototype · Stage 2",
+              "html": "<p class=\"text-sm text-ink-2\">Demonstration prototype · Stage 3</p>",
+              "text": "Demonstration prototype · Stage 3",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
               "key": "bgOverlap",
               "data": {
@@ -901,6 +901,13 @@
       "screenshot": null
     },
     {
+      "label": "desktop /ai-command",
+      "violations": [],
+      "incomplete": [],
+      "passes": 28,
+      "screenshot": null
+    },
+    {
       "label": "desktop /cases/CAS-LOG-01?tab=overview",
       "violations": [],
       "incomplete": [],
@@ -933,6 +940,13 @@
       "violations": [],
       "incomplete": [],
       "passes": 30,
+      "screenshot": null
+    },
+    {
+      "label": "desktop /cases/CAS-LOG-01?tab=ai",
+      "violations": [],
+      "incomplete": [],
+      "passes": 33,
       "screenshot": null
     },
     {
@@ -4757,6 +4771,27 @@
       "screenshot": null
     },
     {
+      "label": "desktop /cases/CAS-LOG-01?tab=ai (task-proposal run output open)",
+      "violations": [],
+      "incomplete": [],
+      "passes": 33,
+      "screenshot": null
+    },
+    {
+      "label": "desktop /cases/CAS-LOG-01?tab=ai (insufficient-evidence output)",
+      "violations": [],
+      "incomplete": [],
+      "passes": 33,
+      "screenshot": null
+    },
+    {
+      "label": "desktop /ai-command (with runs)",
+      "violations": [],
+      "incomplete": [],
+      "passes": 30,
+      "screenshot": null
+    },
+    {
       "label": "desktop /sector/banking (chart table view)",
       "violations": [],
       "incomplete": [
@@ -6198,6 +6233,16 @@
               }
             },
             {
+              "target": ".list-disc > li:nth-child(2)",
+              "html": "<li>Everything runs in your browser from seeded records. There are <b>no live feeds, no integrations, and no AI execution</b>. Briefs are co",
+              "text": "Everything runs in your browser from seeded records. There are no live",
+              "reason": "Element's background color could not be determined because it partially overlaps other elements",
+              "key": "elmPartiallyObscuring",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
               "target": ".list-disc > li:nth-child(2) > b",
               "html": "<b>no live feeds, no integrations, and no AI execution</b>",
               "text": "no live feeds, no integrations, and no AI execution",
@@ -6265,7 +6310,7 @@
             {
               "target": ".p-5.sm\\:p-6 > p",
               "html": "<p class=\"text-sm text-ink-2\">",
-              "text": "This restores all seeded records and removes every Stage 2 change made",
+              "text": "This restores all seeded records and removes every Stage 2 and Stage 3",
               "reason": "Element's background color could not be determined because it partially overlaps other elements",
               "key": "elmPartiallyObscuring",
               "data": {
@@ -6339,8 +6384,8 @@
             },
             {
               "target": ".isolate > p",
-              "html": "<p class=\"text-sm text-ink-2\">Demonstration prototype · Stage 2</p>",
-              "text": "Demonstration prototype · Stage 2",
+              "html": "<p class=\"text-sm text-ink-2\">Demonstration prototype · Stage 3</p>",
+              "text": "Demonstration prototype · Stage 3",
               "reason": "Element's background color could not be determined because it is overlapped by another element",
               "key": "bgOverlap",
               "data": {
@@ -8274,6 +8319,13 @@
       "screenshot": null
     },
     {
+      "label": "mobile /ai-command",
+      "violations": [],
+      "incomplete": [],
+      "passes": 28,
+      "screenshot": null
+    },
+    {
       "label": "mobile /cases/CAS-LOG-01?tab=overview",
       "violations": [],
       "incomplete": [
@@ -8296,6 +8348,16 @@
               "target": "#tab-brief",
               "html": "<button role=\"tab\" id=\"tab-brief\" aria-selected=\"false\" aria-controls=\"panel-brief\" data-testid=\"tab-brief\" class=\"whitespace-nowrap rounded",
               "text": "Decision brief",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-ai",
+              "html": "<button role=\"tab\" id=\"tab-ai\" aria-selected=\"false\" aria-controls=\"panel-ai\" data-testid=\"tab-ai\" class=\"whitespace-nowrap rounded-t-lg px-",
+              "text": "AI assistance",
               "reason": "Element's background color could not be determined because it's partially obscured by another element",
               "key": "elmPartiallyObscured",
               "data": {
@@ -8348,6 +8410,16 @@
               }
             },
             {
+              "target": "#tab-ai",
+              "html": "<button role=\"tab\" id=\"tab-ai\" aria-selected=\"false\" aria-controls=\"panel-ai\" data-testid=\"tab-ai\" class=\"whitespace-nowrap rounded-t-lg px-",
+              "text": "AI assistance",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
               "target": "#tab-activity",
               "html": "<button role=\"tab\" id=\"tab-activity\" aria-selected=\"false\" aria-controls=\"panel-activity\" data-testid=\"tab-activity\" class=\"whitespace-nowra",
               "text": "Activity",
@@ -8393,6 +8465,16 @@
               }
             },
             {
+              "target": "#tab-ai",
+              "html": "<button role=\"tab\" id=\"tab-ai\" aria-selected=\"false\" aria-controls=\"panel-ai\" data-testid=\"tab-ai\" class=\"whitespace-nowrap rounded-t-lg px-",
+              "text": "AI assistance",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
               "target": "#tab-activity",
               "html": "<button role=\"tab\" id=\"tab-activity\" aria-selected=\"false\" aria-controls=\"panel-activity\" data-testid=\"tab-activity\" class=\"whitespace-nowra",
               "text": "Activity",
@@ -8421,6 +8503,16 @@
               "target": "#tab-brief",
               "html": "<button role=\"tab\" id=\"tab-brief\" aria-selected=\"false\" aria-controls=\"panel-brief\" data-testid=\"tab-brief\" class=\"whitespace-nowrap rounded",
               "text": "Decision brief",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-ai",
+              "html": "<button role=\"tab\" id=\"tab-ai\" aria-selected=\"false\" aria-controls=\"panel-ai\" data-testid=\"tab-ai\" class=\"whitespace-nowrap rounded-t-lg px-",
+              "text": "AI assistance",
               "reason": "Element's background color could not be determined because it's partially obscured by another element",
               "key": "elmPartiallyObscured",
               "data": {
@@ -8463,6 +8555,16 @@
               }
             },
             {
+              "target": "#tab-ai",
+              "html": "<button role=\"tab\" id=\"tab-ai\" aria-selected=\"false\" aria-controls=\"panel-ai\" data-testid=\"tab-ai\" class=\"whitespace-nowrap rounded-t-lg px-",
+              "text": "AI assistance",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
               "target": "#tab-activity",
               "html": "<button role=\"tab\" id=\"tab-activity\" aria-selected=\"false\" aria-controls=\"panel-activity\" data-testid=\"tab-activity\" class=\"whitespace-nowra",
               "text": "Activity",
@@ -8477,6 +8579,201 @@
       ],
       "passes": 31,
       "screenshot": "a11y-screenshots/mobile-cases-cas-log-01-tab-brief.jpg"
+    },
+    {
+      "label": "mobile /cases/CAS-LOG-01?tab=ai",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": "#tab-review",
+              "html": "<button role=\"tab\" id=\"tab-review\" aria-selected=\"false\" aria-controls=\"panel-review\" data-testid=\"tab-review\" class=\"whitespace-nowrap roun",
+              "text": "Expert review1",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-brief",
+              "html": "<button role=\"tab\" id=\"tab-brief\" aria-selected=\"false\" aria-controls=\"panel-brief\" data-testid=\"tab-brief\" class=\"whitespace-nowrap rounded",
+              "text": "Decision brief",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-activity",
+              "html": "<button role=\"tab\" id=\"tab-activity\" aria-selected=\"false\" aria-controls=\"panel-activity\" data-testid=\"tab-activity\" class=\"whitespace-nowra",
+              "text": "Activity",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "th:nth-child(3)",
+              "html": "<th class=\"pr-3\">Stance(s)</th>",
+              "text": "Stance(s)",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "th:nth-child(4)",
+              "html": "<th class=\"pr-3\">Source date</th>",
+              "text": "Source date",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "th:nth-child(5)",
+              "html": "<th>Passages</th>",
+              "text": "Passages",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-01\"] > td:nth-child(3)",
+              "html": "<td class=\"pr-3\">supports</td>",
+              "text": "supports",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-01\"] > td:nth-child(4)",
+              "html": "<td class=\"pr-3\">2026-10-05</td>",
+              "text": "2026-10-05",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-01\"] > td:nth-child(5)",
+              "html": "<td>10</td>",
+              "text": "10",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-02\"] > td:nth-child(3)",
+              "html": "<td class=\"pr-3\">supports</td>",
+              "text": "supports",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-02\"] > td:nth-child(4)",
+              "html": "<td class=\"pr-3\">2026-09-30</td>",
+              "text": "2026-09-30",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-02\"] > td:nth-child(5)",
+              "html": "<td>5</td>",
+              "text": "5",
+              "reason": "Element content is too short to determine if it is actual text content",
+              "key": "shortTextContent",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-04\"] > td:nth-child(3)",
+              "html": "<td class=\"pr-3\">supports</td>",
+              "text": "supports",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-04\"] > td:nth-child(4)",
+              "html": "<td class=\"pr-3\">2026-10-10</td>",
+              "text": "2026-10-10",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-04\"] > td:nth-child(5)",
+              "html": "<td>4</td>",
+              "text": "4",
+              "reason": "Element content is too short to determine if it is actual text content",
+              "key": "shortTextContent",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-05\"] > td:nth-child(3)",
+              "html": "<td class=\"pr-3\">contradicts, supports</td>",
+              "text": "contradicts, supports",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-05\"] > td:nth-child(4)",
+              "html": "<td class=\"pr-3\">2026-10-08</td>",
+              "text": "2026-10-08",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-05\"] > td:nth-child(5)",
+              "html": "<td>3</td>",
+              "text": "3",
+              "reason": "Element content is too short to determine if it is actual text content",
+              "key": "shortTextContent",
+              "data": {
+                "ratio": 0
+              }
+            }
+          ]
+        }
+      ],
+      "passes": 34,
+      "screenshot": "a11y-screenshots/mobile-cases-cas-log-01-tab-ai.jpg"
     },
     {
       "label": "mobile /cases/CAS-LOG-01?tab=activity",
@@ -8501,6 +8798,16 @@
               "target": "#tab-brief",
               "html": "<button role=\"tab\" id=\"tab-brief\" aria-selected=\"false\" aria-controls=\"panel-brief\" data-testid=\"tab-brief\" class=\"whitespace-nowrap rounded",
               "text": "Decision brief",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-ai",
+              "html": "<button role=\"tab\" id=\"tab-ai\" aria-selected=\"false\" aria-controls=\"panel-ai\" data-testid=\"tab-ai\" class=\"whitespace-nowrap rounded-t-lg px-",
+              "text": "AI assistance",
               "reason": "Element's background color could not be determined because it's partially obscured by another element",
               "key": "elmPartiallyObscured",
               "data": {
@@ -12580,6 +12887,16 @@
               }
             },
             {
+              "target": "#tab-ai",
+              "html": "<button role=\"tab\" id=\"tab-ai\" aria-selected=\"false\" aria-controls=\"panel-ai\" data-testid=\"tab-ai\" class=\"whitespace-nowrap rounded-t-lg px-",
+              "text": "AI assistance",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
               "target": "#tab-activity",
               "html": "<button role=\"tab\" id=\"tab-activity\" aria-selected=\"false\" aria-controls=\"panel-activity\" data-testid=\"tab-activity\" class=\"whitespace-nowra",
               "text": "Activity",
@@ -12594,6 +12911,541 @@
       ],
       "passes": 31,
       "screenshot": "a11y-screenshots/mobile-cases-cas-log-01-tab-review-expert-role.jpg"
+    },
+    {
+      "label": "mobile /cases/CAS-LOG-01?tab=ai (task-proposal run output open)",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": "#tab-review",
+              "html": "<button role=\"tab\" id=\"tab-review\" aria-selected=\"false\" aria-controls=\"panel-review\" data-testid=\"tab-review\" class=\"whitespace-nowrap roun",
+              "text": "Expert review1",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-brief",
+              "html": "<button role=\"tab\" id=\"tab-brief\" aria-selected=\"false\" aria-controls=\"panel-brief\" data-testid=\"tab-brief\" class=\"whitespace-nowrap rounded",
+              "text": "Decision brief",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-activity",
+              "html": "<button role=\"tab\" id=\"tab-activity\" aria-selected=\"false\" aria-controls=\"panel-activity\" data-testid=\"tab-activity\" class=\"whitespace-nowra",
+              "text": "Activity",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "th:nth-child(3)",
+              "html": "<th class=\"pr-3\">Stance(s)</th>",
+              "text": "Stance(s)",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "th:nth-child(4)",
+              "html": "<th class=\"pr-3\">Source date</th>",
+              "text": "Source date",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "th:nth-child(5)",
+              "html": "<th>Passages</th>",
+              "text": "Passages",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-01\"] > td:nth-child(3)",
+              "html": "<td class=\"pr-3\">supports</td>",
+              "text": "supports",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-01\"] > td:nth-child(4)",
+              "html": "<td class=\"pr-3\">2026-10-05</td>",
+              "text": "2026-10-05",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-01\"] > td:nth-child(5)",
+              "html": "<td>10</td>",
+              "text": "10",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-02\"] > td:nth-child(3)",
+              "html": "<td class=\"pr-3\">supports</td>",
+              "text": "supports",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-02\"] > td:nth-child(4)",
+              "html": "<td class=\"pr-3\">2026-09-30</td>",
+              "text": "2026-09-30",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-02\"] > td:nth-child(5)",
+              "html": "<td>5</td>",
+              "text": "5",
+              "reason": "Element content is too short to determine if it is actual text content",
+              "key": "shortTextContent",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-04\"] > td:nth-child(3)",
+              "html": "<td class=\"pr-3\">supports</td>",
+              "text": "supports",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-04\"] > td:nth-child(4)",
+              "html": "<td class=\"pr-3\">2026-10-10</td>",
+              "text": "2026-10-10",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-04\"] > td:nth-child(5)",
+              "html": "<td>4</td>",
+              "text": "4",
+              "reason": "Element content is too short to determine if it is actual text content",
+              "key": "shortTextContent",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-05\"] > td:nth-child(3)",
+              "html": "<td class=\"pr-3\">contradicts, supports</td>",
+              "text": "contradicts, supports",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-05\"] > td:nth-child(4)",
+              "html": "<td class=\"pr-3\">2026-10-08</td>",
+              "text": "2026-10-08",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-05\"] > td:nth-child(5)",
+              "html": "<td>3</td>",
+              "text": "3",
+              "reason": "Element content is too short to determine if it is actual text content",
+              "key": "shortTextContent",
+              "data": {
+                "ratio": 0
+              }
+            }
+          ]
+        }
+      ],
+      "passes": 34,
+      "screenshot": "a11y-screenshots/mobile-cases-cas-log-01-tab-ai-task-proposal-run-output-open.jpg"
+    },
+    {
+      "label": "mobile /cases/CAS-LOG-01?tab=ai (insufficient-evidence output)",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": "#tab-review",
+              "html": "<button role=\"tab\" id=\"tab-review\" aria-selected=\"false\" aria-controls=\"panel-review\" data-testid=\"tab-review\" class=\"whitespace-nowrap roun",
+              "text": "Expert review1",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-brief",
+              "html": "<button role=\"tab\" id=\"tab-brief\" aria-selected=\"false\" aria-controls=\"panel-brief\" data-testid=\"tab-brief\" class=\"whitespace-nowrap rounded",
+              "text": "Decision brief",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "#tab-activity",
+              "html": "<button role=\"tab\" id=\"tab-activity\" aria-selected=\"false\" aria-controls=\"panel-activity\" data-testid=\"tab-activity\" class=\"whitespace-nowra",
+              "text": "Activity",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "th:nth-child(3)",
+              "html": "<th class=\"pr-3\">Stance(s)</th>",
+              "text": "Stance(s)",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "th:nth-child(4)",
+              "html": "<th class=\"pr-3\">Source date</th>",
+              "text": "Source date",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "th:nth-child(5)",
+              "html": "<th>Passages</th>",
+              "text": "Passages",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-01\"] > td:nth-child(3)",
+              "html": "<td class=\"pr-3\">supports</td>",
+              "text": "supports",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-01\"] > td:nth-child(4)",
+              "html": "<td class=\"pr-3\">2026-10-05</td>",
+              "text": "2026-10-05",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-01\"] > td:nth-child(5)",
+              "html": "<td>10</td>",
+              "text": "10",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-02\"] > td:nth-child(3)",
+              "html": "<td class=\"pr-3\">supports</td>",
+              "text": "supports",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-02\"] > td:nth-child(4)",
+              "html": "<td class=\"pr-3\">2026-09-30</td>",
+              "text": "2026-09-30",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-02\"] > td:nth-child(5)",
+              "html": "<td>5</td>",
+              "text": "5",
+              "reason": "Element content is too short to determine if it is actual text content",
+              "key": "shortTextContent",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-04\"] > td:nth-child(3)",
+              "html": "<td class=\"pr-3\">supports</td>",
+              "text": "supports",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-04\"] > td:nth-child(4)",
+              "html": "<td class=\"pr-3\">2026-10-10</td>",
+              "text": "2026-10-10",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-04\"] > td:nth-child(5)",
+              "html": "<td>4</td>",
+              "text": "4",
+              "reason": "Element content is too short to determine if it is actual text content",
+              "key": "shortTextContent",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-05\"] > td:nth-child(3)",
+              "html": "<td class=\"pr-3\">contradicts, supports</td>",
+              "text": "contradicts, supports",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-05\"] > td:nth-child(4)",
+              "html": "<td class=\"pr-3\">2026-10-08</td>",
+              "text": "2026-10-08",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"scope-EVD-LOG-05\"] > td:nth-child(5)",
+              "html": "<td>3</td>",
+              "text": "3",
+              "reason": "Element content is too short to determine if it is actual text content",
+              "key": "shortTextContent",
+              "data": {
+                "ratio": 0
+              }
+            }
+          ]
+        }
+      ],
+      "passes": 34,
+      "screenshot": "a11y-screenshots/mobile-cases-cas-log-01-tab-ai-insufficient-evidence-output.jpg"
+    },
+    {
+      "label": "mobile /ai-command (with runs)",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": "th:nth-child(5)",
+              "html": "<th class=\"pr-3\">Status</th>",
+              "text": "Status",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "th:nth-child(6)",
+              "html": "<th class=\"pr-3\">Requested by</th>",
+              "text": "Requested by",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "th:nth-child(7)",
+              "html": "<th class=\"pr-3\">Provider / model</th>",
+              "text": "Provider / model",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "th:nth-child(8)",
+              "html": "<th class=\"pr-3\">Created</th>",
+              "text": "Created",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "th:nth-child(9)",
+              "html": "<th>Disposition</th>",
+              "text": "Disposition",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"run-RUN-LOG-02\"] > td:nth-child(6)",
+              "html": "<td class=\"pr-3 text-xs\">Analyst (demo role)</td>",
+              "text": "Analyst (demo role)",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"run-RUN-LOG-02\"] > td:nth-child(7)",
+              "html": "<td class=\"pr-3 text-xs\">No model</td>",
+              "text": "No model",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"run-RUN-LOG-02\"] > .whitespace-nowrap",
+              "html": "<td class=\"pr-3 whitespace-nowrap text-xs\">2026-10-12 21:19 AST</td>",
+              "text": "2026-10-12 21:19 AST",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"run-RUN-LOG-02\"] > .capitalize",
+              "html": "<td class=\"text-xs capitalize\">not applicable</td>",
+              "text": "not applicable",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"run-RUN-LOG-01\"] > td:nth-child(6)",
+              "html": "<td class=\"pr-3 text-xs\">Analyst (demo role)</td>",
+              "text": "Analyst (demo role)",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"run-RUN-LOG-01\"] > td:nth-child(7)",
+              "html": "<td class=\"pr-3 text-xs\">No model</td>",
+              "text": "No model",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"run-RUN-LOG-01\"] > .whitespace-nowrap",
+              "html": "<td class=\"pr-3 whitespace-nowrap text-xs\">2026-10-12 21:19 AST</td>",
+              "text": "2026-10-12 21:19 AST",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            },
+            {
+              "target": "tr[data-testid=\"run-RUN-LOG-01\"] > .capitalize",
+              "html": "<td class=\"text-xs capitalize\">pending</td>",
+              "text": "pending",
+              "reason": "Element's background color could not be determined because it's partially obscured by another element",
+              "key": "elmPartiallyObscured",
+              "data": {
+                "ratio": 0
+              }
+            }
+          ]
+        }
+      ],
+      "passes": 31,
+      "screenshot": "a11y-screenshots/mobile-ai-command-with-runs.jpg"
     },
     {
       "label": "mobile /sector/banking (chart table view)",
@@ -14346,7 +15198,7 @@
             {
               "target": ".p-5.sm\\:p-6 > p",
               "html": "<p class=\"text-sm text-ink-2\">",
-              "text": "This restores all seeded records and removes every Stage 2 change made",
+              "text": "This restores all seeded records and removes every Stage 2 and Stage 3",
               "reason": "Element's background color could not be determined because it partially overlaps other elements",
               "key": "elmPartiallyObscuring",
               "data": {

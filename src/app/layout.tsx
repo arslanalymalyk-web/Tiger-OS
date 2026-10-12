@@ -3,7 +3,7 @@ import { DemoProvider } from "@/state/DemoProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "TIGERIS AI OS — Stage 2 demonstration",
+  title: "TIGERIS AI OS — Stage 3 demonstration",
   description: "Investor-demonstration prototype of an AI-native sovereign capital intelligence operating system. Fictional demonstration data.",
 };
 export const viewport: Viewport = { width: "device-width", initialScale: 1 };

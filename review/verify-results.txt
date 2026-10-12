@@ -1,0 +1,18 @@
+
+> tigeris@0.1.0 verify
+> npm run typecheck && npm run lint && npm run verify:data
+
+
+> tigeris@0.1.0 typecheck
+> tsc --noEmit
+
+
+> tigeris@0.1.0 lint
+> eslint
+
+
+> tigeris@0.1.0 verify:data
+> tsx scripts/verify-data.ts
+
+records: 219, signals: 40, group capital: SAR 262,330 m, commitments: SAR 2327 m
+Data integrity: all checks passed

@@ -134,7 +134,7 @@ export function CommandCentre({ sectorId }: { sectorId: SectorId }) {
               <span className="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-muted"><IdTag id={d.id} />Due {d.dueBy} · {d.amountKind === "commitment" ? "new commitment" : d.amountKind === "reallocation" ? "reallocation" : "no amount"}</span>
             </button></li>
           ))}</ul>
-          <div className="mt-3"><StageBoundary stage={5} capability="Approval workflow">Decisions can be inspected but not approved in Stage 2; they remain proposals.</StageBoundary></div>
+          <div className="mt-3"><StageBoundary stage={5} capability="Approval workflow">Decisions can be inspected but not approved yet; they remain proposals.</StageBoundary></div>
         </Panel>
       </div>
 

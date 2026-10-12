@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GitBranch, LayoutGrid, LayoutDashboard, Map, X, BookOpen, FolderSearch, Library, UserCheck } from "lucide-react";
+import { GitBranch, LayoutGrid, LayoutDashboard, Map, X, BookOpen, FolderSearch, Library, UserCheck, Bot } from "lucide-react";
 import { SECTORS } from "@/data";
 import { useDemo } from "@/state/DemoProvider";
 import { Wordmark } from "./Brand";
@@ -38,6 +38,7 @@ function Sidebar({ onNav }: { onNav: () => void }) {
           <NavLink href="/cases" icon={FolderSearch} onNav={onNav}>Intelligence cases</NavLink>
           <NavLink href="/evidence" icon={Library} onNav={onNav}>Evidence library</NavLink>
           <NavLink href="/reviews" icon={UserCheck} onNav={onNav}>Expert reviews</NavLink>
+          <NavLink href="/ai-command" icon={Bot} onNav={onNav}>AI command</NavLink>
         </div>
         <div>
           <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/70">Command centres</p>
@@ -50,7 +51,7 @@ function Sidebar({ onNav }: { onNav: () => void }) {
         </div>
       </nav>
       <div className="border-t border-white/10 p-4 text-xs text-white/70">
-        <p className="flex items-center gap-1.5"><GitBranch size={12} />Stage 2 prototype</p>
+        <p className="flex items-center gap-1.5"><GitBranch size={12} />Stage 3 prototype</p>
         <p className="mt-1">Simulated role: <b className="text-white">{hydrated ? role : "…"}</b></p>
       </div>
     </div>
@@ -77,7 +78,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <TopBar onMenu={() => setOpen(true)} />
         <Banners />
         <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-[1280px] px-3 py-5 sm:px-5 sm:py-6">{children}</main>
-        <footer className="border-t border-line px-5 py-4 text-xs text-muted">TIGERIS AI OS · Stage 2 demonstration · All data fictional and illustrative · Local browser state only · No production, hosting or compliance claims.</footer>
+        <footer className="border-t border-line px-5 py-4 text-xs text-muted">TIGERIS AI OS · Stage 3 demonstration · All data fictional and illustrative · Local browser state only · No production, hosting or compliance claims.</footer>
       </div>
     </div>
     {/* Outside #app-root: the modal drawer must not sit inside the subtree it makes inert. */}

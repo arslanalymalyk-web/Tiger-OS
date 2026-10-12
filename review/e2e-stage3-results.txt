@@ -1,0 +1,171 @@
+Running Stage 3 checks in chromium (plain server: no provider; mock server: automated-test fixture, not AI)
+PASS  AI command page loads from the sidebar route
+PASS  Four assistants are listed with their responsibilities
+PASS  It states there is no continuous monitoring, background autonomy or action execution
+PASS  Approved capabilities and evidence scope are listed
+PASS  With no credentials it says “AI provider not configured”
+PASS  The banner names missing variables, never values
+PASS  No runs: a clear empty state with a way in
+PASS  Status endpoint reports not configured and exposes no credential fields
+PASS  Run endpoint refuses malformed requests without calling anything
+PASS  Case workspace has an AI assistance tab
+PASS  No provider: the AI run button is off and says why
+PASS  The mock-scenario control is not shown without the test fixture
+PASS  Exact evidence scope is shown before running (linked evidence, versions, records)
+PASS  Deterministic run completes and is labelled “Deterministic demonstration (not AI)”
+PASS  It is never presented as AI-generated and records that no model was used
+PASS  Provenance: run ID, case, requesting demo role, timestamps, snapshot fingerprint, evidence versions
+PASS  Findings are source-supported, each with evidence ID, version and reference
+PASS  Inferences, missing information and next steps are separate sections
+PASS  The validation note says citations are checked but support must be judged by a person
+PASS  A citation opens the evidence at the cited passage, highlighted  — /evidence/EVD-LOG-01?v=1#ref-T1R2
+PASS  An unsupported question is answered with “Insufficient evidence”, not a guess
+PASS  A question the evidence covers is answered with cited passages
+PASS  Conflicting evidence and missing information are reported separately
+PASS  Task proposals are listed as proposals and are not tasks yet
+PASS  The case still has its 3 tasks (generated content did not change it)
+PASS  An Analyst can edit a proposal; it is marked edited and the case is still unchanged
+PASS  Accepting creates a normal Stage 2 task (new ID, Not started)
+PASS  Discarding a proposal leaves the case unchanged and records the disposition
+PASS  The accepted task appears in Tasks with its origin and the edited title
+PASS  The accepted task is a normal task (status can be changed)
+PASS  The expert-review request is untouched by assistant activity
+PASS  A brief proposal shows cited findings and is not saved yet
+PASS  Before accepting, the case still has only brief v1
+PASS  Accepting a brief proposal creates a new version (v2)
+PASS  The Brief tab shows v2 with its origin recorded, and v1 retained
+PASS  The origin names the run, mode (deterministic, not AI) and the Analyst edit
+PASS  Stage 2 deterministic “Compile brief” is retained
+PASS  The brief makes no financial-impact calculation
+PASS  Activity records the runs and the acceptances as local demonstration activity
+PASS  AI command lists the runs with mode, status, role and disposition
+PASS  Filtering by output mode works (no AI-mode runs exist)
+PASS  Search finds assistant runs
+PASS  Runs persist in the versioned local store
+PASS  Runs, proposals and provenance survive a reload
+PASS  Reset removes assistant runs (empty state again)
+PASS  Reset restores the case without accepted tasks or brief versions
+PASS  Expert sees the proposals but cannot edit, accept or discard them (with an explanation)
+PASS  Expert may use analytical assistance
+PASS  An Expert run completes and records the Expert demonstration role
+PASS  Role wording is retained as demonstration behaviour
+PASS  Approver cannot start runs (no run controls, with an explanation)
+PASS  Approver can still read outputs but cannot accept proposals
+PASS  Nothing was created by the Expert or Approver
+PASS  Analyst can accept (controls return)
+PASS  A fresh run is not marked Needs refresh
+PASS  Changing a hypothesis marks the earlier output Needs refresh and names the change
+PASS  The stale output is preserved for inspection
+PASS  Accepting a stale proposal is disabled with an explanation
+PASS  The run list and AI command flag it
+PASS  AI command counts the run as Needs refresh
+PASS  Running again gives a current output; the old one is kept
+PASS  A stale proposal can still be discarded
+PASS  Stage 2 saved state is migrated with a visible notice
+PASS  Role and sector from the Stage 2 state are kept
+PASS  Migration writes the Stage 3 format and removes the Stage 2 key
+PASS  Assistance works on migrated state
+PASS  A malformed saved run triggers the recovery message and does not overwrite it
+PASS  Explicit reset clears it
+PASS  A run that was in flight at reload is shown as interrupted, not running
+PASS  energy: scope lists only this sector's linked evidence
+PASS  energy: summary completes with cited, source-supported findings and no rejections
+PASS  energy: conflicts/missing-information analysis completes
+PASS  energy: an accepted proposal becomes a normal task with its origin recorded
+PASS  energy: a brief proposal is produced for review
+PASS  energy: accepting the brief creates v2 with origin
+PASS  banking: scope lists only this sector's linked evidence
+PASS  banking: summary completes with cited, source-supported findings and no rejections
+PASS  banking: conflicts/missing-information analysis completes
+PASS  banking: an accepted proposal becomes a normal task with its origin recorded
+PASS  banking: a brief proposal is produced for review
+PASS  banking: accepting the brief creates v2 with origin
+PASS  insurance: scope lists only this sector's linked evidence
+PASS  insurance: summary completes with cited, source-supported findings and no rejections
+PASS  insurance: conflicts/missing-information analysis completes
+PASS  insurance: an accepted proposal becomes a normal task with its origin recorded
+PASS  insurance: a brief proposal is produced for review
+PASS  insurance: accepting the brief creates v2 with origin
+PASS  manufacturing: scope lists only this sector's linked evidence
+PASS  manufacturing: summary completes with cited, source-supported findings and no rejections
+PASS  manufacturing: conflicts/missing-information analysis completes
+PASS  manufacturing: an accepted proposal becomes a normal task with its origin recorded
+PASS  manufacturing: a brief proposal is produced for review
+PASS  manufacturing: accepting the brief creates v2 with origin
+PASS  logistics: scope lists only this sector's linked evidence
+PASS  logistics: summary completes with cited, source-supported findings and no rejections
+PASS  logistics: conflicts/missing-information analysis completes
+PASS  logistics: an accepted proposal becomes a normal task with its origin recorded
+PASS  logistics: a brief proposal is produced for review
+PASS  logistics: accepting the brief creates v2 with origin
+PASS  realestate: scope lists only this sector's linked evidence
+PASS  realestate: summary completes with cited, source-supported findings and no rejections
+PASS  realestate: conflicts/missing-information analysis completes
+PASS  realestate: an accepted proposal becomes a normal task with its origin recorded
+PASS  realestate: a brief proposal is produced for review
+PASS  realestate: accepting the brief creates v2 with origin
+PASS  infrastructure: scope lists only this sector's linked evidence
+PASS  infrastructure: summary completes with cited, source-supported findings and no rejections
+PASS  infrastructure: conflicts/missing-information analysis completes
+PASS  infrastructure: an accepted proposal becomes a normal task with its origin recorded
+PASS  infrastructure: a brief proposal is produced for review
+PASS  infrastructure: accepting the brief creates v2 with origin
+PASS  sovereign: scope lists only this sector's linked evidence
+PASS  sovereign: summary completes with cited, source-supported findings and no rejections
+PASS  sovereign: conflicts/missing-information analysis completes
+PASS  sovereign: an accepted proposal becomes a normal task with its origin recorded
+PASS  sovereign: a brief proposal is produced for review
+PASS  sovereign: accepting the brief creates v2 with origin
+PASS  Operation choices are a keyboard-operable radio group
+PASS  A run can be started from the keyboard
+PASS  AI command has no horizontal page overflow at 390 px
+PASS  Case assistance has no horizontal page overflow at 390 px (with a run open)
+PASS  The fixture is announced as a mocked provider, not AI
+PASS  A mocked-provider run is labelled “Mocked provider”, never “AI-generated”
+PASS  Provider/model and prompt template are recorded
+PASS  Only provider-reported usage is shown, with no invented cost
+PASS  The mocked output validates and shows cited findings
+PASS  An accepted mocked-provider brief records its origin as mocked, not AI
+PASS  An invalid reference is rejected with an explanation  — invalid-citation
+PASS  Valid parts of the same response are kept alongside rejected ones
+PASS  A fabricated quotation is rejected  — wrong-quote
+PASS  A citation to an unsupplied version is rejected  — wrong-version
+PASS  A figure not in the supplied material is rejected even with a valid citation  — unsupported-figure
+PASS  Output that obeys instructions embedded in evidence is rejected  — inject
+PASS  No approval or execution statement is accepted from the injected instruction
+PASS  Provider-reported insufficient evidence is shown as such
+PASS  A proposed out-of-scope action (execute a transfer) is rejected, not offered
+PASS  Rejected generated content never reached the case
+PASS  Provider malformed: a visible invalid_response error, status failed
+PASS  Provider toolong: a visible invalid_response error, status failed
+PASS  Provider fail: a visible provider_error error, status failed
+PASS  Provider ratelimit: a visible rate_limited error, status failed
+PASS  A rate limit shows the provider's retry hint
+PASS  Provider auth: a visible provider_auth error, status failed
+PASS  Provider refusal: a visible refused error, status failed
+PASS  A failure never silently switches to demonstration mode (every run stays mock-provider)
+PASS  The error says nothing was saved and no fallback occurred
+PASS  Failed runs left the case unchanged
+PASS  Retry starts a new run (history kept)
+PASS  A slow provider times out visibly (configured 3 s) with an explanation  — 3154 ms
+PASS  While running: status and a Cancel control with the local-cancel caveat
+PASS  Cancelling records the status and says provider processing may continue
+PASS  A result that arrives after cancellation is discarded (no output saved)
+PASS  Double-clicking Run starts exactly one run
+PASS  The run button is disabled while the submission is in flight
+PASS  Exactly one run results
+PASS  The run is stored once
+PASS  An output that completes after the inputs changed is marked Needs refresh
+PASS  The output is preserved and the activity log notes it
+PASS  Local activity records that inputs changed while it ran
+PASS  energy: mocked-provider workflow — accepted task records a mocked origin
+PASS  banking: mocked-provider workflow — accepted task records a mocked origin
+PASS  insurance: mocked-provider workflow — accepted task records a mocked origin
+PASS  manufacturing: mocked-provider workflow — accepted task records a mocked origin
+PASS  logistics: mocked-provider workflow — accepted task records a mocked origin
+PASS  realestate: mocked-provider workflow — accepted task records a mocked origin
+PASS  infrastructure: mocked-provider workflow — accepted task records a mocked origin
+PASS  sovereign: mocked-provider workflow — accepted task records a mocked origin
+PASS  No uncaught page errors or console errors during the run
+
+168/168 Stage 3 checks passed

@@ -3,11 +3,11 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { Role, SectorId } from "@/lib/types";
 import { demoNow } from "@/lib/stage2/mutations";
-import { DEFAULT_UI, KEY_V1, KEY_V2, ROLES, clearPersisted, isDefaultState, loadPersisted, serialize, type UiState } from "@/lib/stage2/persist";
+import { DEFAULT_UI, KEY, KEY_V1, KEY_V2, ROLES, clearPersisted, isDefaultState, loadPersisted, serialize, type UiState } from "@/lib/stage2/persist";
 import { emptyWork, type Ctx, type Result, type WorkState } from "@/lib/stage2/types";
 import { buildWorld, type World } from "@/lib/stage2/world";
 
-export interface Recovery { reason: string; source: "v1" | "v2" }
+export interface Recovery { reason: string; source: "v1" | "v2" | "v3" }
 
 interface Ctxt extends UiState {
   hydrated: boolean;
@@ -67,10 +67,10 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!hydrated || recovery) return;
     try {
-      if (isDefaultState(ui, work)) { localStorage.removeItem(KEY_V2); if (!migratedRef.current) localStorage.removeItem(KEY_V1); }
+      if (isDefaultState(ui, work)) { localStorage.removeItem(KEY); if (!migratedRef.current) { localStorage.removeItem(KEY_V2); localStorage.removeItem(KEY_V1); } }
       else {
-        localStorage.setItem(KEY_V2, serialize(ui, work));
-        if (migratedRef.current) { localStorage.removeItem(KEY_V1); migratedRef.current = false; }
+        localStorage.setItem(KEY, serialize(ui, work));
+        if (migratedRef.current) { localStorage.removeItem(KEY_V2); localStorage.removeItem(KEY_V1); migratedRef.current = false; }
       }
     } catch { /* storage unavailable: state is session-only */ }
   }, [ui, work, hydrated, recovery]);

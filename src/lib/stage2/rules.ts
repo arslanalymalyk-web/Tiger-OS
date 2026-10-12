@@ -7,15 +7,15 @@ import type { Action, CaseAggregate, CaseStatus, ReviewRequest, ReviewState, Wor
 
 /** Demonstration behaviour only — NOT production authentication or authorisation. */
 const PERMISSIONS: Record<Role, Action[]> = {
-  Analyst: ["case.create", "case.edit", "case.transition", "evidence.link", "task.edit", "task.progress", "review.request", "brief.compile", "brief.edit"],
-  Expert: ["review.submit", "task.progress"],
+  Analyst: ["case.create", "case.edit", "case.transition", "evidence.link", "task.edit", "task.progress", "review.request", "brief.compile", "brief.edit", "ai.run", "ai.review"],
+  Expert: ["review.submit", "task.progress", "ai.run"],
   Approver: [],
 };
 export const can = (role: Role, action: Action) => PERMISSIONS[role].includes(action);
 export const ROLE_NOTE: Record<Role, string> = {
-  Analyst: "Demonstration role: Analyst can create and edit investigations, assign tasks, request expert review and prepare briefs.",
-  Expert: "Demonstration role: Expert can submit review findings on requests and progress tasks assigned to experts and specialists. Other edits are Analyst actions.",
-  Approver: "Demonstration role: Approver can read cases, findings and briefs. Approvals cannot be recorded in Stage 2.",
+  Analyst: "Demonstration role: Analyst can create and edit investigations, assign tasks, request expert review and prepare briefs, run analytical assistance and accept or discard its proposals.",
+  Expert: "Demonstration role: Expert can submit review findings on requests and progress tasks assigned to experts and specialists, and may run analytical assistance (but not accept its proposals). Other edits are Analyst actions.",
+  Approver: "Demonstration role: Approver can read cases, findings and briefs. Approvals cannot be recorded yet, and the Approver demonstration role cannot start assistant runs.",
 };
 export const DEMO_ROLE_DISCLAIMER = "Role switching and restrictions are demonstration behaviour, not production authentication or security.";
 export const denied = (role: Role, what: string) => `The ${role} demonstration role cannot ${what}.`;

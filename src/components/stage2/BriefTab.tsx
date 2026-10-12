@@ -30,7 +30,7 @@ export function BriefTab({ c }: { c: CaseAggregate }) {
 
   return (
     <>
-      <p className="rounded-lg border border-dashed border-gd-500/60 bg-gd-100/50 p-3 text-sm text-ink-2" role="note">A brief is compiled from the current case records with a <b>deterministic template</b>. It is not AI-generated and contains no calculated financial impact. It does not record an approval; the Stage 1 decision records remain proposals.</p>
+      <p className="rounded-lg border border-dashed border-gd-500/60 bg-gd-100/50 p-3 text-sm text-ink-2" role="note">A brief is compiled from the current case records with a <b>deterministic template</b>. It is not AI-generated and contains no calculated financial impact. The AI assistance tab can draft a brief for review; accepting a draft saves a new version with its origin recorded. It does not record an approval; the Stage 1 decision records remain proposals.</p>
       <CardSection title="Decision brief" actions={
         <div className="flex flex-wrap items-center gap-2">
           {latest && stale && <StaleBadge />}
@@ -75,6 +75,7 @@ function BriefView({ b, latest, stale }: { b: BriefVersion; latest: boolean; sta
   const k = b.content;
   return (
     <article className="mt-4 rounded-xl border border-line bg-white p-4 sm:p-5" aria-label={`Decision brief version ${b.version}`} data-testid="brief-view">
+      {b.origin && <p className="mt-1 rounded-lg border border-dashed border-gd-500/60 bg-gd-100/50 p-2 text-xs text-ink-2" data-testid="brief-origin">Origin: accepted from assistant proposal <Link href={`/cases/CAS-${b.id.split("-").slice(1, 3).join("-")}?tab=ai&run=${b.origin.runId}`} className="font-mono text-em-700 underline">{b.origin.runId}</Link> ({b.origin.mode === "ai" ? `AI-generated · ${b.origin.provider} · ${b.origin.model}` : b.origin.mode === "deterministic" ? "deterministic demonstration, not AI" : "mocked provider, not AI"}){b.origin.edited ? ", edited by the Analyst" : ""}, {fmtDateTime(b.origin.acceptedAt)}.</p>}
       <p className="text-xs text-muted">Version {b.version} ({b.source}) · saved {fmtDateTime(b.createdAt)} by {b.createdBy}{!latest ? " · earlier version (read-only)" : stale ? " · latest version, needs refresh" : " · latest version"}</p>
       <p className="mt-1 text-xs text-muted">{b.note} <code>{b.id}</code></p>
       <Sec title="Decision question"><p className="text-[15px] font-medium text-ink" data-testid="brief-question">{k.decisionQuestion}</p></Sec>

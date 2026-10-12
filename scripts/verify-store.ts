@@ -214,17 +214,17 @@ ok(can("Analyst", "case.edit") && !can("Approver", "case.edit") && !can("Expert"
 // ---------------------------------------------------------------- D. Persistence, migration, recovery
 const ui = { ...DEFAULT_UI, role: "Expert" as Role, sectorId: "logistics" as const, readIds: ["NTF-01", "NTF-W-0001"], entered: true };
 const text = serialize(ui, w);
-const back = parseSaved(text, "v2");
+const back = parseSaved(text, "v3");
 ok(back.status === "ok" && back.status === "ok" && JSON.stringify(back.work) === JSON.stringify(w) && back.ui.role === "Expert", "save/load round trip preserves Stage 2 work and UI state");
 const store: Record<string, string> = { [KEY_V1]: JSON.stringify({ sectorId: "insurance", role: "Approver", readIds: ["NTF-01", "NTF-02"], entered: true }) };
 const mem = { getItem: (k: string) => store[k] ?? null, setItem: (k: string, v: string) => void (store[k] = v), removeItem: (k: string) => void delete store[k] };
 const mig = loadPersisted(mem);
 ok(mig.status === "ok" && mig.migrated !== undefined && mig.ui.role === "Approver" && mig.ui.sectorId === "insurance" && mig.ui.readIds.length === 2 && Object.keys(mig.work.cases).length === 0, "Stage 1 state migrates without discarding role, sector or read state");
 ok(/migrated/.test((mig as { migrated?: string }).migrated ?? ""), "migration produces a user-visible notice");
-const inval = (s: string, src: "v1" | "v2" = "v2") => parseSaved(s, src);
+const inval = (s: string, src: "v1" | "v2" | "v3" = "v3") => parseSaved(s, src);
 ok(inval("{not json").status === "invalid", "malformed JSON is reported as invalid");
 ok(inval(JSON.stringify({ schemaVersion: 99, ui: ui, work: emptyWork() })).status === "invalid", "a newer schema is reported as unsupported");
-ok(inval(JSON.stringify({ schemaVersion: 2, ui: { ...ui, role: "Admin" }, work: emptyWork() })).status === "invalid", "unsupported role is rejected");
+ok(inval(JSON.stringify({ schemaVersion: 3, ui: { ...ui, role: "Admin" }, work: emptyWork() })).status === "invalid", "unsupported role is rejected");
 {
   const clone = JSON.parse(text);
   clone.work.cases[newId].status = "Teleported";

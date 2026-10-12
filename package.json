@@ -11,10 +11,14 @@
     "typecheck": "tsc --noEmit",
     "e2e": "node scripts/e2e.mjs",
     "e2e:stage2": "node scripts/e2e-stage2.mjs",
+    "e2e:stage3": "node scripts/e2e-stage3.mjs",
     "verify": "npm run typecheck && npm run lint && npm run verify:data",
-    "verify:store": "tsx scripts/verify-store.ts"
+    "verify:store": "tsx scripts/verify-store.ts",
+    "verify:ai": "tsx scripts/verify-ai.ts",
+    "smoke:provider": "tsx scripts/smoke-provider.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.133.0",
     "lucide-react": "^1.55.0",
     "next": "16.4.0",
     "react": "19.3.0",

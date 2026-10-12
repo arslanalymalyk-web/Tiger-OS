@@ -1,0 +1,1 @@
+Stage 3 assistance checks (mocked provider and pure logic; no real model call): 221/221 passed

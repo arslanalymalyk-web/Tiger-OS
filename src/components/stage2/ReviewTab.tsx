@@ -22,7 +22,7 @@ export function ReviewTab({ c }: { c: CaseAggregate }) {
       {c.reviews.map((r) => <ReviewCard key={r.id} c={c} r={r} />)}
       {role === "Expert" && open.length > 0 && c.status !== "Closed" && open.map((r) => <ExpertForm key={r.id} c={c} r={r} />)}
       {role === "Expert" && open.length === 0 && <p className="rounded-lg bg-ivory-2 px-3 py-2 text-sm text-ink-2" data-testid="no-open-review">No open review request on this case for the Expert demonstration role to answer.</p>}
-      {role === "Approver" && <p className="rounded-lg bg-ivory-2 px-3 py-2 text-sm text-ink-2">The Approver demonstration role can read findings and briefs but cannot record approvals in Stage 2.</p>}
+      {role === "Approver" && <p className="rounded-lg bg-ivory-2 px-3 py-2 text-sm text-ink-2">The Approver demonstration role can read findings and briefs but cannot record approvals yet.</p>}
       {role === "Analyst" && <RequestForm c={c} />}
     </>
   );

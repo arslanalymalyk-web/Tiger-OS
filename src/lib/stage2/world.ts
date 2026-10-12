@@ -5,6 +5,9 @@ import { EVIDENCE_LIST, SIGNAL_LIST, personName } from "./catalog";
 import { allCases, isActive, openReviews } from "./rules";
 import { isBriefStale } from "./brief";
 import type { CaseAggregate, WorkState } from "./types";
+import type { AiRun } from "../stage3/types";
+import { OPERATION_LABEL, MODE_LABEL } from "../stage3/types";
+import { buildContext, staleReasons } from "../stage3/context";
 
 export interface World {
   work: WorkState;
@@ -12,11 +15,22 @@ export interface World {
   caseById: Map<string, CaseAggregate>;
   signals: Signal[];
   notifications: Notification[];
+  /** Stage 3: local assistant runs, newest first, and why each completed run Needs refresh (empty list = current). */
+  runs: AiRun[];
+  runStale: Map<string, string[]>;
 }
 export function buildWorld(work: WorkState): World {
   const cases = allCases(work);
+  const caseMap = new Map(cases.map((c) => [c.id, c]));
+  const runs = Object.values(work.ai.runs).sort((a, b) => b.id.localeCompare(a.id)).sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id));
+  const runStale = new Map<string, string[]>();
+  for (const r of runs) {
+    if (r.status !== "completed") continue;
+    const c = caseMap.get(r.caseId);
+    runStale.set(r.id, c ? staleReasons(r.snapshot, buildContext(c)) : ["The case no longer exists."]);
+  }
   return {
-    work, cases, caseById: new Map(cases.map((c) => [c.id, c])), signals: SIGNAL_LIST,
+    work, cases, runs, runStale, caseById: new Map(cases.map((c) => [c.id, c])), signals: SIGNAL_LIST,
     notifications: [...NOTIFICATIONS, ...work.notifications].sort((a, b) => b.at.localeCompare(a.at)),
   };
 }
@@ -36,21 +50,24 @@ export function sectorCounts(w: World, id: SectorId) {
     signals: sd.signals.length, bySev, cases: cs.filter(isActive).length, allCases: cs.length, decisions: sd.decisions.length, commitments, reallocations,
     openReviews: cs.reduce((a, c) => a + openReviews(c).length, 0), staleBriefs: cs.filter((c) => isBriefStale(c)).length,
     untriaged: sd.signals.filter((s) => !activeCaseForSignal(w, s.id)).length,
+    aiRuns: w.runs.filter((r) => r.sectorId === id).length,
+    aiRunning: w.runs.filter((r) => r.sectorId === id && (r.status === "queued" || r.status === "running")).length,
+    aiNeedsRefresh: w.runs.filter((r) => r.sectorId === id && (w.runStale.get(r.id)?.length ?? 0) > 0).length,
   };
 }
 export function groupCounts(w: World) {
   const parts = SECTOR_IDS.map((id) => sectorCounts(w, id));
   const sev = Object.fromEntries(SEVERITY_ORDER.map((s) => [s, parts.reduce((a, p) => a + p.bySev[s], 0)])) as Record<Severity, number>;
-  const sum = (k: "signals" | "cases" | "decisions" | "commitments" | "reallocations" | "openReviews" | "staleBriefs" | "untriaged" | "allCases") => parts.reduce((a, p) => a + p[k], 0);
-  return { signals: sum("signals"), bySev: sev, cases: sum("cases"), allCases: sum("allCases"), decisions: sum("decisions"), commitments: sum("commitments"), reallocations: sum("reallocations"), openReviews: sum("openReviews"), staleBriefs: sum("staleBriefs"), untriaged: sum("untriaged") };
+  const sum = (k: "signals" | "cases" | "decisions" | "commitments" | "reallocations" | "openReviews" | "staleBriefs" | "untriaged" | "allCases" | "aiRuns" | "aiRunning" | "aiNeedsRefresh") => parts.reduce((a, p) => a + p[k], 0);
+  return { signals: sum("signals"), bySev: sev, cases: sum("cases"), allCases: sum("allCases"), decisions: sum("decisions"), commitments: sum("commitments"), reallocations: sum("reallocations"), openReviews: sum("openReviews"), staleBriefs: sum("staleBriefs"), untriaged: sum("untriaged"), aiRuns: sum("aiRuns"), aiRunning: sum("aiRunning"), aiNeedsRefresh: sum("aiNeedsRefresh") };
 }
 
 // ------------------------------------------------------------------ search
-export type WorldKind = RecordKind | "task" | "hypothesis" | "finding" | "brief";
+export type WorldKind = RecordKind | "task" | "hypothesis" | "finding" | "brief" | "run";
 export interface WorldHit { id: string; kind: WorldKind; title: string; sectorId: SectorId; snippet: string; score: number; href?: string }
 export const WORLD_KIND_LABEL: Record<WorldKind, string> = {
   metric: "Metric", signal: "Signal", case: "Intelligence case", decision: "Decision", entity: "Entity", evidence: "Evidence",
-  task: "Task", hypothesis: "Hypothesis", finding: "Expert finding", brief: "Decision brief",
+  task: "Task", hypothesis: "Hypothesis", finding: "Expert finding", brief: "Decision brief", run: "Assistant run",
 };
 const score = (id: string, title: string, text: string, terms: string[]): number | null => {
   const t = text.toLowerCase();
@@ -73,6 +90,10 @@ export function searchWorld(w: World, query: string, limit = 14): WorldHit[] {
     for (const h of c.hypotheses) { const s2 = score(h.id, h.statement, `${h.id} ${h.statement} ${h.rationale}`, terms); if (s2 !== null) hits.push({ id: h.id, kind: "hypothesis", title: h.statement, sectorId: c.sectorId, snippet: `${h.kind} · ${h.status}`, score: s2, href: `/cases/${c.id}?tab=evidence&focus=${h.id}` }); }
     for (const r of c.reviews) for (const rd of r.rounds) for (const f of rd.submission?.findings ?? []) { const s2 = score(f.id, f.text, `${f.id} ${f.type} ${f.text}`, terms); if (s2 !== null) hits.push({ id: f.id, kind: "finding", title: f.text, sectorId: c.sectorId, snippet: `${f.type} · ${personName(r.assigneeId)}`, score: s2, href: `/cases/${c.id}?tab=review&focus=${f.id}` }); }
     for (const b of c.briefs) { const s2 = score(b.id, b.content.decisionQuestion, `${b.id} ${b.content.decisionQuestion} ${b.content.nextStep} ${b.content.currentFindings.join(" ")}`, terms); if (s2 !== null) hits.push({ id: b.id, kind: "brief", title: `Brief v${b.version}: ${b.content.decisionQuestion}`, sectorId: c.sectorId, snippet: b.content.nextStep, score: s2, href: `/cases/${c.id}?tab=brief&version=${b.version}` }); }
+  }
+  for (const r of w.runs) {
+    const s2 = score(r.id, `${r.id} ${OPERATION_LABEL[r.operation]}`, `${r.id} ${r.caseId} ${OPERATION_LABEL[r.operation]} ${MODE_LABEL[r.mode]} ${r.status} ${r.question ?? ""} ${r.model ?? ""}`, terms);
+    if (s2 !== null) hits.push({ id: r.id, kind: "run", title: `${OPERATION_LABEL[r.operation]} (${r.caseId})`, sectorId: r.sectorId, snippet: `${MODE_LABEL[r.mode]} · ${r.status}`, score: s2, href: `/cases/${r.caseId}?tab=ai&run=${r.id}` });
   }
   for (const e of EVIDENCE_LIST) {
     const body = (e.versions ?? []).flatMap((v) => v.blocks.map((b) => (b.type === "p" ? b.text : `${b.caption} ${b.columns.join(" ")} ${b.rows.flat().join(" ")}`))).join(" ");
