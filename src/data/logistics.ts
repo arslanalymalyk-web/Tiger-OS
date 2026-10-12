@@ -37,7 +37,8 @@ const supShare = (sumAttr(top2, "inboundKt") / sumAttr(sups, "inboundKt")) * 100
 const west = ent[1];
 const westRate = (i: number) => (west.series!.delayed[i] / west.series!.shipments[i]) * 100;
 const jed = ent[7];
-const shortN = (e: (typeof ent)[number]) => e.name.replace("Gateway Port – ", "GW – ").replace("Eastern Province – ", "East – ").replace("Northern ", "North ");
+const SHORT: Record<string, string> = { "ENT-LOG-01": "Gateway → Rail", "ENT-LOG-02": "Gateway → West", "ENT-LOG-03": "East → Riyadh", "ENT-LOG-04": "North border" };
+const shortN = (e: (typeof ent)[number]) => SHORT[e.id] ?? e.name;
 
 export const logistics: SectorSeed = {
   sector: {
@@ -63,7 +64,7 @@ export const logistics: SectorSeed = {
       compute: () => ({ value: supShare, sources: ids(sups) }), status: (v) => (v > 60 ? "alert" : v > 50 ? "watch" : "ok"), thresholdNote: "Demonstration tolerance: ≤ 50% ok, > 60% alert.", assumptions: ["Volume by weight."], additive: false },
   ],
   charts: [
-    { id: "CHT-LOG-01", sectorId: S, title: "Delayed shipment rate by route", subtitle: "Apr–Sep 2026", kind: "line", xLabel: "Month (2026)", yLabel: "Delayed shipments (%)", unit: "%", decimals: 1, yMin: 4, formula: "series.delayed ÷ series.shipments × 100.",
+    { id: "CHT-LOG-01", sectorId: S, title: "Delayed shipment rate by route", subtitle: "Apr–Sep 2026", kind: "line", xLabel: "Month (2026)", yLabel: "Delayed shipments (%)", unit: "%", decimals: 1, yMin: 0, formula: "series.delayed ÷ series.shipments × 100.",
       build: (es, p) => { const r = byCat(es, R); return { categories: p, series: r.map((e) => ({ name: shortN(e), values: e.series!.delayed.map((d, i) => (d / e.series!.shipments[i]) * 100) })), sources: ids(r) }; } },
     { id: "CHT-LOG-02", sectorId: S, title: "Inventory cover by distribution centre", subtitle: "As at 30 Sep 2026", kind: "bars", xLabel: "Distribution centre", yLabel: "Days of cover", unit: "days", decimals: 1, refLine: { value: 12, label: "Target 12 days" }, formula: "stock ÷ demand per centre.",
       build: (es) => { const d = byCat(es, W); return { categories: d.map((e) => e.name), series: [{ name: "Days of cover", values: d.map(dcCover) }], sources: ids(d) }; } },

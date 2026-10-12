@@ -19,7 +19,7 @@ const Panel = ({ title, icon: Icon, children, count }: { title: string; icon: Re
 export function CommandCentre({ sectorId }: { sectorId: SectorId }) {
   const seed = SECTOR_BY_ID[sectorId];
   const { sector } = seed;
-  const { role, setSector } = useDemo();
+  const { role, setSector, hydrated } = useDemo();
   const { openRecord } = useRecordNav();
   useEffect(() => setSector(sectorId), [sectorId, setSector]);
   const Icon = SECTOR_ICONS[sectorId];
@@ -55,7 +55,10 @@ export function CommandCentre({ sectorId }: { sectorId: SectorId }) {
         </div>
       </header>
 
-      <section className="rounded-xl border border-em-700/30 bg-em-900 p-4 text-white" aria-label="Role focus">
+      {!hydrated ? (
+        <section className="min-h-[7.5rem] animate-pulse rounded-xl border border-em-700/30 bg-em-900/90 p-4 text-sm text-white/80 motion-reduce:animate-none" aria-label="Role focus" aria-busy="true">Loading your simulated role view…</section>
+      ) : (
+      <section className="on-dark rounded-xl border border-em-700/30 bg-em-900 p-4 text-white" aria-label="Role focus">
         <p className="mb-2 flex items-center gap-2 text-sm font-semibold"><focus.icon size={16} className="text-gd-300" aria-hidden />{focus.label} <span className="rounded bg-white/15 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide">simulated role</span></p>
         {focus.items.length === 0 ? <p className="text-sm text-white/80">Nothing in your queue for this sector.</p> : (
           <ul className="grid gap-2 md:grid-cols-3">{focus.items.map((i) => (
@@ -63,6 +66,7 @@ export function CommandCentre({ sectorId }: { sectorId: SectorId }) {
           ))}</ul>
         )}
       </section>
+      )}
 
       <section aria-label="Key metrics">
         <h2 className="mb-2 text-sm font-semibold">Key metrics</h2>
@@ -70,12 +74,12 @@ export function CommandCentre({ sectorId }: { sectorId: SectorId }) {
           {seed.metrics.map((m) => {
             const r = computeMetric(m);
             return (
-              <button key={m.id} onClick={() => openRecord(m.id)} className="card group p-4 text-left transition hover:border-em-600 hover:shadow-card" data-testid={`metric-${m.id}`}>
+              <button key={m.id} onClick={() => openRecord(m.id)} className="card group flex flex-col p-4 text-left transition hover:border-em-600 hover:shadow-card" data-testid={`metric-${m.id}`}>
                 <p className="eyebrow">{m.theme}</p>
                 <p className="mt-1 text-sm font-medium text-ink">{m.name}</p>
                 <p className="mt-2 flex flex-wrap items-baseline gap-x-1.5"><span className="font-serif text-3xl tabular-nums text-em-900">{fmtNum(r.value, m.decimals)}</span><span className="text-xs text-ink-2">{m.unit}</span></p>
                 <p className="mt-1 text-xs text-muted">{m.period}</p>
-                <div className="mt-3 flex items-center justify-between"><StatusPill status={r.status} /><span className="flex items-center gap-1 text-xs font-medium text-em-700 group-hover:underline">Details <ArrowRight size={12} aria-hidden /></span></div>
+                <div className="mt-auto flex items-center justify-between pt-3"><StatusPill status={r.status} /><span className="flex items-center gap-1 text-xs font-medium text-em-700 group-hover:underline">Details <ArrowRight size={12} aria-hidden /></span></div>
               </button>
             );
           })}
@@ -123,7 +127,7 @@ export function CommandCentre({ sectorId }: { sectorId: SectorId }) {
         </Panel>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
         <Panel title="Recent activity" icon={Radar}>
           <ol className="space-y-3 border-l border-line pl-4">{[...seed.activity].sort((a, b) => b.at.localeCompare(a.at)).map((a) => (
             <li key={a.id} className="relative"><span className="absolute -left-[21px] top-1.5 h-2 w-2 rounded-full bg-gd-500" aria-hidden />
@@ -133,7 +137,7 @@ export function CommandCentre({ sectorId }: { sectorId: SectorId }) {
         </Panel>
         <Panel title="Underlying records" icon={ClipboardList} count={seed.entities.length}>
           <p className="mb-2 text-xs text-muted">Metrics and charts above are calculated from these records. Select one for attributes, dependencies and linked records.</p>
-          <div className="max-h-80 overflow-auto rounded-lg border border-line">
+          <div className="max-h-96 overflow-auto rounded-lg border border-line" tabIndex={0} role="region" aria-label={`Underlying records for ${sector.name} (scrollable)`}>
             <table className="w-full text-left text-sm"><thead className="sticky top-0 bg-ivory-2 text-xs text-muted"><tr><th className="p-2 font-semibold">Record</th><th className="p-2 font-semibold">Category</th><th className="p-2 text-right font-semibold">Capital (SAR m)</th></tr></thead>
               <tbody>{seed.entities.map((e) => (
                 <tr key={e.id} className="border-t border-line-2 hover:bg-sg-50"><td className="p-2"><button onClick={() => openRecord(e.id)} className="text-left font-medium text-em-700 underline-offset-2 hover:underline">{e.name}</button><div className="font-mono text-[10px] text-muted">{e.id}</div></td>

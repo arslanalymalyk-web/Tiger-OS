@@ -2,12 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, ChevronDown, Info, LogOut, Menu, RotateCcw, Search, X } from "lucide-react";
+import { Bell, ChevronDown, Info, Landmark, LogOut, Menu, RotateCcw, Search, X } from "lucide-react";
 import { INSTITUTION, KIND_LABEL, NOTIFICATIONS, SECTORS, SECTOR_BY_ID, fmtTime, search } from "@/data";
-import type { Role } from "@/lib/types";
+import type { Role, SectorId } from "@/lib/types";
 import { useRecordNav } from "@/lib/useRecordNav";
 import { ROLES, useDemo } from "@/state/DemoProvider";
 import { STAGES } from "@/data/roadmap";
+import { trapTab } from "@/lib/focus";
 import { DemoTag, KindChip, SECTOR_ICONS } from "./ui";
 
 function useOutside(ref: React.RefObject<HTMLElement | null>, onOut: () => void, active: boolean) {
@@ -24,21 +25,28 @@ function useOutside(ref: React.RefObject<HTMLElement | null>, onOut: () => void,
 function Menu_({ label, icon, children, align = "left", width = "w-72" }: { label: React.ReactNode; icon?: React.ReactNode; children: (close: () => void) => React.ReactNode; align?: "left" | "right"; width?: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
   useOutside(ref, () => setOpen(false), open);
+  useEffect(() => {
+    if (!open) return;
+    const k = (e: KeyboardEvent) => { if (e.key === "Escape") btn.current?.focus(); };
+    document.addEventListener("keydown", k);
+    return () => document.removeEventListener("keydown", k);
+  }, [open]);
   return (
     <div ref={ref} className="relative">
-      <button onClick={() => setOpen((o) => !o)} aria-haspopup="true" aria-expanded={open} className="flex items-center gap-1.5 rounded-lg border border-line bg-white px-2.5 py-1.5 text-sm text-ink hover:border-em-600">
-        {icon}<span className="max-w-[9rem] truncate">{label}</span><ChevronDown size={14} className="text-muted" aria-hidden />
+      <button ref={btn} onClick={() => setOpen((o) => !o)} aria-haspopup="true" aria-expanded={open} className="flex items-center gap-1.5 rounded-lg border border-line bg-white px-2.5 py-1.5 text-sm text-ink hover:border-em-600">
+        {icon}<span className="max-w-[8rem] truncate">{label}</span><ChevronDown size={14} className="text-muted" aria-hidden />
       </button>
       {open && <div className={`absolute z-40 mt-1 ${width} ${align === "right" ? "right-0" : "left-0"} max-w-[calc(100vw-1.5rem)] rounded-xl border border-line bg-white p-1.5 shadow-card`}>{children(() => setOpen(false))}</div>}
     </div>
   );
 }
 
-function InstitutionSelector() {
+export function InstitutionSelector() {
   const router = useRouter();
   return (
-    <Menu_ label={INSTITUTION.short} icon={<span className="text-[10px] font-semibold uppercase tracking-wider text-muted">Institution</span>} width="w-80">
+    <Menu_ label={INSTITUTION.short} icon={<span className="text-[10px] font-semibold uppercase tracking-wider text-muted">Institution</span>} width="w-64">
       {(close) => (
         <div>
           <div className="rounded-lg bg-sg-50 p-2.5">
@@ -58,11 +66,15 @@ function InstitutionSelector() {
 
 function SectorSelector() {
   const router = useRouter();
-  const { sectorId } = useDemo();
-  const cur = SECTOR_BY_ID[sectorId].sector;
-  const Icon = SECTOR_ICONS[sectorId];
+  const { sectorId: saved, hydrated } = useDemo();
+  const path = usePathname();
+  // The route is authoritative on sector pages; elsewhere wait for the persisted value to avoid showing a stale default.
+  const routeId = path.startsWith("/sector/") ? path.split("/")[2] : null;
+  const sectorId = (routeId && routeId in SECTOR_BY_ID ? routeId : hydrated ? saved : null) as SectorId | null;
+  const cur = sectorId ? SECTOR_BY_ID[sectorId].sector : null;
+  const Icon = sectorId ? SECTOR_ICONS[sectorId] : Landmark;
   return (
-    <Menu_ label={cur.short} icon={<><span className="text-[10px] font-semibold uppercase tracking-wider text-muted">Sector</span><Icon size={14} className="text-em-700" aria-hidden /></>}>
+    <Menu_ label={cur?.short ?? "Select sector"} icon={<><span className="hidden text-[10px] font-semibold uppercase tracking-wider text-muted sm:inline">Sector</span><Icon size={14} className="text-em-700" aria-hidden /></>}>
       {(close) => SECTORS.map((s) => {
         const I = SECTOR_ICONS[s.id];
         return (
@@ -77,11 +89,12 @@ function SectorSelector() {
 }
 
 function RoleSelector() {
-  const { role, setRole } = useDemo();
+  const { role, setRole, hydrated } = useDemo();
   return (
     <label className="flex items-center gap-1.5 rounded-lg border border-line bg-white px-2.5 py-1 text-sm">
-      <span className="text-[10px] font-semibold uppercase leading-tight tracking-wider text-muted">Simulated<br />role</span>
-      <select value={role} onChange={(e) => setRole(e.target.value as Role)} aria-label="Simulated demonstration role" className="bg-transparent py-0.5 font-medium text-ink outline-none">
+      <span className="hidden text-[10px] font-semibold uppercase leading-tight tracking-wider text-muted sm:block">Simulated<br />role</span><span className="text-[10px] font-semibold uppercase tracking-wider text-muted sm:hidden" aria-hidden>Role</span>
+      <select value={hydrated ? role : ""} disabled={!hydrated} onChange={(e) => setRole(e.target.value as Role)} aria-label="Simulated demonstration role" className="min-w-[5.5rem] bg-transparent py-0.5 font-medium text-ink">
+        {!hydrated && <option value="">Loading…</option>}
         {ROLES.map((r) => <option key={r}>{r}</option>)}
       </select>
     </label>
@@ -93,25 +106,26 @@ function SearchBox() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
+  const input = useRef<HTMLInputElement>(null);
   const { openRecord } = useRecordNav();
   const hits = useMemo(() => search(q), [q]);
   useOutside(ref, () => setOpen(false), open);
-  const choose = (id: string) => { setOpen(false); setQ(""); openRecord(id); };
+  const choose = (id: string) => { input.current?.focus(); setOpen(false); setQ(""); openRecord(id); };
   return (
     <div ref={ref} className="relative w-full">
       <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" aria-hidden />
-      <input value={q} onChange={(e) => { setQ(e.target.value); setOpen(true); setActive(0); }} onFocus={() => setOpen(true)}
+      <input ref={input} value={q} onChange={(e) => { setQ(e.target.value); setOpen(true); setActive(0); }} onFocus={() => setOpen(true)}
         onKeyDown={(e) => {
           if (e.key === "ArrowDown") { e.preventDefault(); setActive((a) => Math.min(hits.length - 1, a + 1)); }
           if (e.key === "ArrowUp") { e.preventDefault(); setActive((a) => Math.max(0, a - 1)); }
           if (e.key === "Enter" && hits[active]) choose(hits[active].id);
         }}
-        placeholder="Search seeded records (e.g. Sahil, LCR, SIG-LOG-01)" aria-label="Search seeded demonstration records" role="combobox" aria-expanded={open && q.length > 0} aria-controls="search-results"
+        placeholder="Search seeded records (e.g. Sahil, LCR, SIG-LOG-01)" aria-label="Search seeded demonstration records" role="combobox" aria-expanded={open && q.length > 0} aria-controls="search-results" aria-autocomplete="list" aria-activedescendant={open && hits[active] ? `hit-${hits[active].id}` : undefined}
         className="w-full rounded-lg border border-line bg-white py-2 pl-9 pr-3 text-sm placeholder:text-muted focus:border-em-600" />
       {open && q.trim() && (
         <div id="search-results" role="listbox" className="absolute z-40 mt-1 max-h-[70vh] w-full min-w-[min(28rem,calc(100vw-1.5rem))] overflow-y-auto rounded-xl border border-line bg-white p-1.5 shadow-card">
           {hits.length === 0 ? <p className="p-3 text-sm text-muted">No seeded record matches “{q}”.</p> : hits.map((h, i) => (
-            <button key={h.id} role="option" aria-selected={i === active} onClick={() => choose(h.id)} onMouseEnter={() => setActive(i)}
+            <button key={h.id} id={`hit-${h.id}`} tabIndex={-1} role="option" aria-selected={i === active} onClick={() => choose(h.id)} onMouseEnter={() => setActive(i)}
               className={`block w-full rounded-lg p-2.5 text-left ${i === active ? "bg-sg-100" : ""}`}>
               <span className="flex flex-wrap items-center gap-2"><KindChip kind={h.kind} /><span className="font-mono text-[11px] text-muted">{h.id}</span><span className="text-[11px] text-muted">{SECTOR_BY_ID[h.sectorId].sector.short}</span></span>
               <span className="mt-0.5 block text-sm font-medium text-ink">{h.title}</span>
@@ -125,17 +139,24 @@ function SearchBox() {
 }
 
 function Notifications() {
-  const { readIds, unreadCount, markRead, markUnread, markAllRead } = useDemo();
+  const { readIds, unreadCount, markRead, markUnread, markAllRead, hydrated } = useDemo();
   const { openRecord } = useRecordNav();
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
+  const bell = useRef<HTMLButtonElement>(null);
   useOutside(ref, () => setOpen(false), open);
+  useEffect(() => {
+    if (!open) return;
+    const k = (e: KeyboardEvent) => { if (e.key === "Escape") bell.current?.focus(); };
+    document.addEventListener("keydown", k);
+    return () => document.removeEventListener("keydown", k);
+  }, [open]);
   return (
     <div ref={ref} className="relative">
-      <button onClick={() => setOpen((o) => !o)} aria-label={`Notifications, ${unreadCount} unread`} aria-expanded={open} className="relative rounded-lg border border-line bg-white p-2 text-ink hover:border-em-600">
+      <button ref={bell} onClick={() => setOpen((o) => !o)} aria-label={hydrated ? `Notifications, ${unreadCount} unread` : "Notifications"} aria-expanded={open} className="relative rounded-lg border border-line bg-white p-2 text-ink hover:border-em-600">
         <Bell size={18} aria-hidden />
-        {unreadCount > 0 && <span className="absolute -right-1.5 -top-1.5 grid min-w-[18px] place-items-center rounded-full bg-rd-600 px-1 text-[10px] font-bold leading-[18px] text-white" data-testid="unread-count">{unreadCount}</span>}
+        {hydrated && unreadCount > 0 && <span className="absolute -right-1.5 -top-1.5 grid min-w-[18px] place-items-center rounded-full bg-rd-600 px-1 text-[10px] font-bold leading-[18px] text-white" data-testid="unread-count">{unreadCount}</span>}
       </button>
       {open && (
         <div className="absolute right-0 z-40 mt-1 max-h-[75vh] w-[26rem] max-w-[calc(100vw-1.5rem)] overflow-y-auto rounded-xl border border-line bg-white shadow-card">
@@ -148,7 +169,7 @@ function Notifications() {
               const unread = !readIds.includes(n.id);
               return (
                 <li key={n.id} className={`border-b border-line-2 p-3 ${unread ? "bg-sg-50" : ""}`} data-unread={unread}>
-                  <button className="block w-full text-left" onClick={() => { markRead(n.id); if (n.recordId) { setOpen(false); openRecord(n.recordId); } else setExpanded(expanded === n.id ? null : n.id); }}>
+                  <button className="block w-full text-left" onClick={() => { markRead(n.id); if (n.recordId) { bell.current?.focus(); setOpen(false); openRecord(n.recordId); } else setExpanded(expanded === n.id ? null : n.id); }}>
                     <span className="flex items-start gap-2">
                       <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${unread ? "bg-em-600" : "bg-transparent border border-line"}`} aria-label={unread ? "Unread" : "Read"} />
                       <span className="min-w-0 flex-1">
@@ -171,11 +192,18 @@ function Notifications() {
 }
 
 function Modal({ title, onClose, children, wide }: { title: string; onClose: () => void; children: React.ReactNode; wide?: boolean }) {
-  useEffect(() => { const k = (e: KeyboardEvent) => e.key === "Escape" && onClose(); window.addEventListener("keydown", k); return () => window.removeEventListener("keydown", k); }, [onClose]);
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null;
+    box.current?.focus();
+    const k = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); else trapTab(e, box.current); };
+    window.addEventListener("keydown", k);
+    return () => { window.removeEventListener("keydown", k); if (opener && document.contains(opener)) opener.focus(); };
+  }, [onClose]);
   return (
     <div className="fixed inset-0 z-[60] grid place-items-center p-3" role="dialog" aria-modal="true" aria-label={title}>
       <div className="absolute inset-0 bg-em-950/50" onClick={onClose} aria-hidden />
-      <div className={`relative max-h-[90vh] w-full overflow-y-auto rounded-2xl bg-ivory p-5 shadow-2xl sm:p-6 ${wide ? "max-w-2xl" : "max-w-md"}`}>
+      <div ref={box} tabIndex={-1} className={`outline-none relative max-h-[90vh] w-full overflow-y-auto rounded-2xl bg-ivory p-5 shadow-2xl sm:p-6 ${wide ? "max-w-2xl" : "max-w-md"}`}>
         <div className="mb-3 flex items-start justify-between gap-3"><h2 className="font-serif text-xl">{title}</h2><button onClick={onClose} aria-label="Close" className="rounded-md p-1 hover:bg-ivory-2"><X size={18} /></button></div>
         {children}
       </div>
@@ -227,17 +255,16 @@ export function TopBar({ onMenu }: { onMenu: () => void }) {
   return (
     <>
       <header className="sticky top-0 z-30 border-b border-line bg-ivory/95 backdrop-blur">
-        <div className="flex flex-wrap items-center gap-2 px-3 py-2 sm:px-5">
+        <div className="flex flex-wrap items-center gap-1.5 px-3 py-2 sm:gap-2 sm:px-5">
           <button onClick={onMenu} className="rounded-lg border border-line bg-white p-2 lg:hidden" aria-label="Open navigation"><Menu size={18} /></button>
-          <div className="hidden xl:block"><InstitutionSelector /></div>
           <SectorSelector />
-          <div className="order-last w-full md:order-none md:max-w-md md:flex-1"><SearchBox /></div>
+          <div className="order-last w-full md:order-none md:min-w-[14rem] md:max-w-md md:flex-1"><SearchBox /></div>
           <div className="ml-auto flex items-center gap-2">
             <RoleSelector />
             <Notifications />
             <button onClick={() => setAbout(true)} className="rounded-lg border border-line bg-white p-2 hover:border-em-600" aria-label="About this prototype"><Info size={18} /></button>
-            <button onClick={() => setReset(true)} className="hidden items-center gap-1.5 rounded-lg border border-line bg-white px-2.5 py-2 text-sm hover:border-em-600 sm:flex"><RotateCcw size={14} aria-hidden />Reset demonstration</button>
-            <button onClick={() => setReset(true)} className="rounded-lg border border-line bg-white p-2 hover:border-em-600 sm:hidden" aria-label="Reset demonstration"><RotateCcw size={18} /></button>
+            <button onClick={() => setReset(true)} className="hidden items-center gap-1.5 rounded-lg border border-line bg-white px-2.5 py-2 text-sm hover:border-em-600 2xl:flex"><RotateCcw size={14} aria-hidden />Reset demonstration</button>
+            <button onClick={() => setReset(true)} className="rounded-lg border border-line bg-white p-2 hover:border-em-600 2xl:hidden" aria-label="Reset demonstration" title="Reset demonstration"><RotateCcw size={18} /></button>
             <button onClick={() => router.push("/")} className="hidden rounded-lg border border-line bg-white p-2 hover:border-em-600 md:block" aria-label="Exit to entry page" title="Exit to entry page"><LogOut size={18} /></button>
           </div>
         </div>

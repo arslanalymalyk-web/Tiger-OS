@@ -9,6 +9,7 @@ import {
 } from "@/data";
 import { useRecordNav } from "@/lib/useRecordNav";
 import { useDemo } from "@/state/DemoProvider";
+import { restoreDrawerFocus, trapTab } from "@/lib/focus";
 import { DemoTag, IdTag, KindChip, Section, SeverityBadge, StageBoundary, StatusPill } from "./ui";
 
 function RecLink({ id, onOpen }: { id: string; onOpen: (id: string) => void }) {
@@ -98,7 +99,8 @@ function SignalBody({ s, open }: { s: Signal; open: (id: string) => void }) {
 }
 
 function CaseBody({ c, open }: { c: IntelligenceCase; open: (id: string) => void }) {
-  const { role } = useDemo();
+  const { role: saved, hydrated } = useDemo();
+  const role = hydrated ? saved : null;
   return (
     <>
       <FlowPath current={c.id} />
@@ -120,7 +122,8 @@ function CaseBody({ c, open }: { c: IntelligenceCase; open: (id: string) => void
 }
 
 function DecisionBody({ d, open }: { d: Decision; open: (id: string) => void }) {
-  const { role } = useDemo();
+  const { role: saved, hydrated } = useDemo();
+  const role = hydrated ? saved : null;
   const kindText = { commitment: "New commitment (additive)", reallocation: "Reallocation of existing capital (not additive)", none: "No amount" }[d.amountKind];
   return (
     <>
@@ -141,7 +144,7 @@ function DecisionBody({ d, open }: { d: Decision; open: (id: string) => void }) 
       <Section title="Evidence references (illustrative)"><RecList ids={d.evidenceIds} onOpen={open} /></Section>
       <Assumptions items={d.assumptions} />
       <StageBoundary stage={6} capability="Approval workflow">
-        {role === "Approver" ? "As the simulated Approver you would decide here. " : `The ${role} role cannot approve in the full product. `}
+        {role === "Approver" ? "As the simulated Approver you would decide here. " : role ? `The ${role} role cannot approve in the full product. ` : ""}
         Recording approvals, delegated authority and audit trail are not available in Stage 1; decisions stay pending.
       </StageBoundary>
     </>
@@ -165,7 +168,7 @@ function EntityBody({ e, open }: { e: Entity; open: (id: string) => void }) {
       </Section>
       {e.series && (
         <Section title={`History (${sec.sector.periods[0]} – ${sec.sector.periods.at(-1)})`}>
-          <div className="overflow-x-auto"><table className="w-full text-xs"><thead><tr className="text-muted"><th className="p-1 text-left">Series</th>{sec.sector.periods.map((p) => <th key={p} className="p-1 text-right">{p}</th>)}</tr></thead>
+          <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="History table (scrollable)"><table className="w-full text-xs"><thead><tr className="text-muted"><th className="p-1 text-left">Series</th>{sec.sector.periods.map((p) => <th key={p} className="p-1 text-right">{p}</th>)}</tr></thead>
             <tbody>{Object.entries(e.series).map(([k, arr]) => <tr key={k} className="border-t border-line-2"><td className="p-1">{sec.sector.attrs[k]?.label ?? k}</td>{arr.map((v, i) => <td key={i} className="p-1 text-right tabular-nums">{fmtNum(v, v % 1 ? 1 : 0)}</td>)}</tr>)}</tbody></table></div>
         </Section>
       )}
@@ -204,15 +207,20 @@ export function RecordDrawer() {
   const rec = getRecord(id);
   const panel = useRef<HTMLDivElement>(null);
 
+  const wasOpen = useRef(false);
+  const isOpen = !!id;
+  // Escape closes; Tab is trapped inside the dialog.
   useEffect(() => {
-    if (!rec) return;
-    const prev = document.activeElement as HTMLElement | null;
-    panel.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeRecord();
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closeRecord(); else trapTab(e, panel.current); };
     window.addEventListener("keydown", onKey);
-    return () => { window.removeEventListener("keydown", onKey); prev?.focus?.(); };
-  }, [rec?.data.id]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { if (rec) panel.current?.scrollTo({ top: 0 }); }, [rec?.data.id]); // eslint-disable-line react-hooks/exhaustive-deps
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isOpen, closeRecord]);
+  // Focus the panel when opened or when navigating between records; return focus to the opener on close.
+  useEffect(() => {
+    if (isOpen) { wasOpen.current = true; panel.current?.focus(); panel.current?.scrollTo({ top: 0 }); }
+    else if (wasOpen.current) { wasOpen.current = false; restoreDrawerFocus(); }
+  }, [isOpen, id]);
 
   if (!id) return null;
   const sector = rec ? SECTOR_BY_ID[rec.data.sectorId].sector : null;

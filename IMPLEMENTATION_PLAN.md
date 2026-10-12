@@ -3,6 +3,9 @@
 ## Stage 1 — delivered (this build)
 Shared foundation, entries, eight command centres, drawers, search, notifications, roles (simulated), reset, documentation, verification scripts.
 
+## Stage 1 review and polish pass — delivered
+Hydration-flash fix, chart palette ≥ 4.5:1, visual review fixes, drawer/dialog focus management, axe-core scan, expanded browser checks, review package (`REVIEW.md`, `review/`). Firefox/WebKit checks were not run (browsers not installed in the environment).
+
 ## Future stages (not started; described so boundaries are explicit)
 | Stage | Capabilities | Notes |
 |---|---|---|

@@ -32,4 +32,4 @@ Case editing, evidence document viewing, AI assistance, expert comments, scenari
 Nothing in Stage 1 implies live data, AI execution, integration health, production authentication, production readiness, sovereign hosting or certification.
 
 ## Prototype limitations
-Single institution; static seed data; thresholds ("tolerances") are illustrative; approvals cannot be recorded; evidence has no documents; state is per-browser; English only.
+Single institution; static seed data; thresholds ("tolerances") are illustrative; approvals cannot be recorded; evidence has no documents; state is per-browser; English only; verified in headless Chromium only (Firefox/WebKit not run), no screen-reader testing. See `REVIEW.md`.

@@ -16,7 +16,10 @@ const SECTORS = [
 const results = [];
 const check = (name, ok, detail = "") => { results.push({ name, ok, detail }); console.log(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? "  — " + detail : ""}`); };
 
-const browser = await pw.chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
+const BROWSER = process.env.BROWSER || "chromium";
+let browser;
+try { browser = await pw[BROWSER].launch(); } catch (e) { console.log(`UNAVAILABLE  ${BROWSER} could not be launched: ${String(e.message).split("\n")[0]}`); process.exit(2); }
+console.log(`Running checks in ${BROWSER}`);
 const errors = [];
 async function newPage(viewport) {
   const ctx = await browser.newContext({ viewport });
@@ -164,6 +167,128 @@ const drawerId = async (page, expected) => {
   await page.getByRole("button", { name: "Reset demonstration" }).first().click();
   await page.getByRole("button", { name: "Cancel" }).click();
   check("Reset confirmation can be cancelled", (await page.getByRole("dialog", { name: "Reset demonstration?" }).count()) === 0);
+  await ctx.close();
+}
+
+
+// ---- Hydration: a persisted non-default role must never flash the default
+{
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  await ctx.addInitScript(() => {
+    try { localStorage.setItem("tigeris.demo.v1", JSON.stringify({ sectorId: "insurance", role: "Expert", readIds: ["NTF-01", "NTF-02"], entered: true })); } catch {}
+    window.__seen = new Set();
+    const rec = () => {
+      const sel = document.querySelector('select[aria-label="Simulated demonstration role"]');
+      if (sel) window.__seen.add("sel:" + sel.value);
+      const f = document.querySelector('section[aria-label="Role focus"]');
+      if (f) window.__seen.add("focus:" + (f.textContent || "").slice(0, 24));
+      const side = document.body?.innerText.match(/Simulated role: (\S+)/);
+      if (side) window.__seen.add("side:" + side[1]);
+    };
+    new MutationObserver(rec).observe(document, { subtree: true, childList: true, attributes: true, characterData: true });
+    setInterval(rec, 4);
+  });
+  const page = await ctx.newPage();
+  page.on("pageerror", (e) => errors.push(`pageerror: ${e.message}`));
+  await page.goto(BASE + "/sector/insurance");
+  await page.waitForFunction(() => document.querySelector('select[aria-label="Simulated demonstration role"]')?.value === "Expert");
+  await page.waitForTimeout(300);
+  const seen = await page.evaluate(() => [...window.__seen]);
+  check("No role flash: Analyst never rendered when Expert persisted", !seen.some((x) => /Analyst/.test(x)), seen.join(" | "));
+  check("Persisted role and focus panel appear after hydration", seen.includes("sel:Expert") && seen.some((x) => x.startsWith("focus:Expert")), seen.join(" | "));
+  check("Persisted read count applied (9 unread)", (await page.getByTestId("unread-count").textContent()) === "9");
+  await ctx.close();
+  const raw = await (await fetch(BASE + "/sector/insurance")).text();
+  check("Server HTML contains no role-specific content (loading state only)", !/Analyst focus|Expert focus|Approver focus/.test(raw) && raw.includes("Loading"));
+}
+
+// ---- Keyboard, focus management, persistence, reset
+{
+  const { ctx, page } = await newPage({ width: 1440, height: 900 });
+  const inDialog = () => page.evaluate(() => !!document.activeElement?.closest('[role="dialog"]'));
+  const activeId = () => page.evaluate(() => document.activeElement?.getAttribute("data-testid") || document.activeElement?.getAttribute("aria-label") || document.activeElement?.id || document.activeElement?.tagName);
+  await page.goto(BASE + "/sector/energy");
+  await page.waitForSelector("figure svg");
+  // visible focus + skip link
+  await page.keyboard.press("Tab");
+  const skip = await page.evaluate(() => { const e = document.activeElement; const cs = getComputedStyle(e); return { text: e.textContent, vis: e.getBoundingClientRect().width > 1, outline: cs.outlineStyle }; });
+  check("Skip link is first tab stop and becomes visible", /Skip to main/.test(skip.text) && skip.vis);
+  await page.keyboard.press("Enter");
+  check("Skip link moves focus to main content", (await page.evaluate(() => document.activeElement?.id)) === "main-content");
+  let focusRing = true;
+  for (let i = 0; i < 12; i++) { await page.keyboard.press("Tab"); const o = await page.evaluate(() => { const e = document.activeElement; const cs = getComputedStyle(e); return cs.outlineStyle !== "none" && parseFloat(cs.outlineWidth) >= 2; }); if (!o) focusRing = false; }
+  check("Visible focus ring on the first 12 tab stops", focusRing);
+  // Drawer: keyboard open, focus in, trap, Escape, return
+  const sig = page.locator('[data-testid="signal-SIG-ENR-01"]');
+  await sig.focus(); await page.keyboard.press("Enter");
+  await page.waitForSelector('[role="dialog"][aria-label="Record detail"]');
+  await page.waitForTimeout(150);
+  check("Drawer takes focus on open", await inDialog());
+  let trapped = true;
+  for (let i = 0; i < 60; i++) { await page.keyboard.press("Tab"); if (!(await inDialog())) { trapped = false; break; } }
+  check("Tab stays trapped inside the drawer (60 tab presses)", trapped);
+  let trappedBack = true;
+  for (let i = 0; i < 30; i++) { await page.keyboard.press("Shift+Tab"); if (!(await inDialog())) { trappedBack = false; break; } }
+  check("Shift+Tab stays trapped inside the drawer", trappedBack);
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(250);
+  check("Escape closes drawer and focus returns to the opening signal button", (await activeId()) === "signal-SIG-ENR-01", await activeId());
+  // drawer via mouse then close button
+  await page.locator('[data-testid="metric-MET-ENR-01"]').click();
+  await page.waitForSelector('[role="dialog"][aria-label="Record detail"]');
+  await page.getByRole("button", { name: "Close detail" }).click();
+  await page.waitForTimeout(250);
+  check("Close button returns focus to the opening metric card", (await activeId()) === "metric-MET-ENR-01", await activeId());
+  // drawer-to-drawer navigation does not change what focus returns to
+  await sig.click(); await page.waitForSelector('[role="dialog"][aria-label="Record detail"]');
+  await page.locator('[role="dialog"][aria-label="Record detail"]').getByRole("button", { name: /Wadi hub concentration/ }).first().click();
+  await drawerId(page, "CAS-ENR-01");
+  await page.keyboard.press("Escape"); await page.waitForTimeout(250);
+  check("Focus returns to the original opener after navigating signal → case", (await activeId()) === "signal-SIG-ENR-01", await activeId());
+  // About + Reset dialogs
+  const about = page.getByRole("button", { name: "About this prototype" });
+  await about.focus(); await page.keyboard.press("Enter");
+  await page.waitForSelector('[role="dialog"][aria-label="About this prototype"]');
+  check("About dialog takes focus", await inDialog());
+  let t2 = true; for (let i = 0; i < 12; i++) { await page.keyboard.press("Tab"); if (!(await inDialog())) t2 = false; }
+  check("About dialog traps Tab", t2);
+  await page.keyboard.press("Escape"); await page.waitForTimeout(200);
+  check("Escape closes About and focus returns to the About button", (await page.evaluate(() => document.activeElement?.getAttribute("aria-label"))) === "About this prototype");
+  const resetBtn = page.getByRole("button", { name: "Reset demonstration" }).first();
+  await resetBtn.focus(); await page.keyboard.press("Enter");
+  await page.waitForSelector('[role="dialog"][aria-label="Reset demonstration?"]');
+  check("Reset dialog takes focus", await inDialog());
+  await page.keyboard.press("Escape"); await page.waitForTimeout(200);
+  check("Escape cancels Reset and returns focus to the Reset button", (await page.evaluate(() => document.activeElement?.getAttribute("aria-label") || document.activeElement?.textContent?.trim())) === "Reset demonstration");
+  // Menus
+  await page.getByRole("button", { name: /Sector/ }).first().click();
+  await page.keyboard.press("Escape");
+  check("Escape closes sector menu and returns focus to its button", /Sector/.test(await page.evaluate(() => document.activeElement?.textContent ?? "")));
+  // Search keyboard
+  const input = page.getByLabel("Search seeded demonstration records");
+  await input.focus(); await page.keyboard.type("Rimal"); await page.keyboard.press("ArrowDown"); await page.keyboard.press("Enter");
+  await page.waitForSelector('[role="dialog"][aria-label="Record detail"]');
+  await page.keyboard.press("Escape"); await page.waitForTimeout(250);
+  check("Search (keyboard) → drawer → Escape returns focus to the search box", (await page.evaluate(() => document.activeElement?.getAttribute("role"))) === "combobox");
+  // Persistence of sector, role and notifications, and reset
+  await page.goto(BASE + "/sector/insurance");
+  await page.getByLabel("Simulated demonstration role").selectOption("Approver");
+  await page.getByRole("button", { name: /Notifications/ }).click();
+  await page.getByRole("button", { name: "Mark all read" }).click();
+  await page.keyboard.press("Escape");
+  await page.goto(BASE + "/workspaces");
+  await page.reload();
+  await page.waitForFunction(() => document.querySelector('select[aria-label="Simulated demonstration role"]')?.value === "Approver");
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tigeris.demo.v1") || "null"));
+  check("Persisted state survives reload (role, sector, notifications)", stored?.role === "Approver" && stored?.sectorId === "insurance" && stored?.readIds?.length === 11, JSON.stringify(stored));
+  check("Workspaces shows persisted last-selected sector (Insurance)", (await page.locator('[data-testid="workspace-insurance"]').innerText()).includes("Last selected"));
+  check("Unread badge hidden when all read", (await page.getByTestId("unread-count").count()) === 0);
+  await page.getByRole("button", { name: "Reset demonstration" }).first().click();
+  await page.getByRole("dialog", { name: "Reset demonstration?" }).getByRole("button", { name: "Reset demonstration" }).click();
+  await page.waitForTimeout(400);
+  const afterReset = await page.evaluate(() => localStorage.getItem("tigeris.demo.v1"));
+  check("Reset clears persisted demo state from localStorage", afterReset === null, String(afterReset));
+  check("Reset restores seeded UI state (Analyst, 11 unread, Energy last selected)", (await page.getByLabel("Simulated demonstration role").inputValue()) === "Analyst" && (await page.getByTestId("unread-count").textContent()) === "11" && (await page.locator('[data-testid="workspace-energy"]').innerText()).includes("Last selected"));
   await ctx.close();
 }
 

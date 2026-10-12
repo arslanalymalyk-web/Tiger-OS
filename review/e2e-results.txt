@@ -1,0 +1,102 @@
+Running checks in chromium
+PASS  Main entry renders 'Enter demonstration'
+PASS  Main entry labels access as simulated
+PASS  Entry variant energy: button present and simulated labelling
+PASS  Entry variant energy converges on /sector/energy
+PASS  Entry variant banking: button present and simulated labelling
+PASS  Entry variant banking converges on /sector/banking
+PASS  Workspaces lists all 8 sectors
+PASS  Branded entry links reachable from sector selection
+PASS  Role chosen at entry persisted (Approver)
+PASS  Command centre energy: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=2 d=2
+PASS  Command centre energy: demonstration indicator visible
+PASS  Command centre energy: charts have axis labels
+PASS  Command centre banking: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=3 d=3
+PASS  Command centre banking: demonstration indicator visible
+PASS  Command centre banking: charts have axis labels
+PASS  Command centre insurance: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=3 d=3
+PASS  Command centre insurance: demonstration indicator visible
+PASS  Command centre insurance: charts have axis labels
+PASS  Command centre manufacturing: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=2 d=2
+PASS  Command centre manufacturing: demonstration indicator visible
+PASS  Command centre manufacturing: charts have axis labels
+PASS  Command centre logistics: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=2 d=2
+PASS  Command centre logistics: demonstration indicator visible
+PASS  Command centre logistics: charts have axis labels
+PASS  Command centre realestate: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=2 d=2
+PASS  Command centre realestate: demonstration indicator visible
+PASS  Command centre realestate: charts have axis labels
+PASS  Command centre infrastructure: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=2 d=2
+PASS  Command centre infrastructure: demonstration indicator visible
+PASS  Command centre infrastructure: charts have axis labels
+PASS  Command centre sovereign: heading, 4 metrics, 2 charts, ≥3 signals, ≥2 cases, ≥2 decisions, activity  — m=4 f=2 s=4 c=2 d=2
+PASS  Command centre sovereign: demonstration indicator visible
+PASS  Command centre sovereign: charts have axis labels
+PASS  Sector selector switches dashboard
+PASS  Signal opens drawer
+PASS  Signal → linked case
+PASS  Case → linked decision
+PASS  Decision shows IDs, assumptions, evidence refs, and stage boundary
+PASS  Escape closes drawer
+PASS  Metric drawer shows formula, period and contributing records
+PASS  Search result opens record
+PASS  Search by ID opens that record and switches sector
+PASS  Search shows empty state
+PASS  Notification opens relevant record
+PASS  Notification marked read (count decreased)  — 11 → 10
+PASS  Unread state persists across reload
+PASS  Role persists across reload
+PASS  Expert focus panel shows cases requesting expert input
+PASS  Approver focus panel shows decisions
+PASS  Overview group capital total shown and equals 262,330
+PASS  /methodology renders
+PASS  /roadmap renders
+PASS  About panel states scope
+PASS  Reset restores seeded state (all unread, Analyst)  — unread=11
+PASS  Reset state persists (no stale storage)
+PASS  Reset confirmation can be cancelled
+PASS  No role flash: Analyst never rendered when Expert persisted  — sel: | focus:Loading your simulated r | side:… | sel:Expert | focus:Expert focus: cases requ | side:Expert
+PASS  Persisted role and focus panel appear after hydration  — sel: | focus:Loading your simulated r | side:… | sel:Expert | focus:Expert focus: cases requ | side:Expert
+PASS  Persisted read count applied (9 unread)
+PASS  Server HTML contains no role-specific content (loading state only)
+PASS  Skip link is first tab stop and becomes visible
+PASS  Skip link moves focus to main content
+PASS  Visible focus ring on the first 12 tab stops
+PASS  Drawer takes focus on open
+PASS  Tab stays trapped inside the drawer (60 tab presses)
+PASS  Shift+Tab stays trapped inside the drawer
+PASS  Escape closes drawer and focus returns to the opening signal button  — signal-SIG-ENR-01
+PASS  Close button returns focus to the opening metric card  — metric-MET-ENR-01
+PASS  Focus returns to the original opener after navigating signal → case  — signal-SIG-ENR-01
+PASS  About dialog takes focus
+PASS  About dialog traps Tab
+PASS  Escape closes About and focus returns to the About button
+PASS  Reset dialog takes focus
+PASS  Escape cancels Reset and returns focus to the Reset button
+PASS  Escape closes sector menu and returns focus to its button
+PASS  Search (keyboard) → drawer → Escape returns focus to the search box
+PASS  Persisted state survives reload (role, sector, notifications)  — {"sectorId":"insurance","role":"Approver","readIds":["NTF-01","NTF-02","NTF-03","NTF-04","NTF-05","NTF-06","NTF-07","NTF-08","NTF-09","NTF-10","NTF-11"],"entered":false}
+PASS  Workspaces shows persisted last-selected sector (Insurance)
+PASS  Unread badge hidden when all read
+PASS  Reset clears persisted demo state from localStorage  — null
+PASS  Reset restores seeded UI state (Analyst, 11 unread, Energy last selected)
+PASS  Mobile no horizontal overflow /  — scrollWidth=390 innerWidth=390
+PASS  Mobile no horizontal overflow /entry/energy  — scrollWidth=390 innerWidth=390
+PASS  Mobile no horizontal overflow /entry/banking  — scrollWidth=390 innerWidth=390
+PASS  Mobile no horizontal overflow /workspaces  — scrollWidth=390 innerWidth=390
+PASS  Mobile no horizontal overflow /overview  — scrollWidth=390 innerWidth=390
+PASS  Mobile no horizontal overflow /methodology  — scrollWidth=390 innerWidth=390
+PASS  Mobile no horizontal overflow /roadmap  — scrollWidth=390 innerWidth=390
+PASS  Mobile no horizontal overflow /sector/energy  — scrollWidth=390 innerWidth=390
+PASS  Mobile no horizontal overflow /sector/banking  — scrollWidth=390 innerWidth=390
+PASS  Mobile no horizontal overflow /sector/insurance  — scrollWidth=390 innerWidth=390
+PASS  Mobile no horizontal overflow /sector/manufacturing  — scrollWidth=390 innerWidth=390
+PASS  Mobile no horizontal overflow /sector/logistics  — scrollWidth=390 innerWidth=390
+PASS  Mobile no horizontal overflow /sector/realestate  — scrollWidth=390 innerWidth=390
+PASS  Mobile no horizontal overflow /sector/infrastructure  — scrollWidth=390 innerWidth=390
+PASS  Mobile no horizontal overflow /sector/sovereign  — scrollWidth=390 innerWidth=390
+PASS  Mobile navigation drawer opens
+PASS  Mobile drawer no horizontal overflow
+PASS  No console or page errors
+
+99/99 checks passed

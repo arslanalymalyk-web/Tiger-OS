@@ -28,11 +28,14 @@ No environment variables or credentials are needed.
 ```bash
 npm run verify          # typecheck + lint + data integrity
 npm run build && npm start -- -p 3100 &
-npm run e2e -- http://localhost:3100 ./e2e-shots   # needs Playwright + Chromium
+npm run e2e -- http://localhost:3100 ./e2e-shots        # browser checks (Playwright + Chromium); BROWSER=firefox|webkit if installed
+node scripts/a11y.mjs http://localhost:3100              # axe-core WCAG 2.x A/AA scan across pages and overlays
+node scripts/review-shots.mjs http://localhost:3100 ./review/screenshots
 ```
+Actual results of the last run, screenshots and the client walkthrough are in `REVIEW.md` and `review/`.
 
 ## Documents
-`PRODUCT_SPEC.md` · `DESIGN_SYSTEM.md` · `DATA_MODEL.md` · `IMPLEMENTATION_PLAN.md` · `CLAUDE.md`
+`REVIEW.md` (review package) · `PRODUCT_SPEC.md` · `DESIGN_SYSTEM.md` · `DATA_MODEL.md` · `IMPLEMENTATION_PLAN.md` · `CLAUDE.md`
 
 ## Reference images
 Three sign-in design references were supplied (images 1–3). They were used only to derive layout and design tokens; no screenshot is shown as a page. Mapping: image 1 (Al Noor Energy Authority) → `/entry/energy`; image 2 (Al Noor Financial Authority, Banking & Fintech) → `/entry/banking`; image 3 (generic TIGERIS institutional sign-in) → `/`. Imagery is original stylised SVG, not the reference photography.

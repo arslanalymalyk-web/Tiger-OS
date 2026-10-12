@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { Role, SectorId } from "@/lib/types";
 import { NOTIFICATIONS, isSectorId } from "@/data";
 
@@ -49,11 +49,16 @@ function load(): Persisted {
 export function DemoProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<Persisted>(DEFAULTS);
   const [hydrated, setHydrated] = useState(false);
+  // A sector page may report its route before localStorage has been read; keep that choice and apply it after hydration.
+  const early = useRef<SectorId | null>(null);
+  const hydratedRef = useRef(false);
 
   // Hydrate from localStorage after mount (server render always uses defaults, avoiding mismatches).
   useEffect(() => {
     queueMicrotask(() => {
-      setState(load());
+      const stored = load();
+      setState(early.current ? { ...stored, sectorId: early.current } : stored);
+      hydratedRef.current = true;
       setHydrated(true);
     });
   }, []);
@@ -61,13 +66,19 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!hydrated) return;
     try {
-      localStorage.setItem(KEY, JSON.stringify(state));
+      // Seeded defaults are represented by an absent key, so Reset leaves no persisted demo changes behind.
+      const isDefault = state.sectorId === DEFAULTS.sectorId && state.role === DEFAULTS.role && state.readIds.length === 0 && !state.entered;
+      if (isDefault) localStorage.removeItem(KEY);
+      else localStorage.setItem(KEY, JSON.stringify(state));
     } catch {
       /* storage unavailable: state is session-only */
     }
   }, [state, hydrated]);
 
-  const setSector = useCallback((sectorId: SectorId) => setState((s) => (s.sectorId === sectorId ? s : { ...s, sectorId })), []);
+  const setSector = useCallback((sectorId: SectorId) => {
+    if (!hydratedRef.current) early.current = sectorId;
+    setState((s) => (s.sectorId === sectorId ? s : { ...s, sectorId }));
+  }, []);
   const setRole = useCallback((role: Role) => setState((s) => ({ ...s, role })), []);
   const enter = useCallback((role: Role, sectorId?: SectorId) => setState((s) => ({ ...s, role, entered: true, sectorId: sectorId ?? s.sectorId })), []);
   const markRead = useCallback((id: string) => setState((s) => (s.readIds.includes(id) ? s : { ...s, readIds: [...s.readIds, id] })), []);

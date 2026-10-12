@@ -72,7 +72,7 @@ export const banking: SectorSeed = {
   charts: [
     { id: "CHT-BNK-01", sectorId: S, title: "Gross exposure and RWA by credit portfolio", subtitle: "As at 30 Sep 2026", kind: "bars", xLabel: "Credit portfolio", yLabel: "SAR m", unit: "SAR m", decimals: 0,
       formula: "exposure and rwa attributes for each credit portfolio.",
-      build: (es) => { const c = byCat(es, "Credit portfolio"); return { categories: c.map((e) => e.name.replace("Corporate Lending – ", "Corp. – ").replace("Retail ", "Retail ")), series: [{ name: "Gross exposure", values: c.map((e) => attr(e, "exposure")) }, { name: "Risk-weighted assets", values: c.map((e) => attr(e, "rwa")) }], sources: ids(c) }; } },
+      build: (es) => { const c = byCat(es, "Credit portfolio"); return { categories: c.map((e) => ({ "ENT-BNK-01": "Corp. Energy", "ENT-BNK-02": "Corp. Real Estate", "ENT-BNK-03": "SME", "ENT-BNK-04": "Mortgages", "ENT-BNK-05": "Trade Finance" }[e.id] ?? e.name)), series: [{ name: "Gross exposure", values: c.map((e) => attr(e, "exposure")) }, { name: "Risk-weighted assets", values: c.map((e) => attr(e, "rwa")) }], sources: ids(c) }; } },
     { id: "CHT-BNK-02", sectorId: S, title: "Liquidity coverage ratio trend", subtitle: "Q2 2025 – Q3 2026", kind: "line", xLabel: "Quarter", yLabel: "LCR (%)", unit: "%", decimals: 1, yMin: 100, refLine: { value: 120, label: "Demonstration tolerance 120%" },
       formula: "HQLA ÷ Σ stressed outflows for each quarter × 100.",
       build: (es, p) => { const l = es.find((e) => e.category === "Liquidity")!; const f = byCat(es, "Funding"); return { categories: p, series: [{ name: "LCR", values: p.map((_, i) => (l.series!.hqla[i] / sum(f.map((x) => x.series!.outflow30[i]))) * 100) }], sources: [l.id, ...ids(f)] }; } },

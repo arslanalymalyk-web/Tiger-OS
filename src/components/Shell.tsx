@@ -8,7 +8,7 @@ import { SECTORS } from "@/data";
 import { useDemo } from "@/state/DemoProvider";
 import { Wordmark } from "./Brand";
 import { RecordDrawer } from "./RecordDrawer";
-import { TopBar } from "./TopBar";
+import { InstitutionSelector, TopBar } from "./TopBar";
 import { SECTOR_ICONS } from "./ui";
 
 function NavLink({ href, icon: Icon, children, onNav }: { href: string; icon: React.ComponentType<{ size?: number; className?: string }>; children: React.ReactNode; onNav: () => void }) {
@@ -23,28 +23,28 @@ function NavLink({ href, icon: Icon, children, onNav }: { href: string; icon: Re
 }
 
 function Sidebar({ onNav }: { onNav: () => void }) {
-  const { role } = useDemo();
+  const { role, hydrated } = useDemo();
   return (
-    <div className="flex h-full flex-col bg-em-900 text-white">
-      <div className="border-b border-white/10 px-4 py-4"><Wordmark dark href="/workspaces" /></div>
+    <div className="on-dark flex h-full flex-col bg-em-900 text-white">
+      <div className="space-y-3 border-b border-white/10 px-4 py-4"><Wordmark dark href="/workspaces" /><InstitutionSelector /></div>
       <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4" aria-label="Primary">
         <div className="space-y-0.5">
           <NavLink href="/workspaces" icon={LayoutGrid} onNav={onNav}>Workspaces</NavLink>
           <NavLink href="/overview" icon={LayoutDashboard} onNav={onNav}>Institutional overview</NavLink>
         </div>
         <div>
-          <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/50">Command centres</p>
+          <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/70">Command centres</p>
           <div className="space-y-0.5">{SECTORS.map((s) => <NavLink key={s.id} href={`/sector/${s.id}`} icon={SECTOR_ICONS[s.id]} onNav={onNav}>{s.name}</NavLink>)}</div>
         </div>
         <div className="space-y-0.5">
-          <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/50">Reference</p>
+          <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/70">Reference</p>
           <NavLink href="/methodology" icon={BookOpen} onNav={onNav}>Methodology</NavLink>
           <NavLink href="/roadmap" icon={Map} onNav={onNav}>Stages and roadmap</NavLink>
         </div>
       </nav>
       <div className="border-t border-white/10 p-4 text-xs text-white/70">
         <p className="flex items-center gap-1.5"><GitBranch size={12} />Stage 1 prototype</p>
-        <p className="mt-1">Simulated role: <b className="text-white">{role}</b></p>
+        <p className="mt-1">Simulated role: <b className="text-white">{hydrated ? role : "…"}</b></p>
       </div>
     </div>
   );
@@ -54,6 +54,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[260px_minmax(0,1fr)]">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[70] focus:rounded-lg focus:bg-em-900 focus:px-4 focus:py-2 focus:text-white">Skip to main content</a>
       <aside className="sticky top-0 hidden h-screen lg:block"><Sidebar onNav={() => {}} /></aside>
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
@@ -66,7 +67,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       )}
       <div className="min-w-0">
         <TopBar onMenu={() => setOpen(true)} />
-        <main className="mx-auto w-full max-w-[1280px] px-3 py-5 sm:px-5 sm:py-6">{children}</main>
+        <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-[1280px] px-3 py-5 sm:px-5 sm:py-6">{children}</main>
         <footer className="border-t border-line px-5 py-4 text-xs text-muted">TIGERIS AI OS · Stage 1 demonstration · All data fictional and illustrative · No production, hosting or compliance claims.</footer>
       </div>
       <Suspense fallback={null}><RecordDrawer /></Suspense>

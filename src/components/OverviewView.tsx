@@ -14,7 +14,7 @@ const capChart: ChartDef = {
   formula: "Σ capital attribute of each sector's records, excluding memo records (Sovereign Capital stakes in Group entities).", build: () => ({ categories: [], series: [], sources: [] }),
 };
 const decChart: ChartDef = {
-  id: "CHT-GRP-02", sectorId: "sovereign", title: "Pending decision amounts by sector", subtitle: "Commitments are additive; reallocations are shown separately and never added", kind: "bars", xLabel: "Sector", yLabel: "SAR m", unit: "SAR m", decimals: 0,
+  id: "CHT-GRP-02", sectorId: "sovereign", title: "Pending decision amounts by sector", subtitle: "Reallocations are shown separately, never added", kind: "bars", xLabel: "Sector", yLabel: "SAR m", unit: "SAR m", decimals: 0,
   formula: "Σ decision amounts by amountKind. Commitment = new outlay; reallocation = movement of existing capital.", build: () => ({ categories: [], series: [], sources: [] }),
 };
 
@@ -45,7 +45,7 @@ export function OverviewView() {
         {tile("Open signals", String(g.signals), `${g.bySev.critical} critical · ${g.bySev.high} high · ${g.bySev.moderate} moderate · ${g.bySev.low} low`)}
         {tile("Active cases", String(g.cases), "Across all sectors")}
         {tile("Pending decisions", String(g.decisions), "Awaiting approval (Stage 6 workflow)")}
-        {tile("New commitments requested", `SAR ${fmtNum(g.commitments)} m`, `Reallocations of SAR ${fmtNum(g.reallocations)} m shown separately, not added`)}
+        {tile("New commitments", `SAR ${fmtNum(g.commitments)} m`, `Reallocations of SAR ${fmtNum(g.reallocations)} m shown separately, not added`)}
       </section>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -55,7 +55,7 @@ export function OverviewView() {
 
       <section className="card overflow-hidden">
         <div className="border-b border-line p-4"><h2 className="text-sm font-semibold">Sector summary</h2><p className="text-xs text-muted">Capital is additive. The headline indicator is a non-additive ratio or level from each sector’s first metric and is never summed.</p></div>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Sector summary table (scrollable)">
           <table className="w-full min-w-[820px] text-left text-sm">
             <thead className="bg-ivory-2 text-xs text-muted"><tr><th className="p-3 font-semibold">Sector</th><th className="p-3 text-right font-semibold">Capital employed (SAR m, additive)</th><th className="p-3 font-semibold">Signals (C / H / M / L)</th><th className="p-3 text-right font-semibold">Cases</th><th className="p-3 text-right font-semibold">Decisions</th><th className="p-3 font-semibold">Headline indicator (non-additive)</th></tr></thead>
             <tbody>

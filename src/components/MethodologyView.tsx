@@ -30,7 +30,7 @@ export function MethodologyView() {
             <h2 className="font-serif text-xl">{s.name}</h2>
             <p className="text-xs text-muted">{s.entityName} · reporting period {s.reportingPeriod}</p>
             <p className="mt-2 text-sm text-ink-2"><b>Capital employed:</b> {s.capitalDefinition}</p>
-            <div className="mt-3 overflow-x-auto"><table className="w-full min-w-[700px] text-left text-sm">
+            <div className="mt-3 overflow-x-auto" tabIndex={0} role="region" aria-label={`${s.name} metric definitions (scrollable)`}><table className="w-full min-w-[700px] text-left text-sm">
               <thead className="bg-ivory-2 text-xs text-muted"><tr><th className="p-2 font-semibold">Metric</th><th className="p-2 font-semibold">Formula</th><th className="p-2 font-semibold">Unit · period</th><th className="p-2 font-semibold">Tolerance / assumptions</th></tr></thead>
               <tbody>{seed.metrics.map((m) => (
                 <tr key={m.id} className="border-t border-line-2 align-top"><td className="p-2"><b>{m.name}</b><div><IdTag id={m.id} /></div><div className="text-[11px] text-muted">{m.additive ? "additive" : "non-additive"}</div></td>
