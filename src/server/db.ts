@@ -34,11 +34,14 @@ export async function withTx<T>(opts: TxOptions, fn: (db: Db) => Promise<T>): Pr
     await c.query("select set_config('app.company_id', $1, true), set_config('app.user_id', $2, true), set_config('app.platform', $3, true)", [
       opts.companyId ?? "", opts.userId ?? "", opts.platform ? "1" : "",
     ]);
+    // A pg client runs one query at a time; serialise so concurrent calls (Promise.all) queue instead of overlapping.
+    let tail: Promise<unknown> = Promise.resolve();
+    const serial = <T,>(f: () => Promise<T>): Promise<T> => { const r = tail.then(f, f); tail = r.catch(() => undefined); return r; };
     const db: Db = {
       companyId: opts.companyId ?? null,
       userId: opts.userId ?? null,
-      q: async (sql, params) => (await c.query(sql, params as unknown[])).rows,
-      one: async (sql, params) => (await c.query(sql, params as unknown[])).rows[0],
+      q: (sql, params) => serial(async () => (await c.query(sql, params as unknown[])).rows),
+      one: (sql, params) => serial(async () => (await c.query(sql, params as unknown[])).rows[0]),
     };
     const out = await fn(db);
     await c.query("commit");

@@ -11,7 +11,7 @@ export interface BlobStore {
 }
 
 class LocalStore implements BlobStore {
-  private root = () => resolve(process.cwd(), uploadDir());
+  private root = () => resolve(/*turbopackIgnore: true*/ process.cwd(), uploadDir());
   private path(key: string) {
     const p = resolve(this.root(), key);
     if (!p.startsWith(this.root() + "/")) throw new Error("invalid storage key"); // path traversal guard

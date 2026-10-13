@@ -5,6 +5,8 @@ An AI-native Sovereign Capital Intelligence Operating System, shown as a **funct
 
 > Stage 3 (AI command and evidence-grounded assistance) builds on Stage 2 (intelligence cases, evidence and expert collaboration). The app runs entirely in the browser from seeded records. It has **no live feeds, no integrations, no AI execution, and no real authentication**. Sign-in fields and roles are simulated. It makes no production-readiness, sovereign-hosting or compliance claims.
 
+> **ServiceTrace** — a real multi-tenant maintenance operations platform (database, auth, workflow, EN/AR) is being built beside this demo under `/app`. See `docs/PLATFORM.md`.
+
 ## Run locally
 Requires Node 20+.
 ```bash

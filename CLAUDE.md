@@ -58,3 +58,6 @@ Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 (tokens in 
 ## Commands
 `npm run dev` · `npm run build` · `npm run typecheck` · `npm run lint` · `npm run verify:data` · `npm run verify` (typecheck+lint+data) · `npm run verify:store` · `npm run verify:ai` · `npm run smoke:provider` (credential-gated) · `npm run e2e:stage2` · `npm run e2e:stage3` · `npm run e2e` (needs `npm start -- -p 3100` and Chromium; `BROWSER=firefox|webkit` if installed) · `node scripts/a11y.mjs http://localhost:3100 ./review` (axe-core; writes findings + annotated screenshots) · `node scripts/review-shots.mjs`.
 Run `verify:data` after editing any seed file.
+
+## ServiceTrace (maintenance platform) — separate product
+Lives under `src/app/(platform)`, `src/server`, `src/i18n`, `db/migrations`. The TIGERIS demo rules above do NOT apply to it; see `docs/PLATFORM.md`. Rules: all tenant data goes through `withTx` (RLS context) and service functions that take an `Actor`; never query tenant tables outside them; add a migration (never edit applied ones) for schema changes; every UI string needs en + ar keys (`npm test` enforces parity); run `npm test` after changes.
