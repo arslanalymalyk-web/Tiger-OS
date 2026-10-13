@@ -43,3 +43,6 @@ next-env.d.ts
 # e2e screenshots
 /e2e-shots
 !.env.example
+
+# platform runtime data
+/.data/

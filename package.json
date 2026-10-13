@@ -15,18 +15,28 @@
     "verify": "npm run typecheck && npm run lint && npm run verify:data",
     "verify:store": "tsx scripts/verify-store.ts",
     "verify:ai": "tsx scripts/verify-ai.ts",
-    "smoke:provider": "tsx scripts/smoke-provider.ts"
+    "smoke:provider": "tsx scripts/smoke-provider.ts",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "admin:create": "tsx scripts/create-platform-admin.ts",
+    "seed:demo": "tsx scripts/seed-demo.ts",
+    "test": "APP_ENV=test tsx --test --test-concurrency=1 tests/*.test.ts",
+    "test:e2e": "node scripts/e2e-platform.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.133.0",
     "lucide-react": "^1.55.0",
     "next": "16.4.0",
+    "nodemailer": "^10.1.0",
+    "pg": "^8.23.1",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.2",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "axe-core": "^4.14.0",

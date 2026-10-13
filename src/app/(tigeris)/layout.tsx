@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { DemoProvider } from "@/state/DemoProvider";
-import "./globals.css";
+import "../globals.css";
 
 export const metadata: Metadata = {
   title: "TIGERIS AI OS — Stage 3 demonstration",
